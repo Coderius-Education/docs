@@ -1,3 +1,4 @@
+import { useRef, useState } from 'react';
 import type { CheckerConfig, ProjectFiles } from '../types';
 import styles from './PhotoStrip.module.css';
 
@@ -8,6 +9,11 @@ import styles from './PhotoStrip.module.css';
 //
 // Staat binnen reportRef in CheckerInner, dus de foto's komen automatisch mee
 // in de PDF-export.
+//
+// Een klik op een foto toont hem groot, heel en niet bijgesneden: in de strip
+// zag de docent het frame of de sensoren te klein om een vinkje op te zetten,
+// en een schermafbeelding van het scherm van de robot werd bijgesneden tot
+// een zwart vlak.
 
 interface PhotoStripProps {
   files: ProjectFiles;
@@ -15,6 +21,8 @@ interface PhotoStripProps {
 }
 
 export function PhotoStrip({ files, config }: PhotoStripProps) {
+  const venster = useRef<HTMLDialogElement>(null);
+  const [groot, setGroot] = useState<{ src: string; naam: string } | null>(null);
   const imageKinds = config.imageKinds ?? [];
   if (imageKinds.length === 0) return null;
 
@@ -23,6 +31,12 @@ export function PhotoStrip({ files, config }: PhotoStripProps) {
     .sort((a, b) => a.path.localeCompare(b.path));
 
   if (fotos.length === 0) return null;
+
+  const open = (src: string, naam: string) => {
+    setGroot({ src, naam });
+    // showModal bestaat niet in jsdom; daar is het venster er alleen in de DOM.
+    venster.current?.showModal?.();
+  };
 
   return (
     <section className={styles.section}>
@@ -35,11 +49,46 @@ export function PhotoStrip({ files, config }: PhotoStripProps) {
       <ul className={styles.strip}>
         {fotos.map((foto) => (
           <li className={styles.item} key={foto.path}>
-            <img className={styles.foto} src={foto.content ?? ''} alt={foto.path} loading="lazy" />
+            <button
+              type="button"
+              className={styles.knop}
+              onClick={() => open(foto.content ?? '', foto.path)}
+              aria-label={`Bekijk ${foto.path} groot`}
+            >
+              <img
+                className={styles.foto}
+                src={foto.content ?? ''}
+                alt={foto.path}
+                loading="lazy"
+              />
+            </button>
             <span className={styles.naam}>{foto.path}</span>
           </li>
         ))}
       </ul>
+      <dialog
+        ref={venster}
+        className={styles.venster}
+        aria-label={groot ? groot.naam : "Foto's"}
+        onClose={() => setGroot(null)}
+        data-html2canvas-ignore
+      >
+        {groot && (
+          <>
+            <div className={styles.vensterKop}>
+              <span>{groot.naam}</span>
+              <button
+                type="button"
+                className={styles.sluit}
+                onClick={() => venster.current?.close()}
+              >
+                Sluiten
+              </button>
+            </div>
+            <img className={styles.grootBeeld} src={groot.src} alt={groot.naam} />
+          </>
+        )}
+      </dialog>
     </section>
   );
 }

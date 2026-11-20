@@ -281,7 +281,7 @@ while True:
 
 </details>
 
-Klaar? Op [Robot checken](site:robotica/robot-checken) zie je wat er nu in je `main.py` zit.
+Klaar? Op [Robot checken](site:robotica/robot-checken) zie je of je `main.py` en je foto's binnenkomen zoals je docent ze nodig heeft.
 
 ---
 

@@ -12,6 +12,7 @@ import {
   AArrowDown,
   AArrowUp,
   Blocks,
+  Download,
   FilePlus,
   FlaskConical,
   FolderOpen,
@@ -61,6 +62,7 @@ import Palet from './Palet';
 import Voorbeeld from './Voorbeeld';
 import type { Bouwsteen } from './bouwstenen';
 import { leesEditorHash } from './codeLink';
+import { downloadCode, downloadNaam } from './download';
 import { friendlyError } from './errorMessages';
 import { BoardFS } from './filesystem';
 import { editorThema } from './kleuren';
@@ -962,6 +964,15 @@ export default function WebMicroEditor(): React.JSX.Element {
           >
             <SaveAll aria-hidden="true" size={15} />
             Opslaan als...
+          </button>
+          <button
+            type="button"
+            className={styles.btn}
+            onClick={() => downloadCode(code, downloadNaam(currentFile))}
+            title={`Bewaar de code als ${downloadNaam(currentFile)} op je computer, bijvoorbeeld om in te leveren bij Robot checken`}
+          >
+            <Download aria-hidden="true" size={15} />
+            Download
           </button>
         </fieldset>
         <fieldset className={styles.knopGroep} aria-label="Board">

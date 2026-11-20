@@ -509,3 +509,74 @@ describe('readUploadedFiles — wat een docent en een leerling moeten weten', ()
     expect(een.warnings).toEqual([]);
   });
 });
+
+// De review van de upload tool van robotica (november 2026).
+describe("readUploadedFiles — foto's van een telefoon", () => {
+  const foto = (pad: string, mb: number) => makeFile(pad, new Uint8Array(mb * 1024 * 1024));
+  const metVerkleiner = (kan: boolean, grootte = 300 * 1024): ReadOptions => ({
+    ...webAchtig,
+    verkleiner: {
+      kan,
+      verklein: async () => (kan ? { dataUrl: 'data:image/jpeg;base64,klein', grootte } : null),
+    },
+  });
+
+  it('verkleint een foto van 12 MB in plaats van hem te weigeren', async () => {
+    // Een telefoon maakt foto's van 5 tot 12 MB; eerst viel elke foto boven
+    // 5 MB af, en dat zijn juist de foto's waarop de docent het frame ziet.
+    const { files, warnings } = await readUploadedFiles(
+      [makeFile('p/index.html', '<h1>Hoi</h1>'), foto('p/IMG_0001.png', 12)],
+      metVerkleiner(true),
+    );
+    expect(files['IMG_0001.png'].content).toBe('data:image/jpeg;base64,klein');
+    expect(files['IMG_0001.png'].tooLarge).toBe(false);
+    expect(warnings).toEqual([]);
+  });
+
+  it("telt de verkleinde grootte voor het budget, en zegt bij te veel foto's dat het om foto's gaat", async () => {
+    const tien = Array.from({ length: 10 }, (_, i) => foto(`p/IMG_${i}.png`, 4));
+    const verkleind = await readUploadedFiles(
+      [makeFile('p/index.html', '<h1>Hoi</h1>'), ...tien],
+      metVerkleiner(true),
+    );
+    expect(verkleind.warnings).toEqual([]);
+
+    // Zonder verkleinen past het budget van 25 MB niet: dan geen advies over
+    // mappen van een ander, maar over het aantal foto's.
+    const { warnings } = await readUploadedFiles(
+      [makeFile('p/index.html', '<h1>Hoi</h1>'), ...tien],
+      metVerkleiner(false),
+    );
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0]).toContain("te veel foto's");
+    expect(warnings[0]).not.toContain('mappen');
+  });
+
+  it('weigert een foto boven 5 MB nog als hij niet te verkleinen is', async () => {
+    const { files, warnings } = await readUploadedFiles(
+      [makeFile('p/index.html', '<h1>Hoi</h1>'), foto('p/IMG_0001.png', 6)],
+      { ...webAchtig, verkleiner: { kan: true, verklein: async () => null } },
+    );
+    expect(files['IMG_0001.png'].tooLarge).toBe(true);
+    expect(warnings).toEqual([expect.stringContaining('IMG_0001.png')]);
+  });
+
+  it('laat een kleine foto zoals hij is', async () => {
+    let verkleind = 0;
+    const { files } = await readUploadedFiles(
+      [makeFile('p/index.html', '<h1>Hoi</h1>'), makeFile('p/scherm.png', 'png')],
+      {
+        ...webAchtig,
+        verkleiner: {
+          kan: true,
+          verklein: async () => {
+            verkleind++;
+            return null;
+          },
+        },
+      },
+    );
+    expect(verkleind).toBe(0);
+    expect(files['scherm.png'].content).toMatch(/^data:image\/png;base64,/);
+  });
+});

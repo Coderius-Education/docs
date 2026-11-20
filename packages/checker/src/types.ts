@@ -310,7 +310,12 @@ export interface AfgeleideSoort {
   kind: string;
   /** Van welke bestandssoorten hij gemaakt wordt. */
   van: string[];
-  maak: (inhoud: string, soort: string) => string;
+  /**
+   * `alle`: de inhoud van elk eigen bestand van dezelfde soorten, zonder
+   * commentaar. Robotica volgt zo een sensor die in `sensoren.py` staat en in
+   * `main.py` gelezen wordt.
+   */
+  maak: (inhoud: string, soort: string, alle: string[]) => string;
 }
 
 /** Een concept zonder niveau: wordt herkend en getoond, telt niet mee. */

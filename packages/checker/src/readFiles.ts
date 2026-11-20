@@ -15,6 +15,14 @@ export const MAX_TEXT_FILE_SIZE = 2 * 1024 * 1024; // 2 MB per tekstbestand
 export const MAX_IMAGE_FILE_SIZE = 5 * 1024 * 1024; // 5 MB per afbeelding
 export const MAX_TEXT_TOTAL_SIZE = 10 * 1024 * 1024; // 10 MB code totaal
 export const MAX_IMAGE_TOTAL_SIZE = 25 * 1024 * 1024; // 25 MB afbeeldingen totaal
+// Een foto die de browser kan verkleinen, mag groter zijn: een telefoon maakt
+// foto's van 5 tot 12 MB, en bij robotica viel eerst de helft af. Verkleind
+// is hij een paar honderd kB, en dat telt voor het budget hierboven.
+export const MAX_FOTO_ORIGINEEL = 40 * 1024 * 1024;
+/** De langste zijde van een verkleinde foto, in pixels. */
+export const FOTO_RAND = 1600;
+/** Een foto tot zo groot blijft zoals hij is (een schermafbeelding in PNG). */
+const FOTO_HOUDEN = 1024 * 1024;
 
 // Mappen die nooit bij een project horen, waar ze ook staan. site-packages
 // is het hart van elke Python-venv, ook een die `env` of `.env311` heet: een
@@ -107,11 +115,62 @@ function bytesToDataUrl(bytes: Uint8Array, mimeType: string): Promise<string> {
   });
 }
 
+/**
+ * Maakt van een foto een kleinere JPEG, of geeft null als dat niet kan (geen
+ * canvas in deze omgeving, of een formaat dat de browser niet leest).
+ */
+export type Verkleiner = (
+  bytes: Uint8Array,
+  mimeType: string,
+) => Promise<{ dataUrl: string; grootte: number } | null>;
+
+/** Kan deze omgeving foto's verkleinen? In node (de tests) niet. */
+function browserKanVerkleinen(): boolean {
+  return typeof createImageBitmap === 'function' && typeof OffscreenCanvas === 'function';
+}
+
+const browserVerkleiner: Verkleiner = async (bytes, mimeType) => {
+  if (!browserKanVerkleinen()) return null;
+  try {
+    // createImageBitmap draait een staande telefoonfoto zelf rechtop (EXIF).
+    const beeld = await createImageBitmap(new Blob([bytes], { type: mimeType }));
+    const schaal = Math.min(1, FOTO_RAND / Math.max(beeld.width, beeld.height));
+    const breed = Math.max(1, Math.round(beeld.width * schaal));
+    const hoog = Math.max(1, Math.round(beeld.height * schaal));
+    const doek = new OffscreenCanvas(breed, hoog);
+    const ctx = doek.getContext('2d');
+    if (!ctx) return null;
+    // Wit eronder: een PNG met doorzichtige delen wordt anders zwart.
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, breed, hoog);
+    ctx.drawImage(beeld, 0, 0, breed, hoog);
+    beeld.close();
+    const blob = await doek.convertToBlob({ type: 'image/jpeg', quality: 0.85 });
+    const dataUrl = await bytesToDataUrl(new Uint8Array(await blob.arrayBuffer()), 'image/jpeg');
+    return { dataUrl, grootte: blob.size };
+  } catch {
+    return null;
+  }
+};
+
 export interface ReadOptions {
   classify: (path: string) => string;
   textKinds: string[];
   imageKinds?: string[];
+  /**
+   * Hoe een grote foto kleiner wordt; standaard met een canvas in de browser.
+   * Een test geeft er een mee, want node heeft geen canvas.
+   */
+  verkleiner?: { kan: boolean; verklein: Verkleiner };
 }
+
+function verkleinerVan(opts: ReadOptions) {
+  return opts.verkleiner ?? { kan: browserKanVerkleinen(), verklein: browserVerkleiner };
+}
+
+/** De grootste foto die we nog inlezen. */
+const maxFoto = (opts: ReadOptions) =>
+  verkleinerVan(opts).kan ? MAX_FOTO_ORIGINEEL : MAX_IMAGE_FILE_SIZE;
 
 export interface ReadFilesResult {
   files: ProjectFiles;
@@ -246,7 +305,7 @@ async function unzipToRawEntries(file: File, opts: ReadOptions, diepte = 0): Pro
         meta.push({ name: f.name, size });
         const kind = opts.classify(f.name);
         const wantText = opts.textKinds.includes(kind) && size <= MAX_TEXT_FILE_SIZE;
-        const wantImage = imageKinds.includes(kind) && size <= MAX_IMAGE_FILE_SIZE;
+        const wantImage = imageKinds.includes(kind) && size <= maxFoto(opts);
         // Een zip in een zip pakken we uit als hij het enige is (zie onder).
         const wantZip = diepte === 0 && /\.zip$/i.test(f.name);
         return wantText || wantImage || wantZip;
@@ -388,6 +447,8 @@ async function entriesToProjectFiles(
   const teGroteTekst: string[] = [];
   const teGroteFotos: string[] = [];
   const nietGelezen: string[] = [];
+  const teVeelFotos: string[] = [];
+  const verkleiner = verkleinerVan(opts);
   let textBudget = MAX_TEXT_TOTAL_SIZE;
   let imageBudget = MAX_IMAGE_TOTAL_SIZE;
 
@@ -420,18 +481,27 @@ async function entriesToProjectFiles(
         content = decodeerTekst(await entry.getBytes());
         textBudget -= entry.size;
       }
-    } else if (isImageKind && entry.size > MAX_IMAGE_FILE_SIZE) {
+    } else if (isImageKind && entry.size > maxFoto(opts)) {
       // Een foto is bij robotica het bewijs voor een vinkje; stil weglaten
       // mag dus niet.
       tooLarge = true;
       teGroteFotos.push(path);
     } else if (isImageKind && entry.getBytes) {
-      if (entry.size > imageBudget) {
-        nietGelezen.push(path);
+      const bytes = await entry.getBytes();
+      const klein =
+        verkleiner.kan && entry.size > FOTO_HOUDEN
+          ? await verkleiner.verklein(bytes, mimeTypeForPath(path))
+          : null;
+      const grootte = klein?.grootte ?? entry.size;
+      if (!klein && entry.size > MAX_IMAGE_FILE_SIZE) {
+        // Niet te verkleinen (een formaat dat de browser niet leest).
+        tooLarge = true;
+        teGroteFotos.push(path);
+      } else if (grootte > imageBudget) {
+        teVeelFotos.push(path);
       } else {
-        const bytes = await entry.getBytes();
-        content = await bytesToDataUrl(bytes, mimeTypeForPath(path));
-        imageBudget -= entry.size;
+        content = klein?.dataUrl ?? (await bytesToDataUrl(bytes, mimeTypeForPath(path)));
+        imageBudget -= grootte;
       }
     }
 
@@ -447,7 +517,14 @@ async function entriesToProjectFiles(
   }
   if (teGroteFotos.length > 0) {
     warnings.push(
-      `Niet bekeken, want groter dan ${MAX_IMAGE_FILE_SIZE / (1024 * 1024)} MB: ${opsomming(teGroteFotos)}. Maak de foto kleiner (bijvoorbeeld met een schermafbeelding) en upload opnieuw.`,
+      `Niet bekeken, want groter dan ${maxFoto(opts) / (1024 * 1024)} MB: ${opsomming(teGroteFotos)}. Maak de foto kleiner (bijvoorbeeld met een schermafbeelding) en upload opnieuw.`,
+    );
+  }
+  // Het budget voor foto's is op: dat ligt niet aan mappen van een ander,
+  // maar aan het aantal foto's.
+  if (teVeelFotos.length > 0) {
+    warnings.push(
+      `Niet bekeken, want er zijn te veel foto's: ${opsomming(teVeelFotos)}. Een stuk of vijf is genoeg; kies de foto's die het meest laten zien en upload opnieuw.`,
     );
   }
   if (nietGelezen.length > 0) {

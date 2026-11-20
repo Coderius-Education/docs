@@ -7,6 +7,7 @@ import type {
 } from '@coderius/checker/types';
 import { storageKey } from '@coderius/shared/opslag';
 import leerdoelenJson from '../leerdoelen.json';
+import { irPinnen, schermMetSensor, zonderTekst } from './sensoren';
 
 // De nakijker voor robotica. Wélke concepten tellen en op welk niveau staat
 // in `src/leerdoelen.json`: het tabblad robotica van het beoordelingsblad, in
@@ -46,98 +47,248 @@ function todayStamp(d: Date): string {
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
 }
 
-/** Korter dan het hele object uitschrijven; alle python-concepten lezen `py`. */
+/** Korter dan het hele object uitschrijven; een python-concept leest `py`. */
 function py(pattern: RegExp, minCount?: number): ConceptDetect {
   return minCount === undefined
     ? { type: 'regex', pattern, in: ['py'] }
     : { type: 'regex', pattern, in: ['py'], minCount };
 }
 
+/**
+ * Zoekt in de code zonder de tekst in strings (`zonderTekst`):
+ * `print("links and rechts")` is geen and/or, en `print("DCMotors()")`
+ * stuurt geen motoren aan.
+ */
+function code(pattern: RegExp): ConceptDetect {
+  return { type: 'regex', pattern, in: ['py-code'] };
+}
+
+// Een blok dat iets doet: na de dubbele punt een opdracht die geen `pass` of
+// `...` is, op dezelfde regel of dieper ingesprongen eronder. Het skelet van
+// Deel 8 (`elif …:` met alleen `pass`) is nog geen elif, en een lege
+// `def rijden(): pass` nog geen functie.
+const DOET = String.raw`:(?:[ \t]*(?!pass\b|\.\.\.)\S|(?:[ \t]*\n)+\1[ \t]+(?!pass\b|\.\.\.)\S)`;
+const metBlok = (kop: string) => new RegExp(String.raw`^([ \t]*)${kop}${DOET}`, 'gm');
+
 const HANDMATIG = { type: 'handmatig' } as const;
 
 // Een IR-sensor, met zijn pin als onderdeel: een analoge (`AnalogIR("A0",
-// 2500)`, of een naam in plaats van de pin), een digitale (`Pin("D14",
-// Pin.IN)`, zoals RoboCup ze aanbiedt; een knop heeft er PULL_UP bij), of een
-// pin in een lijst als `["A0", "A1", "A2", "A3"]` waar een lus de sensoren
-// van maakt. Per bestand, want drie scripts met 1, 2 en 2 sensoren zijn geen
+// 2500)`, ook met `pin_name=` of als `IR` geïmporteerd), een digitale
+// (`Pin("D14", Pin.IN)`, zoals RoboCup ze aanbiedt; een knop heeft er PULL_UP
+// bij), of een pin uit een lijst of hulpfunctie die `AnalogIR(pin, …)` maakt.
+// Alleen een sensor die gelezen wordt (`ir-gelezen`), en voor lijnvolgen met
+// vier een sensor waarvan wat hij leest in een `if` komt (`ir-beslist`); zie
+// sensoren.ts. Per bestand, want drie scripts met 1, 2 en 2 sensoren zijn geen
 // robot met vier.
-function irSensoren(aantal: number): ConceptDetect {
+function irSensoren(aantal: number, soort: 'ir-gelezen' | 'ir-beslist'): ConceptDetect {
   return {
     type: 'regex',
-    pattern:
-      /\bAnalogIR\s*\(\s*["']?(\w+)|\bPin\s*\(\s*["'](D\d+)["']\s*,\s*Pin\.IN\s*\)|(?<=\[[^\]\n]*)["'](A\d)["'](?=[^[\n]*\])/g,
-    in: ['py'],
+    pattern: /["'](A[0-7]|D\d{1,2})["']/g,
+    in: [soort],
     delen: true,
     minDelen: aantal,
     perBestand: true,
   };
 }
 
-// Een meegeleverde bibliotheek: alles in lib/ (waar MicroPython modules
-// zoekt) en de leaphymicropython zelf. Die gaf eerst lijsten, break,
-// continue, tuples en de afstandssensor, en tilde een knipperscript van
-// "niet aan basis" naar gevorderd.
-const isBibliotheek = (path: string) => /(?:^|\/)lib\/|leaphymicropython/i.test(path);
+// Een meegeleverde bibliotheek: de leaphymicropython (ook de map
+// leaphy-micropython-main uit de download van GitHub, met zijn examples/ en
+// .github/), en een pakket in lib/ (een map met modules, waar MicroPython
+// zoekt). Die gaf eerst lijsten, break, continue, tuples en de
+// afstandssensor, en tilde een knipperscript van "niet aan basis" naar
+// gevorderd. Alleen hele mappen: een eigen module die de leerling in lib/
+// zette (`lib/motoren.py`) is van hem, en een projectmap die
+// `leaphymicropython_robot` heet ook.
+//
+// Wie alleen de map lib/ kiest, krijgt de paden zonder lib/leaphymicropython
+// ervoor: de nakijker haalt de mappen weg die elk bestand gemeen heeft. Een
+// bestand op de plek van een module van de bibliotheek (`sensors/tof.py`) is
+// daarom ook een bibliotheek. De namen komen uit leaphy-api.json; de test
+// houdt ze gelijk.
+export const LEAPHY_MODULES: Record<string, string> = {
+  actuators: 'buzzer dcmotor oled_screen rgbled servo sh1106 ssd1306',
+  sensors: 'adps9960 barometer bmp280 compass dht22 linesensor lsm6dsox sonar tof vl53l0x',
+  utils: 'ble_uart i2c_address_finder i2c_helper pins timeschedule wifi',
+};
+const LEAPHY_PAD = new RegExp(
+  `(?:^|\\/)(?:${Object.entries(LEAPHY_MODULES)
+    .map(([map, namen]) => `${map}\\/(?:${namen.replaceAll(' ', '|')}|__init__)\\.py$`)
+    .join('|')})`,
+);
+const isBibliotheek = (path: string) =>
+  /(?:^|\/)(?:leaphy[-_]?micropython(?:-main|-master)?|\.github)\/|(?:^|\/)lib\/[^/]+\//i.test(
+    path,
+  ) || LEAPHY_PAD.test(path);
 
-/** De eigen modules: elk .py-bestand behalve main.py en boot.py, buiten lib/. */
+/**
+ * De eigen modules: elk .py-bestand behalve main.py en boot.py, en een map
+ * met een `__init__.py` (een pakket).
+ */
 export function eigenModules(files: ProjectFiles): string[] {
-  return Object.keys(files)
-    .filter((p) => p.endsWith('.py') && !isBibliotheek(p))
+  const paden = Object.keys(files).filter((p) => p.endsWith('.py') && !isBibliotheek(p));
+  const namen = paden
     .map((p) => p.slice(p.lastIndexOf('/') + 1, -3))
-    .filter((naam) => !['main', 'boot'].includes(naam) && /^\w+$/.test(naam));
+    .filter((naam) => !['main', 'boot', '__init__'].includes(naam));
+  const pakketten = paden
+    .filter((p) => p.endsWith('/__init__.py'))
+    .map((p) => p.split('/').at(-2) ?? '');
+  return [...new Set([...namen, ...pakketten])].filter((naam) => /^\w+$/.test(naam));
+}
+
+// Wat het bord en MicroPython zelf meebrengen. Een import van iets anders
+// dat niet in de upload zit, is een eigen module die de leerling vergat mee
+// te sturen (zie waarschuwingen).
+const INGEBOUWD = new Set(
+  (
+    'array asyncio binascii bluetooth builtins cmath collections deflate errno framebuf gc ' +
+    'hashlib heapq io json machine math micropython neopixel network os platform random re ' +
+    'rp2 select socket ssl struct sys time uasyncio ubinascii ucollections uctypes uio ujson ' +
+    'uos urandom ure uselect usocket ustruct usys utime dht onewire ds18x20 ssd1306 requests ' +
+    'urequests mip'
+  ).split(' '),
+);
+
+/** De modules die een bestand importeert, alleen het eerste deel van de naam. */
+function importsVan(code: string): string[] {
+  const namen: string[] = [];
+  for (const m of code.matchAll(/^[ \t]*from\s+(\w+)[\w.]*\s+import\b/gm)) namen.push(m[1]);
+  for (const m of code.matchAll(/^[ \t]*import\s+([^\n#;]+)/gm)) {
+    for (const deel of m[1].split(',')) {
+      const naam = /^\s*(\w+)/.exec(deel)?.[1];
+      if (naam) namen.push(naam);
+    }
+  }
+  return namen;
+}
+
+const opsomming = (namen: string[]) =>
+  namen.length === 1 ? namen[0] : `${namen.slice(0, -1).join(', ')} en ${namen.at(-1)}`;
+
+/**
+ * Wat de leerling over zijn upload moet weten voordat de docent kijkt: alleen
+ * de bibliotheek, geen main.py, een import die ontbreekt, geen foto.
+ */
+export function waarschuwingen(files: ProjectFiles): string[] {
+  const alle = Object.values(files);
+  const python = alle.filter((f) => f.kind === 'py');
+  const eigen = python.filter((f) => !isBibliotheek(f.path));
+  if (python.length === 0) return [];
+  if (eigen.length === 0) {
+    return [
+      'Er staat alleen de bibliotheek van het bord in de upload, geen eigen code. Upload ook je main.py.',
+    ];
+  }
+  const uit: string[] = [];
+  const naam = (p: string) => p.slice(p.lastIndexOf('/') + 1);
+  if (!eigen.some((f) => naam(f.path) === 'main.py')) {
+    const bijna = eigen.find((f) => /^main\b.*\.py$/i.test(naam(f.path)));
+    uit.push(
+      bijna
+        ? `Je script heet ${naam(bijna.path)}, niet main.py. Het bord voert bij het aanzetten alleen main.py uit: geef het die naam, op het bord en hier.`
+        : 'Er staat geen main.py in de upload. Het bord voert bij het aanzetten alleen main.py uit: upload het script dat op je bord zo heet.',
+    );
+  }
+  const eigenNamen = new Set(eigenModules(files));
+  const ontbreekt = [
+    ...new Set(
+      eigen.flatMap((f) =>
+        importsVan(f.content ?? '').filter(
+          (m) => !INGEBOUWD.has(m) && !eigenNamen.has(m) && !/^leaphy/i.test(m),
+        ),
+      ),
+    ),
+  ].sort();
+  if (ontbreekt.length > 0) {
+    const bestanden = opsomming(ontbreekt.map((m) => `${m}.py`));
+    uit.push(
+      `Je code importeert ${opsomming(ontbreekt)}, maar ${ontbreekt.length === 1 ? 'dat bestand zit' : 'die bestanden zitten'} niet in de upload. Upload ${bestanden} mee: alleen dan telt wat erin staat.`,
+    );
+  }
+  if (!alle.some((f) => f.kind === 'image')) {
+    uit.push(
+      "Er staat geen foto in de upload. Aan je code is niet te zien of je robot gebouwd is en rijdt: voeg een paar foto's toe.",
+    );
+  }
+  return uit;
 }
 
 const DETECTIE: Record<string, ConceptDetect> = {
-  'py-variabele': py(/^[ \t]*[a-z_]\w*\s*=\s*[^=\s]/gm),
-  // Bewust smal: een operator tússen twee getallen of variabelen, met
-  // spaties eromheen zoals de cursus het schrijft. Een kale `+` zou net zo
-  // vaak tekst plakken als rekenen.
-  // Ook zonder spaties bij * en /, en `teller += 1`.
-  'py-rekenen': py(/[\w)]\s[-*/]\s[\w(]|[\w)]\s\+\s[\w(]|[\w)][*/][\w(]|\w\s*[-+*/]=\s*[\w(-]/g),
+  // Ook een constante in hoofdletters (`DREMPEL = 2500`).
+  'py-variabele': code(/^[ \t]*[A-Za-z_]\w*\s*=\s*[^=\s]/gm),
+  // Een operator tussen twee getallen, namen of haakjes, met of zonder
+  // spaties (`teller+1`, `snelheid - 55`), en `teller += 1`. Tekst in strings
+  // telt niet: `print("Links - Rechts")` rekent niet. `->` ook niet.
+  'py-rekenen': code(
+    /[\w)\]]\s*(?:\*\*|\/\/|[-+*/%])(?!>)\s*[\w(]|\w\s*(?:\/\/|[-+*/%])=\s*[\w(-]/g,
+  ),
   'py-fstring': py(/\bf["']/g),
   // `while True:` telt hier niet mee. Die regel staat in élk script van de
   // cursus, al in het knipperscript van Deel 2, en zou dit concept dus
   // aanvinken voordat de leerling één boolean heeft gebruikt.
   // Ook `<` en `>`, maar niet `->` of `<<`.
-  'py-boolean': py(/[=!<>]=|(?<![-<>])[<>](?![<>=])|(?<!\bwhile\s{1,8})\b(?:True|False)\b/g),
-  'py-if-else': py(/^[ \t]*if\b/gm),
-  'py-elif': py(/^[ \t]*elif\b/gm),
-  'py-while': py(/^[ \t]*while\b/gm),
+  // Ook `while(True):` niet.
+  'py-boolean': code(
+    /[=!<>]=|(?<![-<>])[<>](?![<>=])|(?<!\bwhile\s{0,8}\(?\s{0,8})\b(?:True|False)\b/g,
+  ),
+  'py-if-else': code(/^[ \t]*if\b/gm),
+  // Een tak die iets doet: het skelet van Deel 8 met alleen `pass` niet.
+  'py-elif': code(metBlok('elif\\b[^\\n]*')),
+  'py-while': code(/^[ \t]*while\b/gm),
   // Elke functie: wie een functie met parameters schrijft, kan er ook een
   // zonder. Op niveau 3 en 4 telt "met parameters" niet mee, en eerst gaf
   // `def stuur(a, b)` daar dus niets, terwijl `def rechtdoor()` gevorderd was.
-  'py-functie': py(/^[ \t]*def\s+\w+\s*\(/gm),
+  // Een functie die iets doet; `def rijden(): pass` nog niet.
+  'py-functie': code(metBlok('def\\s+\\w+\\s*\\([^)]*\\)[^:\\n]*')),
   // `self` alleen is geen parameter.
-  'py-functie-parameters': py(/^[ \t]*def\s+\w+\s*\(\s*(?:self\s*,\s*)?(?!self\b)\w/gm),
-  'py-lijst-methoden': py(/\.(append|insert|remove|pop|sort|reverse|extend|index)\s*\(/g),
-  'py-import': py(/^[ \t]*(from|import)\s+\w/gm),
+  'py-functie-parameters': code(
+    metBlok('def\\s+\\w+\\s*\\(\\s*(?:self\\s*,\\s*)?(?!self\\b)\\w[^)]*\\)[^:\\n]*'),
+  ),
+  // Niet op tekst (`"abc".index(…)`) of het bestandssysteem (`os.remove`).
+  'py-lijst-methoden': code(
+    /(?<!["']|\bos|\bsys|\bpath)\.(append|insert|remove|pop|sort|reverse|extend|index|clear|count)\s*\(/g,
+  ),
+  'py-import': code(/^[ \t]*(from|import)\s+\w/gm),
   'rb-frame': HANDMATIG,
-  'rb-ir-een': irSensoren(1),
-  'rb-ir-twee': irSensoren(2),
-  'rb-scherm': py(/\bOLEDSH1106\s*\(/g),
-  'rb-motoren': py(/\bDCMotors\s*\(/g),
+  'rb-ir-een': irSensoren(1, 'ir-gelezen'),
+  'rb-ir-twee': irSensoren(2, 'ir-gelezen'),
+  // Een regel die een waarde van een IR-sensor op het scherm zet (zie
+  // schermMetSensor); "Hallo robot", een teller of de afstand niet.
+  'rb-scherm': { type: 'regex', pattern: /^[ \t]*\S/gm, in: ['scherm'] },
+  // Ook één motor (`DCMotor`).
+  'rb-motoren': code(/\bDCMotors?\s*\(/g),
   'rb-robot-compleet': HANDMATIG,
   'rb-batterijen': HANDMATIG,
   'rb-lijnvolgen-twee': HANDMATIG,
-  'rb-ir-vier': irSensoren(4),
-  'rb-afstand': py(/\bTimeOfFlight\s*\(|\bget_distance\s*\(|\bread_distance\s*\(/g),
+  // Lijnvolgen: vier sensoren waarvan wat ze lezen in een `if` komt. Bij
+  // Uitlezen en tonen van Deel 9 staan de twee buitenste alleen op het
+  // scherm; de les zegt zelf "een nieuwe sensor doet niets zolang geen regel
+  // in je if-blok hem gebruikt".
+  'rb-ir-vier': irSensoren(4, 'ir-beslist'),
+  'rb-afstand': code(/\bTimeOfFlight\s*\(|\bget_distance\s*\(|\bread_distance\s*\(/g),
   'rb-obstakel-stoppen': HANDMATIG,
   'rb-bal-detecteren': HANDMATIG,
-  'py-and-or': py(/\s(and|or)\s/g),
-  'py-continue': py(/^[ \t]*continue\b/gm),
-  'py-break': py(/^[ \t]*break\b/gm),
-  'py-lijst': py(/=\s*\[/g),
+  'py-and-or': code(/\s(and|or)\s/g),
+  // Ook op één regel: `if x: break`.
+  'py-continue': code(/(?:^[ \t]*|:[ \t]*)continue\b/gm),
+  'py-break': code(/(?:^[ \t]*|:[ \t]*)break\b/gm),
+  // Een lijst die je maakt en gebruikt (`naam[…]`, `naam.iets(`, `in naam`,
+  // of als argument), of een lus over een lijst (`for pin in ["A0", "A1"]`).
+  // `metingen = []` die nergens meer voorkomt, en `pins=["A0"]` als argument,
+  // zijn geen lijst die de leerling gebruikt.
+  'py-lijst': code(
+    /^[ \t]*(\w+)\s*=\s*\[(?=[\s\S]*?(?:(?<![\w.])\1\s*\[|(?<![\w.])\1\.\w+\s*\(|\bin\s+\1\b|[(,]\s*\1\s*[,)]))|\bin\s+\[/gm,
+  ),
   // Een module die als .py in het project staat (zie detectieVoor hieronder);
   // `import struct` of `import ssd1306` telde eerst ook als eigen module.
   'py-import-eigen': py(/(?!)/g),
-  // Zwak te detecteren, en dat is hier vastgelegd in plaats van weggepoetst:
-  // een tuple zonder haakjes (`a, b = 1, 2`) valt hierbuiten, en een set
-  // met één element is niet van een blok code te onderscheiden. Zie de
-  // valkuilen-test.
-  // Een toekenning aan het begin van de regel, zodat `f"afstand={afstand}"`
-  // geen set is; of set() en tuple().
-  'py-tuple-set': py(
-    /^[ \t]*[\w.]+\s*=\s*(?:\([^)\n]*,[^)\n]*\)|\{[^}:\n]+\})|\b(?:set|tuple|frozenset)\s*\(/gm,
+  // Een tuple tussen haakjes (`meting = (a(), b())`, `return (1, 2)`), een
+  // lijst tuples (`[(255, 0, 0), …]`), uitpakken (`wit, zwart = 800, 5000`,
+  // `for r, g, b in kleuren`), `return a, b`, een set (`{…}` zonder dubbele
+  // punt, `in {…}`), of set() en tuple(). Een set met één element is niet van
+  // een blok code te onderscheiden. Tekst in strings telt niet, zodat
+  // `f"afstand={afstand}"` geen set is.
+  'py-tuple-set': code(
+    /^[ \t]*(?:[\w.]+\s*=|return)\s*\((?:[^()\n]|\([^()\n]*\))*,(?:[^()\n]|\([^()\n]*\))*\)|\[\s*\(|^[ \t]*[\w.]+(?:\s*,\s*[\w.]+)+\s*=(?!=)|^[ \t]*for\s+\w+(?:\s*,\s*\w+)+\s+in\b|^[ \t]*return\s+[\w.]+\s*,|^[ \t]*[\w.]+\s*=\s*\{[^}:\n]+\}|\bin\s+\{|\b(?:set|tuple|frozenset)\s*\(/gm,
   ),
   'rb-obstakel-omheen': HANDMATIG,
   'rb-muren': HANDMATIG,
@@ -214,7 +365,8 @@ const OOK_GEBRUIKT: ExtraConcept[] = [
     // Het bord voert bij het aanzetten alleen een bestand met exact deze naam
     // uit; heet het anders, dan doet de robot op batterijen niets.
     // Een main.py in een map oud/ of backup/ telt niet.
-    detect: { type: 'path', pattern: /^(?!(?:.*\/)?(?:oud|old|backup|test)\/)(?:.*\/)?main\.py$/i },
+    // Precies zo: het bord start geen `Main.py` (de batterijenles zegt het).
+    detect: { type: 'path', pattern: /^(?!(?:.*\/)?(?:oud|old|backup|test)\/)(?:.*\/)?main\.py$/ },
   },
 ];
 
@@ -240,11 +392,26 @@ export const roboticaConfig: CheckerConfig = {
   textKinds: ['py'],
   commentaar: { py: 'python' },
   bibliotheek: isBibliotheek,
+  // Zie sensoren.ts. `alle` is de code van elk eigen bestand: een sensor uit
+  // sensoren.py telt als main.py hem leest.
+  afgeleid: [
+    { kind: 'py-code', van: ['py'], maak: (t) => zonderTekst(t) },
+    { kind: 'ir-gelezen', van: ['py'], maak: (t, _s, alle) => irPinnen(t, alle, false) },
+    { kind: 'ir-beslist', van: ['py'], maak: (t, _s, alle) => irPinnen(t, alle, true) },
+    { kind: 'scherm', van: ['py'], maak: (t, _s, alle) => schermMetSensor(t, alle) },
+  ],
+  waarschuwingen,
+  // Een import van een eigen module, ook als tweede naam (`import time,
+  // rijden`), uit een pakket (`from robot.rijden import vooruit`) of uit lib/.
   detectieVoor: (files): Record<string, ConceptDetect> => {
     const namen = eigenModules(files);
     if (namen.length === 0) return {};
-    const patroon = new RegExp(`^[ \\t]*(?:from|import)\\s+(?:${namen.join('|')})\\b`, 'gm');
-    return { 'py-import-eigen': py(patroon) };
+    const n = `(?:${namen.join('|')})`;
+    const patroon = new RegExp(
+      `^[ \\t]*(?:from\\s+\\.*(?:\\w+\\.)*${n}\\b|import\\s+(?:[\\w.]+(?:\\s+as\\s+\\w+)?\\s*,\\s*)*(?:\\w+\\.)*${n}\\b)`,
+      'gm',
+    );
+    return { 'py-import-eigen': code(patroon) };
   },
   imageKinds: ['image'],
   // Bewust geen .heic: telefoons maken dat formaat wel, maar Chrome kan het

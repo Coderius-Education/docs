@@ -31,15 +31,70 @@
   background: var(--ifm-color-emphasis-100);
 }
 
-/* Vaste hoogte met object-fit: een staande telefoonfoto naast een liggende
-   mag de rij niet uit elkaar trekken, en in de PDF-export scheelt het een
-   pagina vol witruimte. */
+/* Vaste hoogte: een staande telefoonfoto naast een liggende mag de rij niet
+   uit elkaar trekken, en in de PDF-export scheelt het een pagina vol
+   witruimte. Wel heel (contain), niet bijgesneden: van een schermafbeelding
+   van het scherm van de robot bleef bij cover alleen een zwart vlak over. */
 .foto {
+  display: block;
   width: 100%;
   height: 150px;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 4px;
   background: var(--ifm-color-emphasis-200);
+}
+
+.knop {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+}
+
+.knop:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+}
+
+.venster {
+  max-width: 95vw;
+  max-height: 95vh;
+  padding: 0.75rem;
+  border: 0;
+  border-radius: 8px;
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+}
+
+.venster::backdrop {
+  background: rgb(0 0 0 / 70%);
+}
+
+.vensterKop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.sluit {
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--ifm-color-emphasis-400);
+  border-radius: 4px;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.grootBeeld {
+  display: block;
+  max-width: calc(95vw - 1.5rem);
+  max-height: calc(95vh - 4rem);
+  object-fit: contain;
 }
 
 .naam {

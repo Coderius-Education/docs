@@ -71,7 +71,7 @@ Zet je robot aan het begin van de baan en laat los. Volgt hij de lijn, ook door 
 
 Dit is het moment waarop het hele traject samenkomt: elk deel van je script heb je zelf getypt, en je weet van elke regel waarom hij er staat.
 
-Klaar? Op [Robot checken](site:robotica/robot-checken) zie je wat er in je `main.py` zit. Doe er een paar foto's van je robot bij — aan je code is niet te zien of het frame er staat en of hij op batterijen rijdt.
+Klaar? Op [Robot checken](site:robotica/robot-checken) zie je of je `main.py` en je foto's binnenkomen zoals je docent ze nodig heeft. Doe er een paar foto's van je robot bij: aan je code is niet te zien of het frame er staat en of hij op batterijen rijdt.
 
 ## Opdracht 10.4.b: de kruising
 

@@ -21,9 +21,36 @@ export interface CodeOpen {
   bereik?: { bestand: string; van: number; tot: number };
 }
 
+/**
+ * De bestanden in de keuzelijst: eerst die van de leerling, dan een
+ * bibliotheek. De lijst begon eerst met 23 bestanden van de leaphymicropython
+ * en opende daar ook, terwijl de docent `main.py` wilde zien.
+ */
+export function bestandenOpVolgorde(
+  files: ProjectFiles,
+  textKinds: string[],
+  bibliotheek?: (path: string, content: string) => boolean,
+): { bestanden: string[]; start: string | null } {
+  const leesbaar = Object.values(files)
+    .filter((f) => f.content !== null && textKinds.includes(f.kind))
+    .sort((a, b) => a.path.localeCompare(b.path));
+  const vreemd = (f: (typeof leesbaar)[number]) => bibliotheek?.(f.path, f.content ?? '') ?? false;
+  const eigen = leesbaar.filter((f) => !vreemd(f)).map((f) => f.path);
+  const bestanden = [...eigen, ...leesbaar.filter(vreemd).map((f) => f.path)];
+  // Het startbestand van een website of een robot, anders het eerste eigen.
+  const start =
+    eigen.find((b) => /(^|\/)index\.html?$/i.test(b)) ??
+    eigen.find((b) => /(^|\/)main\.py$/.test(b)) ??
+    bestanden[0] ??
+    null;
+  return { bestanden, start };
+}
+
 interface CodeWeergaveProps {
   files: ProjectFiles;
   textKinds: string[];
+  /** Wat niet van de leerling is; dat staat achteraan in de keuzelijst. */
+  bibliotheek?: (path: string, content: string) => boolean;
   open: CodeOpen | null;
   onSluit: () => void;
   /** Weglaten: geen markeren (geen open beoordeling). */
@@ -35,16 +62,19 @@ interface Selectie {
   eind: number;
 }
 
-export function CodeWeergave({ files, textKinds, open, onSluit, onMarkeer }: CodeWeergaveProps) {
+export function CodeWeergave({
+  files,
+  textKinds,
+  bibliotheek,
+  open,
+  onSluit,
+  onMarkeer,
+}: CodeWeergaveProps) {
   const dialoog = useRef<HTMLDialogElement>(null);
   const regelRefs = useRef(new Map<number, HTMLLIElement>());
-  const bestanden = useMemo(
-    () =>
-      Object.values(files)
-        .filter((f) => f.content !== null && textKinds.includes(f.kind))
-        .map((f) => f.path)
-        .sort((a, b) => a.localeCompare(b)),
-    [files, textKinds],
+  const { bestanden, start } = useMemo(
+    () => bestandenOpVolgorde(files, textKinds, bibliotheek),
+    [files, textKinds, bibliotheek],
   );
   const plekken = open?.plekken ?? [];
   const [plekNr, setPlekNr] = useState(0);
@@ -60,8 +90,6 @@ export function CodeWeergave({ files, textKinds, open, onSluit, onMarkeer }: Cod
     if (open) {
       const eerste = open.plekken[0];
       setPlekNr(0);
-      // Zonder plekken: het startbestand van een website, anders het eerste.
-      const start = bestanden.find((b) => /(^|\/)index\.html?$/i.test(b)) ?? bestanden[0];
       // Alleen een bestand dat als tekst is ingelezen kan open.
       const gevraagd = eerste?.bestand;
       setBestand(gevraagd && bestanden.includes(gevraagd) ? gevraagd : (start ?? null));
@@ -73,7 +101,7 @@ export function CodeWeergave({ files, textKinds, open, onSluit, onMarkeer }: Cod
     } else if (d.open) {
       d.close();
     }
-  }, [open, bestanden]);
+  }, [open, bestanden, start]);
 
   // Scrol de regel waar het om gaat naar het midden, ook als alleen het
   // bestand wisselt (andere regels onder hetzelfde nummer) of het venster

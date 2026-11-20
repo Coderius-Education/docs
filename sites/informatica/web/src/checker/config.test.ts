@@ -627,7 +627,7 @@ describe('webConfig — JavaScript wordt herkend waar het staat', () => {
       '<p>let op</p>\n<script>\n// x\nlet s = "a\\"b";\n</script>\n<b onclick="f(\'x\')">x</b>';
     for (const a of webConfig.afgeleid ?? []) {
       for (const soort of a.van) {
-        const uit = a.maak(html, soort);
+        const uit = a.maak(html, soort, [html]);
         expect(uit.length, `${a.kind} uit ${soort}`).toBe(html.length);
         expect(uit.split('\n').length, `${a.kind} uit ${soort}`).toBe(html.split('\n').length);
       }
