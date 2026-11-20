@@ -795,7 +795,9 @@ describe('godotConfig — wat niet van de leerling is, en wat er net naast ligt'
     ].join('\n');
     const report = analyze(files({ 'addons/dialoog/dialoog.gd': addon }), godotConfig);
     expect(report.concepts.filter((c) => c.used).map((c) => c.id)).toEqual([]);
-    expect(report.warnings.join(' ')).toContain('addons/dialoog/dialoog.gd');
+    // Het overzicht noemt hem apart, niet als GDScript.
+    expect(report.fileStats.byKind.addon).toBe(1);
+    expect(report.fileStats.byKind.gd).toBe(0);
   });
 
   it('telt niets in commentaar', () => {
@@ -1197,5 +1199,47 @@ describe('godotConfig — review van de upload tool', () => {
         'project-inrichting',
       ),
     ).toBe(false);
+  });
+
+  it('het overzicht telt addon, export en wat Godot zelf maakt apart', () => {
+    const kinds = Object.fromEntries(
+      [
+        'addons/dialogue/a.gd',
+        'addons/dialogue/b.tscn',
+        'export/spel.exe',
+        'export/spel.pck',
+        'web/index.wasm',
+        'icon.svg.import',
+        'speler.gd.uid',
+        'speler.gd',
+      ].map((p) => [p, godotConfig.classify(p)]),
+    );
+    expect(kinds).toEqual({
+      'addons/dialogue/a.gd': 'addon',
+      'addons/dialogue/b.tscn': 'addon',
+      'export/spel.exe': 'export',
+      'export/spel.pck': 'export',
+      'web/index.wasm': 'export',
+      'icon.svg.import': 'intern',
+      'speler.gd.uid': 'intern',
+      'speler.gd': 'gd',
+    });
+  });
+
+  it('waarschuwt bij een upload zonder scènes, zonder code, of alleen een export', () => {
+    const w = (entries: Record<string, string>) => analyze(files(entries), godotConfig).warnings;
+    expect(w({ 'speler.gd': 'extends CharacterBody2D' }).join(' ')).toMatch(
+      /geen scène \(\.tscn\).*project\.godot/,
+    );
+    expect(w({ 'project.godot': 'config_version=5' }).join(' ')).toMatch(
+      /geen script \(\.gd\) en geen scène/,
+    );
+    expect(w({ 'index.pck': 'x', 'index.html': '<html>' }).join(' ')).toMatch(
+      /export van je game \(index\.pck\)/,
+    );
+    // Een gewoon project krijgt geen van deze meldingen.
+    expect(
+      w({ 'speler.gd': 'extends Node', 'level.tscn': '[node name="L" type="Node2D"]' }),
+    ).toEqual([]);
   });
 });

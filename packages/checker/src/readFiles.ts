@@ -364,6 +364,10 @@ async function entriesToProjectFiles(
         ? [`een virtual environment (${opsomming(venvs.map((v) => v.replace(/\/$/, '')))})`]
         : []),
       ...(kopieen.size > 0 ? [`een reservekopie (${opsomming([...kopieen].sort())})`] : []),
+      // Alleen de map .godot (wat Godot zelf maakt) gaf eerst geen reden.
+      ...(rawEntries.some((e) => e.relativePath.split('/').includes('.godot'))
+        ? ['de map .godot, die Godot zelf maakt (kies de map erboven, waar project.godot in staat)']
+        : []),
     ];
     const wat =
       delen.length === 0
@@ -458,11 +462,17 @@ async function entriesToProjectFiles(
   }
   // Twee projecten in één upload (de hele cursusmap, met elke les in een
   // eigen map) tellen samen mee: concepten uit een oude les tellen dan ook.
-  const mains = gekozen.map(({ path }) => path).filter((p) => /(?:^|\/)main\.py$/.test(p));
-  if (mains.length > 1) {
-    warnings.push(
-      `Er staan meer projecten in de upload, want er zijn ${mains.length} keer main.py: ${opsomming(mains.sort())}. Alles telt samen mee. Upload alleen het project dat je wilt laten nakijken.`,
-    );
+  // Een Godot-project herken je aan project.godot, een FastAPI-project aan
+  // main.py; Godot gaf eerst geen waarschuwing.
+  for (const naam of ['main.py', 'project.godot']) {
+    const keer = gekozen
+      .map(({ path }) => path)
+      .filter((p) => p === naam || p.endsWith(`/${naam}`));
+    if (keer.length > 1) {
+      warnings.push(
+        `Er staan meer projecten in de upload, want er zijn ${keer.length} keer ${naam}: ${opsomming(keer.sort())}. Alles telt samen mee. Upload alleen het project dat je wilt laten nakijken.`,
+      );
+    }
   }
   const heic = gekozen.filter(({ path }) => HEIC.test(path)).map(({ path }) => path);
   if (imageKinds.length > 0 && heic.length > 0) {

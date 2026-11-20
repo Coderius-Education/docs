@@ -248,6 +248,11 @@ export interface CheckerConfig {
    */
   buitenLesstof?: (files: ProjectFiles) => Vondst[];
   /**
+   * Optioneel: waarschuwingen over de upload zelf die alleen deze cursus kan
+   * geven, zoals een Godot-project zonder scènes of alleen een export.
+   */
+  waarschuwingen?: (files: ProjectFiles) => string[];
+  /**
    * Optioneel: wat tussen twee bestanden niet aansluit, zoals een formulierveld
    * dat de functie niet verwacht of een `{{ naam }}` die het dictionary niet
    * meegeeft. Zulke fouten geven vaak geen melding: een lege plek, een 422 of

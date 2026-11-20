@@ -34,8 +34,19 @@ import leerdoelenJson from '../leerdoelen.json';
 
 const IMAGE_EXT = new Set(['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.ico', '.bmp']);
 
+// Wat de leerling niet zelf maakt, heeft een eigen soort in het overzicht:
+// een addon, een export van de game, en de .import- en .uid-bestanden die
+// Godot naast elk bestand zet. Eerst telde het overzicht ze als GDScript,
+// scènes en Overig ("174 bestanden", waarvan 10 van de leerling), las de
+// nakijker de scripts van een addon vóór de eigen scripts, en opende Code
+// bekijken in de addon.
+const EXPORT = /\.(?:pck|exe|x86_64|x86_32|arm64|apk|aab|wasm|dmg|app)$/i;
+
 function classify(path: string): string {
   const lower = path.toLowerCase();
+  if (isAddon(path)) return 'addon';
+  if (EXPORT.test(lower)) return 'export';
+  if (/\.(?:import|uid)$/.test(lower)) return 'intern';
   if (lower.endsWith('.gd')) return 'gd';
   if (lower.endsWith('.tscn')) return 'tscn';
   if (lower.endsWith('project.godot')) return 'godot';
@@ -429,7 +440,9 @@ const DETECTIE: Record<string, ConceptDetect> = {
   // schrijven, zoals de rij zegt: alleen de print van stringify uit de
   // voorspelvraag van les 10.4 telde eerst al.
   'gd-json': {
-    ...gd(/\bJSON\.(stringify|parse)(?:_string)?\s*\(/g),
+    type: 'regex',
+    pattern: /\bJSON\.(stringify|parse)(?:_string)?\s*\(/g,
+    in: ['gd', 'tscn-gd'],
     delen: true,
     minDelen: 2,
   },
@@ -491,6 +504,37 @@ const OOK_GEBRUIKT: ExtraConcept[] = [
   },
 ];
 
+/**
+ * Een upload waar de nakijker weinig mee kan: alleen project.godot, alleen
+ * scripts, of alleen een export. Eerst kwam er dan geen melding, en zag de
+ * leerling alleen tellers.
+ */
+export function waarschuwingen(files: ProjectFiles): string[] {
+  const van = (kind: string) => Object.values(files).filter((f) => f.kind === kind);
+  const exports = van('export').map((f) => f.path);
+  const scripts = van('gd').length;
+  const scenes = van('tscn').length;
+  if (scripts === 0 && scenes === 0) {
+    if (exports.length > 0) {
+      return [
+        `Dit lijkt een export van je game (${exports.slice(0, 2).join(', ')}). Die telt niet mee: de nakijker leest je scripts en scènes. Upload de map waarin project.godot staat.`,
+      ];
+    }
+    if (van('godot').length > 0) {
+      return [
+        'Er staat geen script (.gd) en geen scène (.tscn) in de upload. Upload de hele map waarin project.godot staat.',
+      ];
+    }
+    return [];
+  }
+  if (scenes === 0) {
+    return [
+      'Er staat geen scène (.tscn) in de upload, dus de nodes (2D) kunnen niet meetellen. Upload de hele map waarin project.godot staat.',
+    ];
+  }
+  return [];
+}
+
 const uitLeerdoelen = leerdoelenNaarConfig(leerdoelenJson, DETECTIE);
 
 export const godotConfig: CheckerConfig = {
@@ -525,6 +569,9 @@ export const godotConfig: CheckerConfig = {
     { id: 'godot', label: 'Project' },
     { id: 'image', label: 'Afbeeldingen' },
     { id: 'other', label: 'Overig' },
+    { id: 'addon', label: 'Addons (telt niet)' },
+    { id: 'export', label: 'Export (telt niet)' },
+    { id: 'intern', label: 'Van Godot (.import, .uid)' },
   ],
 
   classify,
@@ -534,6 +581,7 @@ export const godotConfig: CheckerConfig = {
   commentaar: { gd: 'gdscript' },
   afgeleid: [{ kind: 'tscn-gd', van: ['tscn'], maak: ingebouwdeScripts }],
   bibliotheek: isAddon,
+  waarschuwingen,
   // Een autoload heet niet altijd Global; de namen staan in project.godot.
   detectieVoor: (files) => {
     const namen = [...new Set(['Global', ...autoloads(files)])];

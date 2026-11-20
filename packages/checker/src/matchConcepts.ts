@@ -49,6 +49,22 @@ export interface AnalyzeOpties {
   losseBestanden?: boolean;
 }
 
+/**
+ * Bestanden van een bibliotheek, samengenomen per map onder addons/, lib/,
+ * vendor/ of node_modules/ (`addons/dialogue (45 bestanden)`). Een los
+ * bestand (`static/js/htmx.min.js`) blijft zoals het is.
+ */
+export function bibliotheekMappen(paden: string[]): string[] {
+  const perMap = new Map<string, string[]>();
+  for (const p of paden) {
+    const map = /^(.*?(?:^|\/)(?:addons|lib|vendor|node_modules)\/[^/]+)\//.exec(p)?.[1] ?? p;
+    perMap.set(map, [...(perMap.get(map) ?? []), p]);
+  }
+  return [...perMap]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([map, lijst]) => (lijst.length > 1 ? `${map} (${lijst.length} bestanden)` : lijst[0]));
+}
+
 export function analyze(
   files: ProjectFiles,
   config: CheckerConfig,
@@ -221,13 +237,16 @@ export function analyze(
     );
   }
   if (bibliotheken.length > 0) {
-    const lijst = bibliotheken.sort((a, b) => a.localeCompare(b));
+    // Per map, niet per bestand: een addon van Godot met 200 scripts was eerst
+    // een melding van meerdere schermen, en een derde van de PDF.
+    const lijst = bibliotheekMappen(bibliotheken);
     const namen =
       lijst.length === 1 ? lijst[0] : `${lijst.slice(0, -1).join(', ')} en ${lijst.at(-1)}`;
     warnings.push(
       `Niet meegeteld: ${namen}. ${lijst.length === 1 ? 'Dat is een bibliotheek' : 'Dat zijn bibliotheken'}, geen eigen code.`,
     );
   }
+  warnings.push(...(config.waarschuwingen?.(files) ?? []));
   return {
     fileStats: { total: values.length, byKind, skippedTooLarge },
     concepts,
