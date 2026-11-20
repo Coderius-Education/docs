@@ -24,7 +24,12 @@ import { samenhang } from './samenhang';
 
 const IMAGE_EXT = new Set(['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.ico', '.bmp']);
 
+// De bestanden van niveau 3 die de nakijker aan hun naam herkent. Ze worden
+// ook gelezen: een lege Dockerfile of README telde eerst als gedaan.
+const INSTELLING = /(?:^|\/)(?:Dockerfile|(?:docker-)?compose\.ya?ml|requirements\.txt|README\.md|\.gitignore)$/i;
+
 function classify(path: string): string {
+  if (INSTELLING.test(path)) return 'instelling';
   const dot = path.lastIndexOf('.');
   const ext = dot === -1 ? '' : path.slice(dot).toLowerCase();
   if (ext === '.py') return 'py';
@@ -228,7 +233,8 @@ const DETECTIE: Record<string, ConceptDetect> = {
   // Alle drie de adressen uit, zoals in de les; alleen docs_url is genoeg.
   // `openapi_url=None` zet alle drie de adressen uit, ook /docs.
   'vh-docs': py(/\b(?:docs_url|openapi_url)\s*=\s*None\b/g),
-  'vh-gitignore': { type: 'path', pattern: /(^|\/)\.gitignore$/ },
+  // Elk bestand met inhoud: een lege .gitignore, README of Dockerfile telt niet.
+  'vh-gitignore': { type: 'path', pattern: /(^|\/)\.gitignore$/, inhoud: /^\s*[^#\s]/m },
   // Een grens in Form: lengte of waarde. Form(...) alleen is geen controle.
   'vh-invoer': py(/\bForm\s*\([^)]*\b(?:max_length|min_length|ge|le|gt|lt)\s*=/g),
   // Templates escapen vanzelf: wie niets doet, doet het goed. Of er nergens
@@ -242,11 +248,19 @@ const DETECTIE: Record<string, ConceptDetect> = {
   'vh-hash': py(/\bPasswordHasher\s*\(/g),
   // De limiet op het inlog-endpoint, zoals in de les: direct onder @app.post.
   'vh-pogingen': py(/@\w+\.post\s*\(\s*["']\/(?:inlog|login)[^\n]*\n\s*@limiter\.limit\s*\(/gi),
-  'on-requirements': { type: 'path', pattern: /(^|\/)requirements\.txt$/ },
-  'on-readme': { type: 'path', pattern: /(^|\/)README\.md$/i },
+  'on-requirements': {
+    type: 'path',
+    pattern: /(^|\/)requirements\.txt$/,
+    inhoud: /^\s*[A-Za-z][\w.-]*/m,
+  },
+  'on-readme': { type: 'path', pattern: /(^|\/)README\.md$/i, inhoud: /\S/ },
   'on-linux': { type: 'handmatig' },
-  'on-dockerfile': { type: 'path', pattern: /(^|\/)Dockerfile$/ },
-  'on-compose': { type: 'path', pattern: /(^|\/)(?:docker-)?compose\.ya?ml$/ },
+  'on-dockerfile': { type: 'path', pattern: /(^|\/)Dockerfile$/, inhoud: /^\s*FROM\s+\S/im },
+  'on-compose': {
+    type: 'path',
+    pattern: /(^|\/)(?:docker-)?compose\.ya?ml$/,
+    inhoud: /^services\s*:/m,
+  },
   'on-server': { type: 'handmatig' },
   'on-dichtzetten': { type: 'handmatig' },
   'on-https': { type: 'handmatig' },
@@ -460,11 +474,12 @@ export const fullstackConfig: CheckerConfig = {
     { id: 'css', label: 'CSS' },
     { id: 'js', label: 'JavaScript' },
     { id: 'image', label: 'Afbeeldingen' },
+    { id: 'instelling', label: 'Instellingen' },
     { id: 'other', label: 'Overig' },
   ],
 
   classify,
-  textKinds: ['py', 'html', 'css', 'js'],
+  textKinds: ['py', 'html', 'css', 'js', 'instelling'],
   // Ook de bestanden van niveau 3 (requirements.txt, README.md, compose.yaml).
   // Een Dockerfile of .gitignore heeft geen extensie en is hier niet te
   // kiezen; die komen mee met Kies een map of een zip.

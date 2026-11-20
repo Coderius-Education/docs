@@ -1189,6 +1189,39 @@ describe('fullstackConfig — review van de upload tool', () => {
     expect(img("{{ url_for('static', path='logo.png') }}")).toBe(true);
   });
 
+  it('een leeg bestand van niveau 3 telt niet, een gevuld wel', () => {
+    // De nakijker las deze bestanden niet: een lege Dockerfile gaf gevorderd.
+    const ids = ['vh-gitignore', 'on-requirements', 'on-readme', 'on-dockerfile', 'on-compose'];
+    const leeg = perId(
+      analyze(
+        files({
+          'main.py': 'app = FastAPI()',
+          '.gitignore': '',
+          'requirements.txt': '\n',
+          'README.md': '',
+          Dockerfile: '# nog leeg\n',
+          'compose.yaml': '',
+        }),
+        fullstackConfig,
+      ),
+    );
+    for (const id of ids) expect(leeg.get(id), id).toBe(false);
+    const gevuld = perId(
+      analyze(
+        files({
+          'main.py': 'app = FastAPI()',
+          '.gitignore': '# databases\n*.db\n',
+          'requirements.txt': 'fastapi[standard]\n',
+          'README.md': '# Gastenboek\n',
+          Dockerfile: 'FROM python:3.13-slim\n',
+          'compose.yaml': 'services:\n  gastenboek:\n',
+        }),
+        fullstackConfig,
+      ),
+    );
+    for (const id of ids) expect(gevuld.get(id), id).toBe(true);
+  });
+
   it('Ook gebruikt: gebruikt, niet alleen geïmporteerd, en van de database', () => {
     const alleenImport = 'from fastapi import FastAPI, HTTPException, Request\napp = FastAPI()';
     expect(py('fastapi-request', alleenImport)).toBe(false);

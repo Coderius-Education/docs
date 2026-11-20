@@ -72,6 +72,12 @@ export type ConceptDetect =
       /** "Aanwezig" als een bestandspad hierop matcht (mappenstructuur-check). */
       type: 'path';
       pattern: RegExp;
+      /**
+       * Optioneel: en de inhoud van dat bestand past hierop. Een leeg
+       * bestand met de goede naam telde eerst ook. Het bestand moet dan wel
+       * gelezen worden: zijn soort staat in `textKinds`.
+       */
+      inhoud?: RegExp;
     }
   | {
       /**

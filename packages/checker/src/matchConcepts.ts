@@ -130,7 +130,10 @@ export function analyze(
     }
     if (c.detect.type === 'path') {
       const re = withoutGlobal(c.detect.pattern);
-      const paden = allPaths.filter((p) => re.test(p));
+      const inhoud = c.detect.inhoud ? withoutGlobal(c.detect.inhoud) : null;
+      const paden = allPaths.filter(
+        (p) => re.test(p) && (!inhoud || inhoud.test(files[p]?.content ?? '')),
+      );
       const used = paden.length > 0;
       if (!metPlekken) return { id: c.id, count: used ? 1 : 0, used };
       const plekken = paden
