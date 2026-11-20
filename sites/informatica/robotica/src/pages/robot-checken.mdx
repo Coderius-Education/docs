@@ -8,21 +8,41 @@ import { roboticaConfig } from '@site/src/checker/config';
 # Robot checken
 
 Is je robot af, of ben je een eind op weg? Upload je `main.py` én een paar foto's
-van je robot, en zie meteen wat er binnenkomt.
+van je robot, en zie meteen of alles binnenkomt wat je docent nodig heeft. Deze
+pagina is voor een robot in MicroPython: de Lego-auto of je RoboCup-robot. Een
+Golfbot programmeer je in blokken, en die lever je in zoals je docent dat vraagt.
 
-**Let op:** je bestanden gaan nooit naar een server. Alles gebeurt in je eigen browser.
+**Let op:** je bestanden gaan nooit naar een server. Alles gebeurt in je eigen
+browser. Je docent bekijkt je werk dus niet hier: lever dezelfde bestanden in
+zoals je docent dat vraagt (bijvoorbeeld als zip in de ELO). Je docent zet ze
+dan in de docentversie van deze pagina.
 
 ## Wat lever je in?
 
-- Je **`main.py`** — precies zoals hij op het bord staat. De naam telt: het bord
+- Je **`main.py`**, precies zoals hij op het bord staat. De naam telt: het bord
   voert bij het aanzetten alleen een bestand met die naam uit.
+- Je **eigen modules**: importeert `main.py` een bestand dat je zelf schreef
+  (`import rijden`), lever dat dan ook in. De map `lib/leaphymicropython` hoeft
+  niet mee.
 - **Foto's** van je gebouwde robot. Aan je code is niet te zien of het frame er
   staat, of de sensoren goed hangen, of hij op batterijen rijdt. Maak er dus een
-  paar: het geheel, de onderkant met de sensoren, en het scherm terwijl hij aan
-  staat.
-- Alles in één keer, of als **zip**.
+  stuk of vijf: het geheel, de onderkant met de sensoren, en het scherm terwijl
+  hij aan staat.
 
-**Foto's als JPG of PNG.** Zet je telefoon zo nodig van HEIC om naar JPG —
-browsers kunnen HEIC niet tonen.
+Zet alles eerst in één map, en kies dan die map of alle bestanden tegelijk, of
+maak er een **zip** van. Kies je twee keer, dan telt alleen de tweede keer.
+
+## Je `main.py` op je computer krijgen
+
+Je code staat op het bord, en het bord verschijnt niet als schijf op je computer.
+
+- In de [online editor](site:robotica/editor): open `main.py` onder
+  **Bestanden op board** en klik op **Download**. Een eigen module download je
+  op dezelfde manier.
+- In Thonny: open `main.py` van het bord, kies `File` → `Save as...` en dan
+  **This computer**.
+
+**Foto's als JPG of PNG.** Zet je telefoon zo nodig van HEIC om naar JPG:
+browsers kunnen HEIC niet tonen. Een grote foto verkleint deze pagina zelf.
 
 <Checker config={roboticaConfig} variant="leerling" />

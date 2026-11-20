@@ -637,6 +637,7 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
         <CodeWeergave
           files={files}
           textKinds={config.textKinds}
+          bibliotheek={config.bibliotheek}
           open={codeOpen}
           onSluit={() => setCodeOpen(null)}
           onMarkeer={actief ? markeer : undefined}

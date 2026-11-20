@@ -442,6 +442,38 @@ describe('analyze — onderdelen en extra concepten', () => {
     });
   });
 
+  it('geeft een afgeleide soort de andere eigen bestanden mee, zonder bibliotheek', () => {
+    // Robotica: een sensor die in sensoren.py staat, wordt in main.py
+    // gelezen. Per bestand alleen was dat niet te zien.
+    const gezien: string[][] = [];
+    analyze(
+      projectFiles(
+        file('a.js', 'js', 'een // weg'),
+        file('b.js', 'js', 'twee'),
+        file('lib.min.js', 'js', 'drie'),
+      ),
+      {
+        ...config([concept('x', { type: 'regex', pattern: /x/g, in: ['kopie'] })]),
+        commentaar: { js: 'js' },
+        bibliotheek: (pad) => pad.includes('.min.'),
+        afgeleid: [
+          {
+            kind: 'kopie',
+            van: ['js'],
+            maak: (t, _soort, alle) => {
+              gezien.push(alle);
+              return t;
+            },
+          },
+        ],
+      },
+    );
+    expect(gezien).toEqual([
+      ['een       ', 'twee'],
+      ['een       ', 'twee'],
+    ]);
+  });
+
   it('slaat een afgeleide tekst met een andere lengte over, zodat geen plek verschuift', () => {
     const report = analyze(projectFiles(file('a.js', 'js', 'if (x) {}')), {
       ...config([concept('als', { type: 'regex', pattern: /\bif\s*\(/g, in: ['kort'] })]),
@@ -594,6 +626,19 @@ describe('analyze — detectieVoor', () => {
 });
 
 describe('bibliotheekMappen', () => {
+  it('noemt een bovenste map met veel bestanden één keer, en twee losse apart', () => {
+    // Alleen de map lib/ van het bord: lib/ valt weg als gemeenschappelijke
+    // map, en de melding noemde eerst alle 23 bestanden.
+    const leaphy = ['actuators/buzzer.py', 'actuators/servo.py', 'sensors/tof.py', 'utils/i2c.py'];
+    expect(bibliotheekMappen(leaphy.map((p) => `leaphymicropython/${p}`))).toEqual([
+      'leaphymicropython (4 bestanden)',
+    ]);
+    expect(bibliotheekMappen(['static/js/htmx.min.js', 'static/css/pico.min.css'])).toEqual([
+      'static/css/pico.min.css',
+      'static/js/htmx.min.js',
+    ]);
+  });
+
   it('noemt een addon één keer, met het aantal bestanden', () => {
     const paden = Array.from({ length: 45 }, (_, i) => `addons/dialogue/onderdeel_${i}.gd`);
     expect(bibliotheekMappen([...paden, 'static/js/htmx.min.js'])).toEqual([

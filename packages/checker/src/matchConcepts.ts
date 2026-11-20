@@ -52,12 +52,23 @@ export interface AnalyzeOpties {
 /**
  * Bestanden van een bibliotheek, samengenomen per map onder addons/, lib/,
  * vendor/ of node_modules/ (`addons/dialogue (45 bestanden)`). Een los
- * bestand (`static/js/htmx.min.js`) blijft zoals het is.
+ * bestand (`static/js/htmx.min.js`) blijft zoals het is. Vier of meer
+ * bestanden in dezelfde bovenste map zijn ook één regel: wie alleen de map
+ * lib/ van het bord uploadt, krijgt `leaphymicropython/…` zonder lib/ ervoor
+ * (de gemeenschappelijke map valt weg), en de melding noemde eerst alle 23.
  */
 export function bibliotheekMappen(paden: string[]): string[] {
+  const mapVan = (p: string) =>
+    /^(.*?(?:^|\/)(?:addons|lib|vendor|node_modules)\/[^/]+)\//.exec(p)?.[1];
+  const bovenste = new Map<string, number>();
+  for (const p of paden) {
+    const top = /^([^/]+)\//.exec(p)?.[1];
+    if (top && !mapVan(p)) bovenste.set(top, (bovenste.get(top) ?? 0) + 1);
+  }
   const perMap = new Map<string, string[]>();
   for (const p of paden) {
-    const map = /^(.*?(?:^|\/)(?:addons|lib|vendor|node_modules)\/[^/]+)\//.exec(p)?.[1] ?? p;
+    const top = /^([^/]+)\//.exec(p)?.[1];
+    const map = mapVan(p) ?? (top && (bovenste.get(top) ?? 0) >= 4 ? top : p);
     perMap.set(map, [...(perMap.get(map) ?? []), p]);
   }
   return [...perMap]
@@ -107,9 +118,10 @@ export function analyze(
   }
   for (const a of metConcepten ? (config.afgeleid ?? []) : []) {
     const bucket: { path: string; content: string }[] = [];
+    const alle = a.van.flatMap((van) => (textByKind[van] ?? []).map((f) => f.content));
     for (const van of a.van) {
       for (const f of textByKind[van] ?? []) {
-        const content = a.maak(f.content, van);
+        const content = a.maak(f.content, van, alle);
         // Een andere lengte zou de regelnummers laten verschuiven; dan liever
         // niets dan een plek in de verkeerde regel.
         if (content.length === f.content.length) bucket.push({ path: f.path, content });
