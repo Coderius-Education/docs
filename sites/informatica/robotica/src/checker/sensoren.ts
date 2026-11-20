@@ -104,11 +104,21 @@ function sensorenIn(code: string): Sensor[] {
     'gm',
   );
   for (const m of code.matchAll(digitaal)) {
+    bezet.push([m.index ?? 0, (m.index ?? 0) + m[0].length]);
     if (/PULL_UP/.test(m[3])) continue;
     sensoren.push({ naam: m[1], digitaal: true, pin: pinPlek(m, 2) });
   }
-  // Een sensor zonder eigen variabele: `[AnalogIR("A0", 2500), …]`.
+  // Een sensor zonder eigen variabele: `[AnalogIR("A0", 2500), …]` of
+  // `[Pin("D14", Pin.IN), …]`.
   const binnen = (i: number) => bezet.some(([van, tot]) => i >= van && i < tot);
+  const losDigitaal = new RegExp(
+    `\\b(?:${pin})\\s*\\(\\s*["'](D\\d{1,2})["']\\s*,\\s*(?:mode\\s*=\\s*)?(?:[\\w.]*\\.)?IN\\b([^)\\n]*)\\)`,
+    'g',
+  );
+  for (const m of code.matchAll(losDigitaal)) {
+    if (binnen(m.index ?? 0) || /PULL_UP/.test(m[2])) continue;
+    sensoren.push({ naam: null, digitaal: true, pin: pinPlek(m, 1) });
+  }
   const los = new RegExp(`\\b(?:${ir})\\s*\\(\\s*(?:pin_name\\s*=\\s*)?["'](A[0-7])["']`, 'g');
   for (const m of code.matchAll(los)) {
     if (binnen(m.index ?? 0)) continue;
@@ -119,7 +129,13 @@ function sensorenIn(code: string): Sensor[] {
   // elke A-pin als tekst in het bestand een sensor. Zonder zo'n aanroep is
   // een lijst A-pinnen iets anders (de joystick en de potmeter lezen ze met
   // ADC).
-  if (new RegExp(`\\b(?:${ir})\\s*\\(\\s*(?:pin_name\\s*=\\s*)?[A-Za-z_]`).test(code)) {
+  // Een naam als pin, niet `pin_name="A0"`: zonder `(?!pin_name\b)` sloeg
+  // de regex het groepje over en las hij `pin_name` als een naam.
+  if (
+    new RegExp(
+      `\\b(?:${ir})\\s*\\(\\s*(?:pin_name\\s*=\\s*)?(?!pin_name\\b)[A-Za-z_]\\w*\\s*[,)]`,
+    ).test(code)
+  ) {
     for (const m of code.matchAll(/["'](A[0-7])["']/g)) {
       if (binnen(m.index ?? 0)) continue;
       sensoren.push({ naam: null, digitaal: false, pin: pinPlek(m, 1) });
@@ -128,9 +144,13 @@ function sensorenIn(code: string): Sensor[] {
   return sensoren;
 }
 
+// Een naam, ook na de naam van de module (`sensoren.links` na `import
+// sensoren`), maar niet het einde van een andere naam.
+const NAAM_VOOR = '(?<![\\w.])(?:\\w+\\.)?';
+
 const leesVan = (s: Sensor) =>
   new RegExp(
-    `${s.naam ? `(?<![\\w.])${esc(s.naam)}` : ''}${s.digitaal ? LEES_DIGITAAL : LEES_ANALOOG}`,
+    `${s.naam ? `${NAAM_VOOR}${esc(s.naam)}` : ''}${s.digitaal ? LEES_DIGITAAL : LEES_ANALOOG}`,
   );
 
 /**
@@ -147,7 +167,7 @@ function waardenVan(code: string, lees: RegExp): Set<string> {
       if (!m || namen.has(m[1])) continue;
       if (
         lees.test(m[2]) ||
-        [...namen].some((n) => new RegExp(`(?<![\\w.])${esc(n)}\\b`).test(m[2]))
+        [...namen].some((n) => new RegExp(`${NAAM_VOOR}${esc(n)}\\b`).test(m[2]))
       )
         namen.add(m[1]);
     }
@@ -156,7 +176,7 @@ function waardenVan(code: string, lees: RegExp): Set<string> {
 }
 
 const noemt = (regel: string, lees: RegExp, waarden: Set<string>) =>
-  lees.test(regel) || [...waarden].some((n) => new RegExp(`(?<![\\w.])${esc(n)}\\b`).test(regel));
+  lees.test(regel) || [...waarden].some((n) => new RegExp(`${NAAM_VOOR}${esc(n)}\\b`).test(regel));
 
 /** Waar de sensor gelezen wordt, en of wat hij leest in een beslissing komt. */
 function gebruik(alle: string[], s: Sensor) {

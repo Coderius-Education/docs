@@ -448,6 +448,7 @@ async function entriesToProjectFiles(
   const teGroteFotos: string[] = [];
   const nietGelezen: string[] = [];
   const teVeelFotos: string[] = [];
+  const nietTeVerkleinen: string[] = [];
   const verkleiner = verkleinerVan(opts);
   let textBudget = MAX_TEXT_TOTAL_SIZE;
   let imageBudget = MAX_IMAGE_TOTAL_SIZE;
@@ -496,7 +497,7 @@ async function entriesToProjectFiles(
       if (!klein && entry.size > MAX_IMAGE_FILE_SIZE) {
         // Niet te verkleinen (een formaat dat de browser niet leest).
         tooLarge = true;
-        teGroteFotos.push(path);
+        nietTeVerkleinen.push(path);
       } else if (grootte > imageBudget) {
         teVeelFotos.push(path);
       } else {
@@ -518,6 +519,13 @@ async function entriesToProjectFiles(
   if (teGroteFotos.length > 0) {
     warnings.push(
       `Niet bekeken, want groter dan ${maxFoto(opts) / (1024 * 1024)} MB: ${opsomming(teGroteFotos)}. Maak de foto kleiner (bijvoorbeeld met een schermafbeelding) en upload opnieuw.`,
+    );
+  }
+  // Een eigen melding, met de grens die voor zo'n foto geldt: eerst stond er
+  // "groter dan 40 MB" bij een foto van 6 MB.
+  if (nietTeVerkleinen.length > 0) {
+    warnings.push(
+      `Niet bekeken, want groter dan ${MAX_IMAGE_FILE_SIZE / (1024 * 1024)} MB en niet te verkleinen: ${opsomming(nietTeVerkleinen)}. Sla de foto opnieuw op als JPG en upload opnieuw.`,
     );
   }
   // Het budget voor foto's is op: dat ligt niet aan mappen van een ander,

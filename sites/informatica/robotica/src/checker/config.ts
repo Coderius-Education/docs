@@ -72,6 +72,11 @@ const metBlok = (kop: string) => new RegExp(String.raw`^([ \t]*)${kop}${DOET}`, 
 
 const HANDMATIG = { type: 'handmatig' } as const;
 
+// Windows-regeleinden: de `\r` wordt een spatie (dezelfde lengte). Een blok
+// na `elif …:` of een regel als `kleur = links.black_or_white()` werd met een
+// `\r` aan het eind niet meer herkend.
+const lf = (t: string) => t.replaceAll('\r', ' ');
+
 // Een IR-sensor, met zijn pin als onderdeel: een analoge (`AnalogIR("A0",
 // 2500)`, ook met `pin_name=` of als `IR` geïmporteerd), een digitale
 // (`Pin("D14", Pin.IN)`, zoals RoboCup ze aanbiedt; een knop heeft er PULL_UP
@@ -135,6 +140,26 @@ export function eigenModules(files: ProjectFiles): string[] {
   return [...new Set([...namen, ...pakketten])].filter((naam) => /^\w+$/.test(naam));
 }
 
+/**
+ * De namen waaronder een eigen module te importeren is: `robot/rijden.py`
+ * als `rijden` en als `robot.rijden`, een pakket met `__init__.py` als zijn
+ * map. Een import moet een van die namen helemaal noemen: een eigen
+ * `servo.py` maakt `from leaphymicropython.actuators.servo import …` nog
+ * geen eigen module.
+ */
+export function eigenImportNamen(files: ProjectFiles): string[] {
+  const namen = new Set<string>();
+  for (const p of Object.keys(files)) {
+    if (!p.endsWith('.py') || isBibliotheek(p)) continue;
+    const delen = p.slice(0, -3).split('/');
+    if (delen.at(-1) === '__init__') delen.pop();
+    if (delen.length === 0 || ['main', 'boot'].includes(delen.at(-1) ?? '')) continue;
+    if (!delen.every((d) => /^\w+$/.test(d))) continue;
+    for (let i = 0; i < delen.length; i++) namen.add(delen.slice(i).join('.'));
+  }
+  return [...namen].sort((a, b) => b.length - a.length);
+}
+
 // Wat het bord en MicroPython zelf meebrengen. Een import van iets anders
 // dat niet in de upload zit, is een eigen module die de leerling vergat mee
 // te sturen (zie waarschuwingen).
@@ -188,7 +213,13 @@ export function waarschuwingen(files: ProjectFiles): string[] {
         : 'Er staat geen main.py in de upload. Het bord voert bij het aanzetten alleen main.py uit: upload het script dat op je bord zo heet.',
     );
   }
-  const eigenNamen = new Set(eigenModules(files));
+  // Wat in de upload staat, ook een pakket in lib/ dat als bibliotheek
+  // telt: dat is er wel.
+  const eigenNamen = new Set(
+    Object.keys(files)
+      .filter((p) => p.endsWith('.py'))
+      .flatMap((p) => p.slice(0, -3).split('/')),
+  );
   const ontbreekt = [
     ...new Set(
       eigen.flatMap((f) =>
@@ -219,7 +250,8 @@ const DETECTIE: Record<string, ConceptDetect> = {
   // spaties (`teller+1`, `snelheid - 55`), en `teller += 1`. Tekst in strings
   // telt niet: `print("Links - Rechts")` rekent niet. `->` ook niet.
   'py-rekenen': code(
-    /[\w)\]]\s*(?:\*\*|\/\/|[-+*/%])(?!>)\s*[\w(]|\w\s*(?:\/\/|[-+*/%])=\s*[\w(-]/g,
+    // Een min na `return`, `else` of `in` is een negatief getal (`return -1`).
+    /(?:\b(?!(?:return|else|yield|in|not|and|or|if|elif|while|lambda|is|assert|await)\b)\w+|[)\]])\s*(?:\*\*|\/\/|[-+*/%])(?!>)\s*[\w(]|\w\s*(?:\/\/|[-+*/%])=\s*[\w(-]/g,
   ),
   'py-fstring': py(/\bf["']/g),
   // `while True:` telt hier niet mee. Die regel staat in élk script van de
@@ -288,7 +320,7 @@ const DETECTIE: Record<string, ConceptDetect> = {
   // een blok code te onderscheiden. Tekst in strings telt niet, zodat
   // `f"afstand={afstand}"` geen set is.
   'py-tuple-set': code(
-    /^[ \t]*(?:[\w.]+\s*=|return)\s*\((?:[^()\n]|\([^()\n]*\))*,(?:[^()\n]|\([^()\n]*\))*\)|\[\s*\(|^[ \t]*[\w.]+(?:\s*,\s*[\w.]+)+\s*=(?!=)|^[ \t]*for\s+\w+(?:\s*,\s*\w+)+\s+in\b|^[ \t]*return\s+[\w.]+\s*,|^[ \t]*[\w.]+\s*=\s*\{[^}:\n]+\}|\bin\s+\{|\b(?:set|tuple|frozenset)\s*\(/gm,
+    /^[ \t]*(?:[\w.]+\s*=|return)\s*\((?:[^()\n]|\([^()\n]*\))*,(?:[^()\n]|\([^()\n]*\))*\)|\[\s*\(|(?<![(,[{][ \t]*\n)^[ \t]*[\w.]+(?:\s*,\s*[\w.]+)+\s*=(?!=)|^[ \t]*for\s+\w+(?:\s*,\s*\w+)+\s+in\b|^[ \t]*return\s+[\w.]+\s*,|^[ \t]*[\w.]+\s*=\s*\{[^}:\n]+\}|\bin\s+\{|\b(?:set|tuple|frozenset)\s*\(/gm,
   ),
   'rb-obstakel-omheen': HANDMATIG,
   'rb-muren': HANDMATIG,
@@ -395,20 +427,24 @@ export const roboticaConfig: CheckerConfig = {
   // Zie sensoren.ts. `alle` is de code van elk eigen bestand: een sensor uit
   // sensoren.py telt als main.py hem leest.
   afgeleid: [
-    { kind: 'py-code', van: ['py'], maak: (t) => zonderTekst(t) },
-    { kind: 'ir-gelezen', van: ['py'], maak: (t, _s, alle) => irPinnen(t, alle, false) },
-    { kind: 'ir-beslist', van: ['py'], maak: (t, _s, alle) => irPinnen(t, alle, true) },
-    { kind: 'scherm', van: ['py'], maak: (t, _s, alle) => schermMetSensor(t, alle) },
+    { kind: 'py-code', van: ['py'], maak: (t) => zonderTekst(lf(t)) },
+    {
+      kind: 'ir-gelezen',
+      van: ['py'],
+      maak: (t, _s, alle) => irPinnen(lf(t), alle.map(lf), false),
+    },
+    { kind: 'ir-beslist', van: ['py'], maak: (t, _s, alle) => irPinnen(lf(t), alle.map(lf), true) },
+    { kind: 'scherm', van: ['py'], maak: (t, _s, alle) => schermMetSensor(lf(t), alle.map(lf)) },
   ],
   waarschuwingen,
   // Een import van een eigen module, ook als tweede naam (`import time,
   // rijden`), uit een pakket (`from robot.rijden import vooruit`) of uit lib/.
   detectieVoor: (files): Record<string, ConceptDetect> => {
-    const namen = eigenModules(files);
+    const namen = eigenImportNamen(files);
     if (namen.length === 0) return {};
-    const n = `(?:${namen.join('|')})`;
+    const n = `(?:${namen.map((m) => m.replaceAll('.', '\\.')).join('|')})(?![\\w.])`;
     const patroon = new RegExp(
-      `^[ \\t]*(?:from\\s+\\.*(?:\\w+\\.)*${n}\\b|import\\s+(?:[\\w.]+(?:\\s+as\\s+\\w+)?\\s*,\\s*)*(?:\\w+\\.)*${n}\\b)`,
+      `^[ \\t]*(?:from\\s+\\.*${n}|import\\s+(?:[\\w.]+(?:\\s+as\\s+\\w+)?\\s*,\\s*)*${n})`,
       'gm',
     );
     return { 'py-import-eigen': code(patroon) };

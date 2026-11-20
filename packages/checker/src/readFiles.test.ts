@@ -559,6 +559,8 @@ describe("readUploadedFiles — foto's van een telefoon", () => {
     );
     expect(files['IMG_0001.png'].tooLarge).toBe(true);
     expect(warnings).toEqual([expect.stringContaining('IMG_0001.png')]);
+    // De grens van een foto die niet te verkleinen is, niet die van 40 MB.
+    expect(warnings[0]).toContain('groter dan 5 MB en niet te verkleinen');
   });
 
   it('laat een kleine foto zoals hij is', async () => {

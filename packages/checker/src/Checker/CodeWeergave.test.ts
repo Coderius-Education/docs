@@ -24,6 +24,13 @@ describe('bestandenOpVolgorde', () => {
     expect(start).toBe('main.py');
   });
 
+  it('opent de main.py die het bord uitvoert, niet een kopie', () => {
+    const { start } = bestandenOpVolgorde(files(['backup/main.py', 'deel1/main.py', 'main.py']), [
+      'py',
+    ]);
+    expect(start).toBe('main.py');
+  });
+
   it('opent index.html bij een website', () => {
     const { start } = bestandenOpVolgorde(
       {

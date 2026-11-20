@@ -787,3 +787,95 @@ describe('roboticaConfig — review van de upload tool', () => {
     ).toBe('');
   });
 });
+
+// Een kritische review van PR #231 (november 2026).
+describe('roboticaConfig — kritische review van de herkenning', () => {
+  const ids = (entries: Record<string, string>) => perId(analyze(files(entries), roboticaConfig));
+  const IR = 'from leaphymicropython.sensors.linesensor import AnalogIR\n';
+
+  it('leest een bestand met Windows-regeleinden net zo', () => {
+    const lf = `${IR}links = AnalogIR("A0", 2500)\nkleur = links.black_or_white()\ndef rijden():\n    print(kleur)\nif kleur == "black":\n    print(1)\nelif kleur == "white":\n    print(2)\n`;
+    const crlf = lf.replaceAll('\n', '\r\n');
+    for (const id of ['py-functie', 'py-elif', 'rb-ir-een']) {
+      expect(ids({ 'main.py': lf }).get(id), `${id} met LF`).toBe(true);
+      expect(ids({ 'main.py': crlf }).get(id), `${id} met CRLF`).toBe(true);
+    }
+  });
+
+  it('maakt van pin_name geen lijst sensoren, en telt een joystick ernaast niet', () => {
+    const script = `${IR}from machine import ADC, Pin\nlinks = AnalogIR(pin_name="A0", above_black=2500)\nrechts = AnalogIR(pin_name="A1", above_black=2500)\nx = ADC(Pin("A2"))\ny = ADC(Pin("A3"))\nwhile True:\n    if links.black_or_white() == "black" and rechts.black_or_white() == "black":\n        print(x.read_u16(), y.read_u16())\n`;
+    const r = ids({ 'main.py': script });
+    expect(r.get('rb-ir-twee')).toBe(true);
+    expect(r.get('rb-ir-vier')).toBe(false);
+  });
+
+  it('telt digitale sensoren in een lijst', () => {
+    const script =
+      'from machine import Pin\nir = [Pin("D14", Pin.IN), Pin("D15", Pin.IN)]\nif ir[0].value() == 0:\n    print(1)\n';
+    expect(ids({ 'main.py': script }).get('rb-ir-twee')).toBe(true);
+    expect(
+      ids({
+        'main.py':
+          'from machine import Pin\nknoppen = [Pin("D7", Pin.IN, Pin.PULL_UP)]\nprint(knoppen[0].value())\n',
+      }).get('rb-ir-een'),
+    ).toBe(false);
+  });
+
+  it('telt een sensor die main.py via de naam van de module leest', () => {
+    const r = ids({
+      'sensoren.py': `${IR}links = AnalogIR("A0", 2500)\n`,
+      'main.py': 'import sensoren\nif sensoren.links.black_or_white() == "black":\n    print(1)\n',
+    });
+    expect(r.get('rb-ir-een')).toBe(true);
+  });
+
+  it('rekent een min na return of else niet als rekenen', () => {
+    for (const regel of ['def f():\n    return -1', 'snelheid = 50 if x else -50', 'y = [-1, 1]']) {
+      expect(ids({ 'main.py': regel }).get('py-rekenen'), regel).toBe(false);
+    }
+    expect(ids({ 'main.py': 'def f(a):\n    return a - 1' }).get('py-rekenen')).toBe(true);
+  });
+
+  it('ziet een import uit de bibliotheek niet als eigen module met dezelfde naam', () => {
+    const servo = { 'servo.py': 'def zwaai():\n    print(1)\n' };
+    expect(
+      ids({
+        'main.py': 'from leaphymicropython.actuators.servo import set_servo_angle',
+        ...servo,
+      }).get('py-import-eigen'),
+    ).toBe(false);
+    expect(
+      ids({ 'main.py': 'import leaphymicropython.actuators.servo', ...servo }).get(
+        'py-import-eigen',
+      ),
+    ).toBe(false);
+    expect(ids({ 'main.py': 'from servo import zwaai', ...servo }).get('py-import-eigen')).toBe(
+      true,
+    );
+    expect(
+      ids({ 'main.py': 'import robot.rijden', 'robot/rijden.py': 'print(1)' }).get(
+        'py-import-eigen',
+      ),
+    ).toBe(true);
+  });
+
+  it('leest de vervolgregel van een aanroep niet als uitpakken', () => {
+    expect(
+      ids({ 'main.py': 'motor = maak(\n    links, rechts, snelheid=50)\n' }).get('py-tuple-set'),
+    ).toBe(false);
+    expect(ids({ 'main.py': 'links, rechts = 1, 2' }).get('py-tuple-set')).toBe(true);
+  });
+
+  it('mist geen module die als pakket in de upload staat', () => {
+    const meldingen = analyze(
+      files({
+        'main.py': 'from umqtt.simple import MQTTClient\nimport robot\n',
+        'lib/umqtt/simple.py': 'class MQTTClient:\n    pass\n',
+        'lib/robot/__init__.py': 'print(1)',
+        'robot.jpg': 'data:image/jpeg;base64,eA==',
+      }),
+      roboticaConfig,
+    ).warnings.join('\n');
+    expect(meldingen).not.toContain('importeert');
+  });
+});

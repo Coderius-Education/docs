@@ -38,11 +38,14 @@ export function bestandenOpVolgorde(
   const eigen = leesbaar.filter((f) => !vreemd(f)).map((f) => f.path);
   const bestanden = [...eigen, ...leesbaar.filter(vreemd).map((f) => f.path)];
   // Het startbestand van een website of een robot, anders het eerste eigen.
+  // Het minst diep, en niet een kopie in oud/ of backup/: alfabetisch kwam
+  // `backup/main.py` vóór de `main.py` die het bord uitvoert.
+  const startVan = (patroon: RegExp) =>
+    eigen
+      .filter((b) => patroon.test(b) && !/(^|\/)(?:oud|old|backup|test)\//i.test(b))
+      .sort((a, b) => a.split('/').length - b.split('/').length)[0];
   const start =
-    eigen.find((b) => /(^|\/)index\.html?$/i.test(b)) ??
-    eigen.find((b) => /(^|\/)main\.py$/.test(b)) ??
-    bestanden[0] ??
-    null;
+    startVan(/(^|\/)index\.html?$/i) ?? startVan(/(^|\/)main\.py$/) ?? bestanden[0] ?? null;
   return { bestanden, start };
 }
 
