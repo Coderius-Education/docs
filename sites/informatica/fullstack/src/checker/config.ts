@@ -26,7 +26,8 @@ const IMAGE_EXT = new Set(['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.i
 
 // De bestanden van niveau 3 die de nakijker aan hun naam herkent. Ze worden
 // ook gelezen: een lege Dockerfile of README telde eerst als gedaan.
-const INSTELLING = /(?:^|\/)(?:Dockerfile|(?:docker-)?compose\.ya?ml|requirements\.txt|README\.md|\.gitignore)$/i;
+const INSTELLING =
+  /(?:^|\/)(?:Dockerfile|(?:docker-)?compose\.ya?ml|requirements\.txt|README\.md|\.gitignore)$/i;
 
 function classify(path: string): string {
   if (INSTELLING.test(path)) return 'instelling';
