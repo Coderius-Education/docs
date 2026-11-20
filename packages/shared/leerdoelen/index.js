@@ -579,7 +579,10 @@ function moeilijkheidVoorstel(perOnderwerp) {
       }),
       { used: 0, total: 0 },
     );
-  const lijst = opsomming;
+  // De namen tussen aanhalingstekens: een groep als Gegevens opslaan of
+  // Online zetten liep anders door de zin heen ("bij Online zetten geen
+  // concept op expert").
+  const lijst = (namen) => opsomming(namen.map((n) => `"${n}"`));
 
   // Een onderdeel kan voor gevorderd meer groepen vragen (gevorderdInGroepen):
   // dan telt hoeveel groepen een gevorderd concept hebben, niet of er één is.
@@ -608,7 +611,7 @@ function moeilijkheidVoorstel(perOnderwerp) {
       mist = zonder;
       groepenMist = teWeinig.map(
         (o) =>
-          `bij ${o.label} in ${o.gevorderdGroepen.gehaald} van de ${o.gevorderdGroepen.nodig} groepen die nodig zijn een concept op gevorderd`,
+          `bij "${o.label}" in ${o.gevorderdGroepen.gehaald} van de ${o.gevorderdGroepen.nodig} groepen die nodig zijn een concept op gevorderd`,
       );
       break;
     }
@@ -637,7 +640,7 @@ function moeilijkheidVoorstel(perOnderwerp) {
       ...(mist.length > 0 ? [`bij ${lijst(mist)} geen concept op ${label(volgende)}`] : []),
       ...groepenMist,
     ];
-    reden = `${bijElk} een concept op ${label(gehaald)}, maar ${lijst(delen)}.`;
+    reden = `${bijElk} een concept op ${label(gehaald)}, maar ${opsomming(delen)}.`;
   } else {
     reden = `${bijElk} een concept op ${label(gehaald)}.`;
   }
