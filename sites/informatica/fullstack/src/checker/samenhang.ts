@@ -51,6 +51,8 @@ interface Formulier {
    * veld.
    */
   onzeker: boolean;
+  /** Een hx-get, hx-post, … op het formulier: dan stuurt htmx, niet de browser. */
+  htmx: boolean;
 }
 
 const MAP_VAN = (pad: string) => (pad.includes('/') ? pad.slice(0, pad.lastIndexOf('/') + 1) : '');
@@ -152,8 +154,11 @@ function formVelden(params: string, paramsStart: number, tekst: string): Veld[] 
     const p = deel.trim();
     // Een model uit Depends(...) of een body: welke velden dat zijn, weten
     // we niet. Eerst gaf `data: Bericht = Depends(Bericht.as_form)` voor
-    // elk veld "komt nergens aan".
-    if (/\b(Depends|Body)\(/.test(p)) return null;
+    // elk veld "komt nergens aan". Een andere afhankelijkheid (een database,
+    // `db = Depends(get_db)`) is geen formulierveld: die slaat hij over, en
+    // de Form-parameters ernaast controleert hij gewoon.
+    if (/\bBody\(|\bDepends\(\s*(?:\)|[\w.]*\.as_form\b)/.test(p)) return null;
+    if (/\bDepends\(/.test(p)) continue;
     if (!/\b(Form|File)\(/.test(p)) continue;
     const m = p.match(/^(\w+)\s*:\s*(.+?)\s*(?:=\s*(.+))?$/s);
     if (!m) return null;
@@ -316,6 +321,7 @@ function formulieren(files: ProjectFiles): Formulier[] {
         action,
         velden,
         onzeker,
+        htmx: /\shx-(get|post|put|patch|delete)\s*=/i.test(tag),
       });
     }
   }
@@ -329,7 +335,10 @@ function controleerFormulieren(lijst: Route[], fouten: Samenhangfout[], files: P
     if (!form.action.startsWith('/') || form.action.startsWith('//')) continue;
     // Een HTML-formulier kent alleen get en post; een andere method stuurt de
     // browser als GET. Wie `hx-delete` kent, schrijft snel method="delete".
+    // Met method="dialog" stuurt hij niets, en met een hx-attribuut stuurt
+    // htmx het verzoek: dan doet method er niet toe.
     if (form.methode !== 'GET' && form.methode !== 'POST') {
+      if (form.methode === 'DIALOG' || form.htmx) continue;
       fouten.push({
         titel: `Een formulier kan geen ${form.methode} sturen`,
         uitleg: `Een HTML-formulier kent alleen method="get" en method="post". Bij method="${form.methode.toLowerCase()}" stuurt de browser een GET naar ${form.action}, en een route met @app.${form.methode.toLowerCase()} krijgt dan 405 Method Not Allowed. Gebruik een formulier met method="post" en @app.post, of htmx met hx-${form.methode.toLowerCase()}.`,

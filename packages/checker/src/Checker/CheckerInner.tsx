@@ -457,6 +457,14 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
           busy={busy || exporting}
           setBusy={setBusy}
         />
+        {/* De leerlingpagina zegt dit zelf, in zijn lestekst; de docentpagina
+            heeft geen lestekst, en daar uploadt iemand het werk van anderen. */}
+        {isDocent && (
+          <p className={styles.privacy}>
+            De bestanden gaan nooit naar een server: alles gebeurt in deze browser, en de
+            beoordelingen blijven op deze computer.
+          </p>
+        )}
         {busy && <output className={styles.status}>Bezig met analyseren...</output>}
         {error && (
           <p className={styles.error} role="alert">

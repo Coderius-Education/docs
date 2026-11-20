@@ -32,6 +32,9 @@ describe('knipPunten', () => {
     expect(knipPunten(250, 100, () => true, [90])).toEqual([0, 89, 189]);
     // Een kop hoger op de pagina laat de grens staan.
     expect(knipPunten(250, 100, () => true, [50])).toEqual([0, 100, 200]);
+    // Twee koppen onderaan: de bovenste begint de volgende pagina, niet de
+    // onderste (dan bleef de h2 met één regel achter).
+    expect(knipPunten(300, 100, () => true, [86, 95]).slice(0, 2)).toEqual([0, 85]);
   });
 });
 

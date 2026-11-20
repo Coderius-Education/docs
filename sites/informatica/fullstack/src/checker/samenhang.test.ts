@@ -681,6 +681,24 @@ async def home(request: Request):
       );
     });
     expect(titels(p)).toEqual([]);
+    const leeg = compleetMet((q) => {
+      q['main.py'] = q['main.py'].replace(
+        'naam: str = Form(...), bericht: str = Form(...)',
+        'data: Bericht = Depends()',
+      );
+    });
+    expect(titels(leeg)).toEqual([]);
+  });
+
+  it('een database uit Depends naast Form slaat de controle niet over', () => {
+    const p = compleetMet((q) => {
+      q['main.py'] = q['main.py'].replace(
+        'naam: str = Form(...), bericht: str = Form(...)',
+        'naam: str = Form(...), bericht: str = Form(...), db = Depends(get_db)',
+      );
+      q[FORM] = q[FORM].replace('name="naam"', 'name="nam"');
+    });
+    expect(titels(p)).toContain('Het veld "nam" komt nergens aan');
   });
 
   it('een knop met een name komt niet als ontbrekend veld terug', () => {
@@ -698,6 +716,13 @@ async def home(request: Request):
       q[FORM] = q[FORM].replace('method="post"', 'method="delete"');
     });
     expect(titels(p)).toEqual(['Een formulier kan geen DELETE sturen']);
+    // Met hx-delete stuurt htmx de DELETE; method="dialog" stuurt niets.
+    for (const tag of ['method="delete" hx-delete="/gastenboek"', 'method="dialog"']) {
+      const goed = compleetMet((q) => {
+        q[FORM] = q[FORM].replace('method="post"', tag);
+      });
+      expect(titels(goed), tag).toEqual([]);
+    }
   });
 
   it('een link naar een route die alleen POST kent, is een 405 en geen 404', () => {

@@ -462,7 +462,18 @@ describe('readUploadedFiles — wat een docent en een leerling moeten weten', ()
         [makeFile('p/.venv/pyvenv.cfg', 'home = x'), makeFile('p/.venv/lib/a.py', 'x = 1')],
         pyAchtig,
       ),
-    ).rejects.toThrow(/virtual environment.*\.venv/);
+    ).rejects.toThrow(/alleen een virtual environment.*\.venv/);
+  });
+
+  it('noemt de venv en de reservekopie samen', async () => {
+    await expect(
+      readUploadedFiles(
+        [makeFile('p/.venv/pyvenv.cfg', 'home = x'), makeFile('p - kopie/main.py', 'x = 1')],
+        pyAchtig,
+      ),
+    ).rejects.toThrow(
+      /alleen een virtual environment \(p\/\.venv\) en een reservekopie \(p - kopie\) in, en die tellen/,
+    );
   });
 
   it('waarschuwt bij twee projecten in één upload', async () => {

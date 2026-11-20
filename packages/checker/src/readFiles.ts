@@ -342,9 +342,13 @@ async function entriesToProjectFiles(
   const paden = stripCommonRoot(schoon.map((e) => e.relativePath));
   const kopieen = new Set<string>();
   const gekozen: { entry: RawEntry; path: string }[] = [];
+  let genegeerd = 0;
   schoon.forEach((entry, i) => {
     const path = paden[i];
-    if (isIgnoredPath(path)) return;
+    if (isIgnoredPath(path)) {
+      genegeerd++;
+      return;
+    }
     const kopie = kopieMap(path);
     if (kopie) kopieen.add(kopie);
     else gekozen.push({ entry, path });
@@ -353,12 +357,18 @@ async function entriesToProjectFiles(
   if (gekozen.length === 0) {
     // Zeg wat er wel in zat: een venv of een reservekopie telt niet mee, en
     // dan was "geen bruikbare bestanden" een raadsel.
+    // Elke reden die geldt, en "alleen" pas als er verder niets was: een venv
+    // naast een reservekopie met main.py noemde eerst alleen de venv.
+    const delen = [
+      ...(venvs.length > 0
+        ? [`een virtual environment (${opsomming(venvs.map((v) => v.replace(/\/$/, '')))})`]
+        : []),
+      ...(kopieen.size > 0 ? [`een reservekopie (${opsomming([...kopieen].sort())})`] : []),
+    ];
     const wat =
-      venvs.length > 0
-        ? ` Er stond alleen een virtual environment in (${opsomming(venvs.map((v) => v.replace(/\/$/, '')))}), en die telt niet mee.`
-        : kopieen.size > 0
-          ? ` Er stond alleen een reservekopie in (${opsomming([...kopieen].sort())}), en die telt niet mee.`
-          : '';
+      delen.length === 0
+        ? ''
+        : ` Er stond ${genegeerd === 0 ? 'alleen ' : ''}${opsomming(delen)} in, en ${delen.length > 1 ? 'die tellen' : 'die telt'} niet mee.`;
     throw new LeesFout(
       `Geen bruikbare bestanden gevonden in de upload.${wat} Kies de map met je eigen bestanden.`,
     );

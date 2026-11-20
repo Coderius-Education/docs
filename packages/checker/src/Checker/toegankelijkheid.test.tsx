@@ -94,4 +94,14 @@ describe('waarschuwingen bij het inlezen', () => {
     const leerling = bron.slice(bron.indexOf('{report && !isDocent && ('));
     expect(leerling.slice(0, 300)).toContain('<Waarschuwingen warnings={report.warnings} />');
   });
+
+  it('de docentpagina zegt dat de bestanden niet naar een server gaan', () => {
+    // Met privacyNote verdween de zin ook van de vijf docentpagina's, die hem
+    // niet in hun eigen tekst hebben.
+    const bron = readFileSync(join(__dirname, 'CheckerInner.tsx'), 'utf8');
+    const docent = bron.slice(
+      bron.indexOf('{isDocent && (\n          <p className={styles.privacy}>'),
+    );
+    expect(docent.slice(0, 200)).toMatch(/nooit naar een server/);
+  });
 });

@@ -1190,6 +1190,12 @@ describe('fullstackConfig — review van de upload tool', () => {
     expect(img('//cdn.example.com/a.png')).toBe(false);
     expect(img('/static/logo.png')).toBe(true);
     expect(img("{{ url_for('static', path='logo.png') }}")).toBe(true);
+    // data-src is niet het adres waar het plaatje nu vandaan komt.
+    expect(
+      met('html-img', {
+        'templates/a.html': '<img data-src="https://x/a.png" src="/static/a.png" alt="">',
+      }),
+    ).toBe(true);
   });
 
   it('een leeg bestand van niveau 3 telt niet, een gevuld wel', () => {

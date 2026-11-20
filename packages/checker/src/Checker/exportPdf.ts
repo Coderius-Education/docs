@@ -169,9 +169,11 @@ export function knipPunten(
   while (start + paginaHoogte < hoogte) {
     let knip = start + paginaHoogte;
     const kopGrens = start + Math.floor(paginaHoogte * (5 / 6));
-    const kop = Math.max(-1, ...koppen.filter((y) => y > kopGrens && y <= knip));
-    if (kop !== -1) {
-      knip = kop - 1;
+    // De eerste kop in die zone: staan er twee (een h2 en de h3 eronder),
+    // dan gaan ze samen naar de volgende pagina.
+    const onderaan = koppen.filter((y) => y > kopGrens && y <= knip);
+    if (onderaan.length > 0) {
+      knip = Math.min(...onderaan) - 1;
     } else {
       const ondergrens = start + Math.floor(paginaHoogte * 0.75);
       for (let y = knip; y > ondergrens; y--) {

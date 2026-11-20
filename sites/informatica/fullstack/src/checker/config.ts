@@ -129,7 +129,8 @@ const DETECTIE: Record<string, ConceptDetect> = {
   ),
   // Een eigen afbeelding: een plaatje van internet telt niet, net als een
   // stylesheet van een CDN.
-  'html-img': html(/<img\b(?![^>]*\bsrc\s*=\s*["']?(?:https?:|\/\/))[^>]*>/gi),
+  // Alleen het attribuut src, niet data-src van een plaatje dat later laadt.
+  'html-img': html(/<img\b(?![^>]*(?<![\w-])src\s*=\s*["']?(?:https?:|\/\/))[^>]*>/gi),
   // Een link naar een route van de eigen server; een link naar een bestand in
   // /static/ of naar een andere site is geen pagina via een endpoint.
   'html-link': html(/<a\b[^>]*\bhref\s*=\s*["']\/(?!static\/)[^"']*["']/gi),
