@@ -133,8 +133,13 @@ export function analyze(
     if (c.detect.type === 'path') {
       const re = withoutGlobal(c.detect.pattern);
       const inhoud = c.detect.inhoud ? withoutGlobal(c.detect.inhoud) : null;
+      // Een bestand van een bibliotheek telt ook hier niet: de scènes van een
+      // addon gaven Godot eerst "scènes in eigen mappen".
       const paden = allPaths.filter(
-        (p) => re.test(p) && (!inhoud || inhoud.test(files[p]?.content ?? '')),
+        (p) =>
+          re.test(p) &&
+          !config.bibliotheek?.(p, files[p]?.content ?? '') &&
+          (!inhoud || inhoud.test(files[p]?.content ?? '')),
       );
       const used = paden.length > 0;
       if (!metPlekken) return { id: c.id, count: used ? 1 : 0, used };

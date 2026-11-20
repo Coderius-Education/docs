@@ -95,32 +95,43 @@ const isAddon = (path: string) => /(?:^|\/)addons\//.test(path);
 export function autoloads(files: ProjectFiles): string[] {
   const project = Object.values(files).find((f) => f.kind === 'godot')?.content ?? '';
   const sectie = /^\[autoload\]\s*\n([\s\S]*?)(?=^\[|(?![\s\S]))/m.exec(project)?.[1] ?? '';
-  return Array.from(sectie.matchAll(/^(\w+)\s*=/gm), (m) => m[1]);
+  // Een autoload uit een addon (Dialogic) is niet van de leerling.
+  return Array.from(sectie.matchAll(/^(\w+)\s*=\s*"([^"\n]*)"/gm))
+    .filter((m) => !/(?:^|\/)addons\//.test(m[2]))
+    .map((m) => m[1]);
 }
 
 // De nodes die de cursus zelf aanleert, geteld uit de lessen en de
 // nodes-cheatsheet. Alles daarbuiten telt als "zelf ontdekt" — dat is het
 // enige concept dat niet naar iets bekends zoekt maar naar iets onbekends.
+// StaticBody2D en HBoxContainer stonden er ook in, maar geen les en de
+// cheatsheet ook niet noemt ze: wie ze gebruikt, heeft ze zelf gevonden.
 const BEKENDE_NODES = [
   'Node',
   'Node2D',
   'CharacterBody2D',
-  'StaticBody2D',
   'Sprite2D',
   'AnimatedSprite2D',
   'CollisionShape2D',
   'Camera2D',
   'Area2D',
   'TileMapLayer',
+  // De tilemap van vóór Godot 4.3; Godot-versies zegt dat je de cursus
+  // daarmee kunt volgen. Eerst telde hij als zelf ontdekte node.
+  'TileMap',
   'CanvasLayer',
   'Label',
   'Control',
   'VBoxContainer',
-  'HBoxContainer',
   'Button',
   'TextureRect',
   'Timer',
 ];
+
+// Een node die alleen onder een andere bestaat, is met die andere één
+// ontdekking: Path2D met zijn PathFollow2D, een parallax met zijn laag. Voor
+// "drie soorten" telden ze eerst als twee.
+const HULPNODES = ['PathFollow2D', 'ParallaxLayer', 'Parallax2D'];
 
 // De waardes die in de cursus staan. Wie ze laat staan heeft overgetypt; wie
 // er iets anders neerzet heeft zijn spel van zichzelf gemaakt, en dát is wat
@@ -155,6 +166,16 @@ const alt = (waardes: string[]) => waardes.map((w) => w.replace(/[.\-]/g, '\\$&'
 // Een toekenning aan een van deze namen, ook met een type (`const SPEED: float
 // = 450.0`) en met @export ervoor; het getal komt na de lookahead.
 const toekenning = (namen: string) => `\\b(?:${namen})\\s*(?::\\s*\\w+\\s*)?(?::=|=)\\s*`;
+// De namen: alles met speed of snelheid erin (SPRINT_SPEED, LOOPSNELHEID),
+// maar niet de snelheid van een animatie (speed_scale) of van een sprong.
+// Eerst telden alleen SPEED en snelheid zelf, en sprinten (opdracht 5.7.b)
+// nooit.
+const SNELHEID_NAAM = '(?![\\w]*(?:jump|sprong|spring|_scale))\\w*(?:speed|snelheid)\\w*';
+const SPRONG_NAAM = '\\w*(?:jump|sprong|spring)\\w*';
+// Een eigen waarde: een getal dat niet uit de les komt, of een getal uit de
+// les met een berekening erachter (`300.0 * 1.5`).
+const eigenWaarde = (cursus: string[]) =>
+  `(?:(?!(?:${alt(cursus)})(?![\\d.]))-?\\d|-?\\d[\\d.]*\\s*[*/+-]\\s*\\d)`;
 
 // Animatie veranderen: in code een animatie wisselen of spiegelen (issue
 // 227). Dat is wat les 6.2 leert, en het telt ook met de namen uit de les
@@ -175,7 +196,8 @@ const toekenning = (namen: string) => `\\b(?:${namen})\\s*(?::\\s*\\w+\\s*)?(?::
 // Label en een parameter `naam` die naar `play(naam)` gaat, tellen samen ook.
 const NAAM = `(?:StringName\\s*\\(\\s*)?&?(?:"[^"\\n]+"|'[^'\\n]+')`;
 const AFSPELEN = '\\b(?:play|play_backwards|set_animation|travel|queue)\\s*\\(\\s*';
-const ZETTEN = '\\b(?:current_)?animation\\s*=\\s*';
+// Niet `var animation = 0`: dat is een eigen variabele die zo heet.
+const ZETTEN = '(?<!\\b(?:var|const)\\s+)\\b(?:current_)?animation\\s*=\\s*';
 // Spiegelen, zoals les 6.2 bij naar links lopen; `==` is een vergelijking.
 const SPIEGELEN = '\\bflip_[hv]\\s*=(?!=)';
 const TEKST = `"[^"\\n]*"|'[^'\\n]*'`;
@@ -224,9 +246,72 @@ const CALLBACKS = [
   'get_configuration_warnings',
 ];
 
+/**
+ * Eigen functies, zonder de callbacks van Godot, de handlers (`_on_…` en
+ * elke functie die in een scène aan een signal hangt: les 8.2 leert die een
+ * eigen naam te geven) en wat de cursus voorzegt.
+ */
+function modulaireFuncties(handlers: string[]): ConceptDetect {
+  const niet = [...CURSUS_FUNCTIES, ...handlers];
+  return gd(
+    new RegExp(
+      `^[ \\t]*func\\s+(?!_on_|_(?:${CALLBACKS.join('|')})\\s*\\(|(?:${alt(niet)})\\s*\\()\\w+`,
+      'gm',
+    ),
+    2,
+  );
+}
+
+/** De functies die in een scène aan een signal hangen (`[connection … method="x"]`). */
+export function koppelingen(files: ProjectFiles): string[] {
+  const namen = new Set<string>();
+  for (const f of Object.values(files)) {
+    if (f.kind !== 'tscn' || !f.content) continue;
+    for (const m of f.content.matchAll(/^\[connection [^\]\n]*\bmethod="(\w+)"/gm)) namen.add(m[1]);
+  }
+  return [...namen];
+}
+
+/**
+ * Een lijst of dictionary in een autoload, gebruikt in een ander script
+ * (`Global.level_volgorde.find(…)`, les 10.2). Per script kon de nakijker dat
+ * niet zien: de lijst staat in global.gd en het gebruik in vlag.gd.
+ */
+function overScripts(files: ProjectFiles, autoloadNamen: string[]): Record<string, ConceptDetect> {
+  const scripts = Object.values(files).filter((f) => f.kind === 'gd' && f.content);
+  const namenVan = (soort: '[' | '{') =>
+    scripts.flatMap((f) =>
+      Array.from(
+        (f.content ?? '').matchAll(
+          soort === '['
+            ? /\b(?:var|const)\s+(\w+)\b(?:[^\n=]*=\s*\[|\s*:\s*Array\b)/g
+            : /\b(?:var|const)\s+(\w+)\b(?:[^\n=]*=\s*\{|\s*:\s*Dictionary\b)/g,
+        ),
+        (m) => m[1],
+      ),
+    );
+  const uit: Record<string, ConceptDetect> = {};
+  const auto = autoloadNamen.join('|');
+  for (const [id, soort, basis] of [
+    ['gd-lijsten', '[', LIJSTEN],
+    ['gd-dictionaries', '{', DICTIONARIES],
+  ] as const) {
+    const namen = [...new Set(namenVan(soort))];
+    if (namen.length === 0) continue;
+    const via = `\\b(?:${auto})\\.(?:${namen.join('|')})\\s*(?:\\[|\\.\\w+)|\\bin\\s+(?:${auto})\\.(?:${namen.join('|')})\\b`;
+    uit[id] = gd(new RegExp(`${basis.source}|${via}`, 'g'));
+  }
+  return uit;
+}
+
+const LIJSTEN =
+  /\b(?:var|const)\s+(\w+)\b(?:[^\n=]*=\s*\[|\s*:\s*Array\b)[\s\S]*?(?:\b\1\s*(?:\[|\.\w+\s*\()|\bin\s+\1\b)/g;
+const DICTIONARIES =
+  /\b(?:var|const)\s+(\w+)\b(?:[^\n=]*=\s*\{|\s*:\s*Dictionary\b)[\s\S]*?(?:\b\1\s*(?:\[|\.\w+)|\bin\s+\1\b)/g;
+
 const DETECTIE: Record<string, ConceptDetect> = {
   // --- 2D: nodes uit de scene-bestanden ---
-  '2d-tilemaplayer': node('TileMapLayer'),
+  '2d-tilemaplayer': node('(?:TileMapLayer|TileMap)'),
   '2d-texturerect': node('TextureRect'),
   '2d-characterbody2d': node('CharacterBody2D'),
   '2d-animatedsprite2d': node('AnimatedSprite2D'),
@@ -247,7 +332,7 @@ const DETECTIE: Record<string, ConceptDetect> = {
   '2d-startscherm': {
     type: 'regex',
     pattern:
-      /\[node name="(?![^"]*(?:hud|pauze|pause))[^"]*" type="(?:Control|CanvasLayer)"(?![^\]]*\bparent=)[^\]]*\][\s\S]*?\[node [^\]]*type="Button"/gi,
+      /\[node name="(?![^"]*(?:hud|pauze|pause))[^"]*" type="(?:Control|CanvasLayer)"(?![^\]]*\bparent=)[^\]]*\][\s\S]*?\[node [^\]]*type="(?:Button|TextureButton)"/gi,
     in: ['tscn'],
   },
   '2d-nieuwe-nodes': {
@@ -260,7 +345,10 @@ const DETECTIE: Record<string, ConceptDetect> = {
   // Marker2D is één soort; daarom minDelen en niet minCount.
   '2d-nieuwe-nodes-meer': {
     type: 'regex',
-    pattern: new RegExp(`\\[node [^\\]]*type="(?!(?:${BEKENDE_NODES.join('|')})")(\\w+)"`, 'g'),
+    pattern: new RegExp(
+      `\\[node [^\\]]*type="(?!(?:${[...BEKENDE_NODES, ...HULPNODES].join('|')})")(\\w+)"`,
+      'g',
+    ),
     in: ['tscn'],
     delen: true,
     minDelen: 3,
@@ -269,28 +357,49 @@ const DETECTIE: Record<string, ConceptDetect> = {
   // --- GDScript: je game eigen maken ---
   // De negatieve lookahead is het hele punt: `SPEED = 300.0` telt niet mee,
   // `SPEED = 450.0` wel.
-  'gd-snelheid': gd(
-    new RegExp(
-      `${toekenning('SPEED|speed|snelheid|SNELHEID')}(?!(?:${alt(CURSUS_SNELHEID)})(?![\\d.]))-?\\d`,
-      'g',
+  // Ook in een scène: een @export-waarde die je in de Inspector aanpast,
+  // staat als `speed = 450.0` onder de node. En de snelheid keer iets in de
+  // regel met velocity (sprinten).
+  'gd-snelheid': {
+    type: 'regex',
+    pattern: new RegExp(
+      `${toekenning(SNELHEID_NAAM)}${eigenWaarde(CURSUS_SNELHEID)}|\\b(?![\\w]*(?:jump|sprong|spring|_scale))\\w*(?:speed|snelheid)\\w*\\s*[*/]\\s*\\d`,
+      'gi',
     ),
-  ),
-  'gd-sprongkracht': gd(
-    new RegExp(
-      `${toekenning('JUMP_VELOCITY|jump_velocity|JUMP_FORCE|jump_force|sprongkracht|SPRONGKRACHT')}(?!(?:${alt(CURSUS_SPRONG)})(?![\\d.]))-?\\d`,
-      'g',
-    ),
-  ),
-  // Eigen toetsen staan als [input]-sectie in project.godot; zonder die
-  // sectie gebruikt het project alleen de ingebouwde ui_*-acties.
-  'gd-keybindings': { type: 'regex', pattern: /^\[input\]/gm, in: ['godot'] },
+    in: ['gd', 'tscn-gd', 'tscn'],
+  },
+  'gd-sprongkracht': {
+    type: 'regex',
+    pattern: new RegExp(`${toekenning(SPRONG_NAAM)}${eigenWaarde(CURSUS_SPRONG)}`, 'gi'),
+    in: ['gd', 'tscn-gd', 'tscn'],
+  },
+  // Eigen toetsen staan als [input]-sectie in project.godot, met per actie
+  // de toetsen (`"events": [Object(InputEventKey, …`). Les 5.7 zet W, A en D
+  // aan ui_accept, ui_left en ui_right: wie de les volgt, heeft dit. Een
+  // [input] met alleen lege acties telde eerst ook.
+  'gd-keybindings': {
+    type: 'regex',
+    pattern: /^\[input\][^[]*?"events":\s*\[\s*Object\(/gm,
+    in: ['godot'],
+  },
   // `&"zwemmen"` is een StringName; dat schrijft Godot zelf als je een
   // animatie uit de lijst sleept. Zie ANIMATIE hieronder.
   'gd-animatie': gd(ANIMATIE),
-  // Een handler die de editor maakt (_on_…), of een eigen signal dat je in
-  // code verbindt.
-  'gd-signal': gd(/\bfunc\s+_on_\w+|^[ \t]*signal\s+\w+|\.connect\s*\(/gm),
-  'gd-volgend-level': gd(/change_scene_to_(?:file|packed)\s*\(/g),
+  // Een signal dat ergens aan hangt: in de editor gekoppeld (een
+  // [connection] in de scène, ook met een eigen naam voor de functie), in
+  // code met .connect, of een eigen signal dat je uitzendt. Een _on_-functie
+  // die nergens aan hangt, telde eerst ook, en dat is de fout uit les 7.1.
+  'gd-signal': {
+    type: 'regex',
+    pattern: /^\[connection signal=|\.connect\s*\(|\.emit\s*\(|\bemit_signal\s*\(/gm,
+    in: ['gd', 'tscn-gd', 'tscn'],
+  },
+  // Een scène wisselen, ook uitgesteld (call_deferred). Niet vanuit een knop
+  // (`_on_start_pressed`): de knop Start van het menu laadt level 1, en dat is
+  // geen volgend level. Eerst haalde een startmenu alleen deze rij al.
+  'gd-volgend-level': gd(
+    /^func\s+(?!\w*pressed\b)\w+[^\n]*\n(?:[ \t][^\n]*\n|[ \t]*\n)*?[ \t][^\n]*\bchange_scene_to_(?:file|packed)\b/gm,
+  ),
 
   // --- GDScript: verder met code ---
   // "Nuttig gebruik" is een oordeel dat een regex niet kan vellen. Wat hij
@@ -298,38 +407,43 @@ const DETECTIE: Record<string, ConceptDetect> = {
   // Daarom een drempel van twee op de concepten waar de tabel "nuttig" zegt.
   'gd-globals': gd(/\bGlobal\.\w+/g, 2),
   'gd-instantiate': gd(/\.instantiate\s*\(/g),
-  'gd-groups': gd(/\b(?:add_to_group|get_nodes_in_group|call_group|is_in_group)\s*\(/g),
+  'gd-groups': gd(
+    /\b(?:add_to_group|get_nodes_in_group|get_first_node_in_group|call_group|is_in_group)\s*\(/g,
+  ),
   // Eigen functies, dus niet de functies die Godot zelf aanroept (_ready,
   // _process, _physics_process, _input), niet de signal-handlers (_on_…),
   // want die staan al als eigen concept in de tabel, en niet de functies die
   // de cursus voorzegt (CURSUS_FUNCTIES).
-  'gd-modulaire-functies': gd(
-    new RegExp(
-      `^[ \\t]*func\\s+(?!_on_|_(?:${CALLBACKS.join('|')})\\s*\\(|(?:${alt(CURSUS_FUNCTIES)})\\s*\\()\\w+`,
-      'gm',
-    ),
-    2,
-  ),
+  'gd-modulaire-functies': modulaireFuncties([]),
   // Nuttig gebruik: een lijst die je maakt én daarna gebruikt, in hetzelfde
   // script. Een `var v: Array[Node] = []` die nergens meer voorkomt, telt
   // niet; een `.has()` op iets anders ook niet.
-  'gd-lijsten': gd(
-    /\b(?:var|const)\s+(\w+)\b[^\n=]*=\s*\[[\s\S]*?(?:\b\1\s*(?:\[|\.\w+\s*\()|\bin\s+\1\b)/g,
-  ),
+  // Ook een lijst uit de Inspector (`@export var v: Array[PackedScene]`).
+  // Een lijst in de global die een ander script gebruikt (les 10.2), voegt
+  // detectieVoor toe.
+  'gd-lijsten': gd(LIJSTEN),
   // Hetzelfde voor een dictionary: maken en er iets uit halen, zoals
-  // `WAARDES[soort]` in de les.
-  'gd-dictionaries': gd(
-    /\b(?:var|const)\s+(\w+)\b[^\n=]*=\s*\{[\s\S]*?(?:\b\1\s*(?:\[|\.\w+\s*\()|\bin\s+\1\b)/g,
-  ),
-  // JSON, niet elk bestand: FileAccess op een .txt is geen JSON.
-  'gd-json': gd(/\bJSON\.(?:stringify|parse_string|parse)\s*\(|\bJSON\.new\s*\(/g),
+  // `WAARDES[soort]` in de les, of `speler.score`.
+  'gd-dictionaries': gd(DICTIONARIES),
+  // JSON, niet elk bestand: FileAccess op een .txt is geen JSON. Lezen én
+  // schrijven, zoals de rij zegt: alleen de print van stringify uit de
+  // voorspelvraag van les 10.4 telde eerst al.
+  'gd-json': {
+    ...gd(/\bJSON\.(stringify|parse)(?:_string)?\s*\(/g),
+    delen: true,
+    minDelen: 2,
+  },
   'gd-loops': gd(/^[ \t]*(?:for|while)\s/gm, 2),
-  'gd-tweens': gd(/\bcreate_tween\s*\(|\bTween\b/g),
+  // Een tween die je maakt of iets laat doen; `var t: Tween` of het woord
+  // in een print telde eerst ook.
+  'gd-tweens': gd(/\bcreate_tween\s*\(|\.tween_(?:property|callback|interval|method)\s*\(/g),
   // Een Timer is er in twee smaken: de node in je scène, en de stopwatch die
-  // je in code maakt met create_timer. Allebei tellen.
+  // je in code maakt met create_timer. Allebei tellen, de node als zijn
+  // timeout ergens aan hangt (les 8.4): een losse Timer-node telde eerst ook.
   'gd-timers': {
     type: 'regex',
-    pattern: /\bcreate_timer\s*\(|\bTimer\.new\s*\(|\[node [^\]]*type="Timer"/g,
+    pattern:
+      /\bcreate_timer\s*\(|\bTimer\.new\s*\(|\.timeout\.connect\s*\(|\[connection signal="timeout"/g,
     in: ['gd', 'tscn-gd', 'tscn'],
   },
 };
@@ -423,7 +537,11 @@ export const godotConfig: CheckerConfig = {
   // Een autoload heet niet altijd Global; de namen staan in project.godot.
   detectieVoor: (files) => {
     const namen = [...new Set(['Global', ...autoloads(files)])];
-    return { 'gd-globals': gd(new RegExp(`\\b(?:${namen.join('|')})\\.\\w+`, 'g'), 2) };
+    return {
+      'gd-globals': gd(new RegExp(`\\b(?:${namen.join('|')})\\.\\w+`, 'g'), 2),
+      ...overScripts(files, namen),
+      'gd-modulaire-functies': modulaireFuncties(koppelingen(files)),
+    };
   },
   accept: '.zip,.gd,.tscn,.godot,.tres,.import,.png,.jpg,.jpeg,.gif,.svg,.webp',
 
