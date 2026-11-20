@@ -688,14 +688,23 @@ function controleerBestandsantwoorden(
  * Een RedirectResponse naar een pad waar geen enkele route bij hoort. Dat
  * patroon staat vanaf Doorsturen na opslaan in elke stand van main.py; een
  * tikfout geeft na het opslaan een 404, terwijl het bericht wel bewaard is.
+ * Alleen een pad dat helemaal tekst is (bij `"/bericht/" + sleutel` is de
+ * tekst maar het begin), en niet naar een StaticFiles-mount of de handleiding
+ * van FastAPI: die bestaan zonder @app.get. Met een mount op `/` kan elk pad
+ * een bestand zijn, en dan zwijgt hij.
  */
 function controleerDoorsturen(lijst: Route[], fouten: Samenhangfout[], files: ProjectFiles) {
+  const { mappen, zeker } = statischeMappen(files);
+  if (!zeker || mappen.some((m) => m.prefix === '')) return;
+  const ingebouwd = ['/docs', '/redoc', '/openapi.json'];
   for (const f of Object.values(files)) {
     if (f.kind !== 'py' || !f.content) continue;
-    const doorsturen = /\bRedirectResponse\(\s*(?:url\s*=\s*)?["'](\/[^"'?#]*)[^"']*["']/g;
+    const doorsturen = /\bRedirectResponse\(\s*(?:url\s*=\s*)?["'](\/[^"'?#]*)[^"']*["']\s*[,)]/g;
     for (const m of f.content.matchAll(doorsturen)) {
       const adres = m[1];
-      if (adres.startsWith('//') || lijst.some((r) => past(adres, r.pad))) continue;
+      if (adres.startsWith('//') || ingebouwd.includes(adres)) continue;
+      if (mappen.some((s) => adres === s.prefix || adres.startsWith(`${s.prefix}/`))) continue;
+      if (lijst.some((r) => past(adres, r.pad))) continue;
       fouten.push({
         titel: `RedirectResponse stuurt door naar ${adres}, en die route bestaat niet`,
         uitleg: `Na dit antwoord vraagt de browser ${adres} op, maar geen functie in je Python-code hoort bij dat pad. De bezoeker krijgt dan 404 Not Found, ook als het opslaan wel gelukt is. Kijk of het pad precies hetzelfde is als in een @app.get(...).`,
@@ -749,7 +758,11 @@ function controleerImports(fouten: Samenhangfout[], files: ProjectFiles) {
  *   van de leerling, maar een link ernaar is geen kapotte link. Eerst gaf elk
  *   project met de htmx-uitbreiding een valse 404.
  */
-export function samenhang(project: ProjectFiles, alle: ProjectFiles = project): Samenhangfout[] {
+export function samenhang(
+  project: ProjectFiles,
+  alle: ProjectFiles = project,
+  opties: { losseBestanden?: boolean } = {},
+): Samenhangfout[] {
   begins.clear();
   const files = zonderCommentaar(project);
   const fouten: Samenhangfout[] = [];
@@ -770,8 +783,14 @@ export function samenhang(project: ProjectFiles, alle: ProjectFiles = project): 
   // Losse bestanden (Kies bestanden, zonder map of zip) hebben geen mappen:
   // dan ontbreekt elk static-bestand en elk template op zijn plek, terwijl
   // ze net geüpload zijn. Die controles slaat hij dan over; de pagina zegt
-  // dat de leerling zijn projectmap moet kiezen.
-  const metMappen = Object.keys(alle).some((p) => p.includes('/'));
+  // dat de leerling zijn projectmap moet kiezen. Een map of zip met alles
+  // bovenin is wel een fout: daar vindt de server het template ook niet. Het
+  // inlezen weet welke van de twee het was; een oude beoordeling zonder die
+  // vlag kijkt of er ergens een map in het pad staat.
+  const metMappen =
+    opties.losseBestanden === undefined
+      ? Object.keys(alle).some((p) => p.includes('/'))
+      : !opties.losseBestanden;
   const metHtml = metMappen && Object.values(files).some((f) => f.kind === 'html');
   const { mappen, zeker: mountsZeker } = statischeMappen(files);
   const opWortel = mappen.some((m) => m.prefix === '');

@@ -5,7 +5,7 @@ import styles from './styles.module.css';
 
 interface UploadZoneProps {
   config: CheckerConfig;
-  onLoaded: (files: ProjectFiles, warnings: string[]) => void;
+  onLoaded: (files: ProjectFiles, warnings: string[], losseBestanden?: boolean) => void;
   onError: (message: string) => void;
   busy: boolean;
   setBusy: (busy: boolean) => void;
@@ -20,12 +20,12 @@ export function UploadZone({ config, onLoaded, onError, busy, setBusy }: UploadZ
     async (source: FileList | File[] | DataTransferItemList) => {
       setBusy(true);
       try {
-        const { files, warnings } = await readUploadedFiles(source, {
+        const { files, warnings, losseBestanden } = await readUploadedFiles(source, {
           classify: config.classify,
           textKinds: config.textKinds,
           imageKinds: config.imageKinds,
         });
-        onLoaded(files, warnings);
+        onLoaded(files, warnings, losseBestanden);
       } catch (err) {
         onError(err instanceof Error ? err.message : String(err));
       } finally {

@@ -226,7 +226,7 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
   }, [zetActief]);
 
   const toonProject = useCallback(
-    (loadedFiles: ProjectFiles, warnings: string[]) => {
+    (loadedFiles: ProjectFiles, warnings: string[], losseBestanden?: boolean) => {
       setError(null);
       setFiles(loadedFiles);
       setIdeError(null);
@@ -241,6 +241,7 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
         buitenLesstof: isDocent,
         plekken: isDocent,
         concepten: isDocent,
+        losseBestanden,
       });
       result.warnings = [...warnings, ...result.warnings];
       setReport(result);
@@ -249,7 +250,7 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
   );
 
   const handleLoaded = useCallback(
-    (loadedFiles: ProjectFiles, warnings: string[]) => {
+    (loadedFiles: ProjectFiles, warnings: string[], losseBestanden?: boolean) => {
       // Een upload die klaar is terwijl de PDF wordt gemaakt, zou het rapport
       // halverwege de opname vervangen.
       if (exporterendRef.current) {
@@ -258,14 +259,14 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
       }
       verzoekRef.current++;
       wisBeoordeling();
-      toonProject(loadedFiles, warnings);
+      toonProject(loadedFiles, warnings, losseBestanden);
       const bewaarder = bewaarderRef.current;
       if (!isDocent || !bewaarder) return;
       // Elke upload in de docentweergave wordt meteen een beoordeling; de
       // Bewaarder schrijft hem weg, de volgende upload laat hem staan.
       const b = bewaarder.nieuw(
         nieuweNaamRef.current,
-        { files: loadedFiles, warnings },
+        { files: loadedFiles, warnings, losseBestanden },
         laatsteTrackRef.current,
       );
       zetActief(b.id);
@@ -310,7 +311,7 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
         return;
       }
       const { beoordeling, project } = gevonden;
-      toonProject(project.files, project.warnings);
+      toonProject(project.files, project.warnings, project.losseBestanden);
       setPdfKlaarVoor(null);
       zetActief(beoordeling.id);
       setNaamVeld(beoordeling.naam);

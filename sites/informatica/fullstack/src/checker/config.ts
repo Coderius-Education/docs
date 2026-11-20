@@ -101,6 +101,9 @@ const inDb = (na: (db: number, eigen: number) => string, eigenGroepen = 0): Conc
 // welk veld het herhaalveld is, zegt HERHAAL.
 const WACHTWOORD = String.raw`(?:\w*(?:wachtwoord|password|passwd|pwd)\w*|(?:ww|pw)\b)`;
 const HERHAAL = String.raw`(?:\w*(?:herhaal|bevestig|confirm|repeat|opnieuw)\w*|\w*2\b|\w*_again\b)`;
+// Het herhaalveld rechts van een vergelijking, ook uit een dictionary of
+// formulier (`form["password_confirm"]`, `data.get("wachtwoord_herhaal")`).
+const RECHTS_HERHAAL = String.raw`[\w.]*(?:(?:\[|\(\s*)\s*["'])?${HERHAAL}`;
 
 // Het controlescript van de cursus (static/controleer.py): de leerling zet
 // het naast main.py, en zijn routes, cookies en if's telden eerst als die van
@@ -204,8 +207,8 @@ const DETECTIE: Record<string, ConceptDetect> = {
     new RegExp(
       [
         String.raw`[\w)\]](?<!herhaal\w*|bevestig\w*|confirm\w*|repeat\w*|opnieuw\w*|2|_again)\s*[!=]=\s*(?!${HERHAAL})${WACHTWOORD}`,
-        String.raw`(?<![\w"'])(?!${HERHAAL}\s*[!=]=)${WACHTWOORD}\s*[!=]=\s*(?!["'\d]|${HERHAAL}|None\b)\w`,
-        String.raw`\[\s*["']${WACHTWOORD}["']\s*\]\s*[!=]=\s*(?!["'\d]|None\b)\w`,
+        String.raw`(?<![\w"'])(?!${HERHAAL}\s*[!=]=)${WACHTWOORD}\s*[!=]=\s*(?!["'\d]|${RECHTS_HERHAAL}|None\b)\w`,
+        String.raw`\[\s*["']${WACHTWOORD}["']\s*\]\s*[!=]=\s*(?!["'\d]|${RECHTS_HERHAAL}|None\b)\w`,
         String.raw`\.verify\s*\(`,
       ].join('|'),
       'g',

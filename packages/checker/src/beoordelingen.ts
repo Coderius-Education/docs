@@ -42,6 +42,8 @@ export interface Beoordeling {
 export interface Project {
   files: ProjectFiles;
   warnings: string[];
+  /** Zie ReadFilesResult; ontbreekt bij een project van vóór deze vlag. */
+  losseBestanden?: boolean;
 }
 
 /**

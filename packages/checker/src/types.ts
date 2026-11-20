@@ -255,8 +255,14 @@ export interface CheckerConfig {
    * ook aan de leerling, want het is terugkoppeling op zijn eigen code.
    * `files` zijn de bestanden van de leerling, `alle` ook de bibliotheken:
    * een link naar een meegeleverde `htmx.min.js` is geen kapotte link.
+   * `opties.losseBestanden`: de upload had geen map en geen zip (Kies
+   * bestanden). Onbekend bij een beoordeling van vóór deze vlag.
    */
-  samenhang?: (files: ProjectFiles, alle: ProjectFiles) => Samenhangfout[];
+  samenhang?: (
+    files: ProjectFiles,
+    alle: ProjectFiles,
+    opties?: { losseBestanden?: boolean },
+  ) => Samenhangfout[];
 }
 
 /** Iets dat tussen twee bestanden van het project niet aansluit. */

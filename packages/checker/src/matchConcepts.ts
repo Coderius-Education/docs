@@ -45,6 +45,8 @@ export interface AnalyzeOpties {
    * vastzat, voor een uitkomst die niemand zag.
    */
   concepten?: boolean;
+  /** Losse bestanden, zonder map of zip; zie ReadFilesResult. */
+  losseBestanden?: boolean;
 }
 
 export function analyze(
@@ -227,7 +229,8 @@ export function analyze(
     extra,
     buitenLesstof:
       (opties.buitenLesstof ?? true) ? (config.buitenLesstof?.(eigenBestanden) ?? []) : [],
-    samenhang: config.samenhang?.(eigenBestanden, files) ?? [],
+    samenhang:
+      config.samenhang?.(eigenBestanden, files, { losseBestanden: opties.losseBestanden }) ?? [],
     warnings,
   };
 }

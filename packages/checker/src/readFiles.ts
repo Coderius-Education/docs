@@ -116,6 +116,13 @@ export interface ReadOptions {
 export interface ReadFilesResult {
   files: ProjectFiles;
   warnings: string[];
+  /**
+   * Losse bestanden, zonder map of zip (Kies bestanden). Dan staat alles
+   * zonder map, ook wat in templates/ of static/ hoort, en is een ontbrekend
+   * template geen fout van de leerling. Een map of zip met alles bovenin is
+   * dat wel: daar vindt de server het template ook niet.
+   */
+  losseBestanden?: boolean;
 }
 
 interface RawEntry {
@@ -518,6 +525,8 @@ async function leesUpload(
   }
 
   const resultaat = await entriesToProjectFiles(alles, opts);
+  resultaat.losseBestanden =
+    zips.length === 0 && rawEntries.every((e) => !e.relativePath.includes('/'));
   if (archieven.length > 0) {
     resultaat.warnings.push(
       `Niet geopend: ${opsomming(archieven)}. De nakijker kan alleen een .zip openen; pak het uit of maak er een .zip van.`,

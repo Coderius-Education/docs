@@ -1132,6 +1132,9 @@ describe('fullstackConfig — review van de upload tool', () => {
       'if wachtwoord != wachtwoord_opnieuw:',
       'if wachtwoord != bevestig_wachtwoord:',
       'if wachtwoord == "":',
+      'if form["password"] != form["password_confirm"]:',
+      'if data["wachtwoord"] != data["wachtwoord_herhaal"]:',
+      'if wachtwoord != form.get("wachtwoord_herhaal"):',
     ])
       expect(py('account-wachtwoord', code), code).toBe(false);
   });

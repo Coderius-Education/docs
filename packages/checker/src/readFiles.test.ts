@@ -205,6 +205,24 @@ describe('readUploadedFiles — zip', () => {
     expect(files['index.html'].content).toContain('Uit een zip');
   });
 
+  it('weet of het losse bestanden waren of een map of zip', async () => {
+    const los = await readUploadedFiles(
+      [makeFile('main.html', '<h1>A</h1>'), makeFile('b.html', '<h1>B</h1>')],
+      webAchtig,
+    );
+    expect(los.losseBestanden).toBe(true);
+    // Een map met alles bovenin: na het afknippen van de map ziet het pad er
+    // hetzelfde uit, maar het is geen losse upload.
+    const map = await readUploadedFiles(
+      [makeFile('p/main.html', '<h1>A</h1>'), makeFile('p/b.html', '<h1>B</h1>')],
+      webAchtig,
+    );
+    expect(Object.keys(map.files).sort()).toEqual(['b.html', 'main.html']);
+    expect(map.losseBestanden).toBe(false);
+    const zip = await readUploadedFiles([maakZip({ 'a.html': '<h1>A</h1>' })], webAchtig);
+    expect(zip.losseBestanden).toBe(false);
+  });
+
   it('pakt een gekozen zip ook uit naast losse bestanden', async () => {
     // Robotica vraagt om code en foto's; een leerling die de zip en de foto's
     // samen koos, kreeg eerst "Geen leesbare codebestanden".

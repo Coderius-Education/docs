@@ -619,6 +619,29 @@ describe('samenhang — review van de upload tool', () => {
       ]),
     ) as Record<string, string>;
     expect(titels(project(los))).toEqual([]);
+    expect(samenhang(project(los), project(los), { losseBestanden: true })).toEqual([]);
+  });
+
+  it('een map of zip met de templates naast main.py geeft wel de melding', () => {
+    // Zelfde paden als bij losse bestanden, maar uit een map: de server zoekt
+    // in templates/ en vindt het template niet.
+    const plat = {
+      'main.py': `from fastapi import FastAPI, Request
+from fastapi.templating import Jinja2Templates
+
+app = FastAPI()
+templates = Jinja2Templates(directory="templates")
+
+
+@app.get("/")
+async def home(request: Request):
+    return templates.TemplateResponse(request, "home.html")
+`,
+      'home.html': '<h1>Hoi</h1>',
+    };
+    expect(
+      samenhang(project(plat), project(plat), { losseBestanden: false }).map((f) => f.titel),
+    ).toEqual(['Het template home.html bestaat niet']);
   });
 
   it('een vergeten Form(...) is een 422 uit de URL, geen veld dat weggegooid wordt', () => {
@@ -715,6 +738,19 @@ describe('samenhang — review van de upload tool', () => {
       q['main.py'] = q['main.py'].replace('url="/berichten"', 'url="/bericht/abc?nieuw=1"');
     });
     expect(titels(goed)).toEqual([]);
+  });
+
+  it('een RedirectResponse met een berekend pad, naar static of naar /docs is goed', () => {
+    for (const doel of [
+      '"/bericht/" + "abc"',
+      'url="/static/pages/gastenboek_form.html"',
+      'url="/docs"',
+    ]) {
+      const p = compleetMet((q) => {
+        q['main.py'] = q['main.py'].replace('url="/berichten"', doel);
+      });
+      expect(titels(p), doel).toEqual([]);
+    }
   });
 
   it('dezelfde kapotte link twee keer op een regel is één melding', () => {
