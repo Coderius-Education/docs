@@ -344,7 +344,17 @@ async function entriesToProjectFiles(
   });
 
   if (gekozen.length === 0) {
-    throw new LeesFout('Geen bruikbare bestanden gevonden in de upload.');
+    // Zeg wat er wel in zat: een venv of een reservekopie telt niet mee, en
+    // dan was "geen bruikbare bestanden" een raadsel.
+    const wat =
+      venvs.length > 0
+        ? ` Er stond alleen een virtual environment in (${opsomming(venvs.map((v) => v.replace(/\/$/, '')))}), en die telt niet mee.`
+        : kopieen.size > 0
+          ? ` Er stond alleen een reservekopie in (${opsomming([...kopieen].sort())}), en die telt niet mee.`
+          : '';
+    throw new LeesFout(
+      `Geen bruikbare bestanden gevonden in de upload.${wat} Kies de map met je eigen bestanden.`,
+    );
   }
   if (gekozen.length > MAX_FILE_COUNT) {
     throw new LeesFout(
@@ -354,7 +364,7 @@ async function entriesToProjectFiles(
 
   const files: ProjectFiles = {};
   const warnings: string[] = [];
-  let skippedTooLarge = 0;
+  const teGroteTekst: string[] = [];
   const teGroteFotos: string[] = [];
   const nietGelezen: string[] = [];
   let textBudget = MAX_TEXT_TOTAL_SIZE;
@@ -381,7 +391,7 @@ async function entriesToProjectFiles(
     // vallen, terwijl dezelfde upload als map wél een waarschuwing geeft.
     if (isTextKind && entry.size > MAX_TEXT_FILE_SIZE) {
       tooLarge = true;
-      skippedTooLarge++;
+      teGroteTekst.push(path);
     } else if (isTextKind && entry.getBytes) {
       if (entry.size > textBudget) {
         nietGelezen.push(path);
@@ -407,9 +417,11 @@ async function entriesToProjectFiles(
     files[path] = { path, kind, content, sizeBytes: entry.size, tooLarge };
   }
 
-  if (skippedTooLarge > 0) {
+  // Welke: eerst stond er alleen een aantal, en als main.py zelf te groot
+  // was, zocht de docent waar het aan lag.
+  if (teGroteTekst.length > 0) {
     warnings.push(
-      `${skippedTooLarge} bestand(en) waren groter dan ${MAX_TEXT_FILE_SIZE / (1024 * 1024)} MB en zijn overgeslagen bij de analyse (ze tellen wel mee in het bestandsoverzicht).`,
+      `Niet gelezen, want groter dan ${MAX_TEXT_FILE_SIZE / (1024 * 1024)} MB: ${opsomming(teGroteTekst)}. Ze tellen wel mee in het bestandsoverzicht.`,
     );
   }
   if (teGroteFotos.length > 0) {
@@ -425,6 +437,14 @@ async function entriesToProjectFiles(
   if (kopieen.size > 0) {
     warnings.push(
       `Niet meegeteld, want het lijkt een reservekopie: ${opsomming([...kopieen].sort())}. Hoort die map wel bij je project, geef hem dan een andere naam.`,
+    );
+  }
+  // Twee projecten in één upload (de hele cursusmap, met elke les in een
+  // eigen map) tellen samen mee: concepten uit een oude les tellen dan ook.
+  const mains = gekozen.map(({ path }) => path).filter((p) => /(?:^|\/)main\.py$/.test(p));
+  if (mains.length > 1) {
+    warnings.push(
+      `Er staan meer projecten in de upload, want er zijn ${mains.length} keer main.py: ${opsomming(mains.sort())}. Alles telt samen mee. Upload alleen het project dat je wilt laten nakijken.`,
     );
   }
   const heic = gekozen.filter(({ path }) => HEIC.test(path)).map(({ path }) => path);

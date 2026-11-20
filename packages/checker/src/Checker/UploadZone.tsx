@@ -100,7 +100,11 @@ export function UploadZone({ config, onLoaded, onError, busy, setBusy }: UploadZ
         accept={config.accept}
         className={styles.hiddenInput}
         onChange={handleFileInputChange}
-        aria-label="Kies bestanden of een zip-bestand"
+        // De knoppen erboven openen dit veld; zelf is het onzichtbaar. Zonder
+        // deze twee kwam Tab er twee keer op uit, en hoorde een schermlezer
+        // vier knoppen.
+        tabIndex={-1}
+        aria-hidden="true"
       />
       <input
         ref={folderInputRef}
@@ -110,7 +114,11 @@ export function UploadZone({ config, onLoaded, onError, busy, setBusy }: UploadZ
         webkitdirectory=""
         className={styles.hiddenInput}
         onChange={handleFileInputChange}
-        aria-label="Kies een map met je projectbestanden"
+        // De knoppen erboven openen dit veld; zelf is het onzichtbaar. Zonder
+        // deze twee kwam Tab er twee keer op uit, en hoorde een schermlezer
+        // vier knoppen.
+        tabIndex={-1}
+        aria-hidden="true"
       />
     </div>
   );

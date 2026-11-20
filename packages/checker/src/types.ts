@@ -227,8 +227,6 @@ export interface CheckerConfig {
   teacher: { password: string; storageKey: string };
   /** Voorgestelde PDF-bestandsnaam. */
   pdfFilename: (date: Date) => string;
-  /** Korte privacy-belofte onder de uploadzone. */
-  privacyNote?: string;
   /**
    * Optioneel: toon een "Bekijk in Online Editor"-knop die het project via
    * window.open + postMessage naar de IDE stuurt (alleen zinvol voor projecten

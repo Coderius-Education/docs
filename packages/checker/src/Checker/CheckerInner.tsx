@@ -21,7 +21,7 @@ import { type CodeOpen, CodeWeergave } from './CodeWeergave';
 import { FileStats } from './FileStats';
 import { LevelSummary } from './LevelSummary';
 import { PhotoStrip } from './PhotoStrip';
-import { ReportView } from './ReportView';
+import { ReportView, Waarschuwingen } from './ReportView';
 import { Samenhang } from './Samenhang';
 import { TeacherGate } from './TeacherGate';
 import { UploadZone } from './UploadZone';
@@ -456,8 +456,11 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
           busy={busy || exporting}
           setBusy={setBusy}
         />
-        {config.privacyNote && <p className={styles.privacy}>{config.privacyNote}</p>}
-        {busy && <p className={styles.status}>Bezig met analyseren...</p>}
+        {busy && (
+          <p className={styles.status} role="status">
+            Bezig met analyseren...
+          </p>
+        )}
         {error && (
           <p className={styles.error} role="alert">
             {error}
@@ -467,6 +470,7 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
 
       {report && !isDocent && (
         <>
+          <Waarschuwingen warnings={report.warnings} />
           <div className={styles.reportHeader}>
             <FileStats report={report} config={config} />
             {ideButton}

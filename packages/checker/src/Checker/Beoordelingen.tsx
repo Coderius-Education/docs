@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { BEWAARTERMIJN_DAGEN, type Beoordeling } from '../beoordelingen';
 import styles from './Beoordelingen.module.css';
 
@@ -34,9 +35,21 @@ export function Beoordelingen({
   opslagFout,
   bezig = false,
 }: BeoordelingenProps) {
+  // Na het verwijderen is de knop waar de focus stond weg, en viel hij op de
+  // pagina zelf. Dan gaat hij naar de kop van de lijst.
+  const kop = useRef<HTMLHeadingElement>(null);
+  const vorigAantal = useRef(lijst.length);
+  useEffect(() => {
+    const minder = lijst.length < vorigAantal.current;
+    vorigAantal.current = lijst.length;
+    if (minder && (document.activeElement === document.body || !document.activeElement))
+      kop.current?.focus();
+  }, [lijst.length]);
   return (
     <section className={styles.section} aria-labelledby="mijn-beoordelingen">
-      <h2 id="mijn-beoordelingen">Mijn beoordelingen</h2>
+      <h2 id="mijn-beoordelingen" ref={kop} tabIndex={-1}>
+        Mijn beoordelingen
+      </h2>
       {opslagFout ? (
         <p className={styles.waarschuwing} role="alert">
           {opslagFout}

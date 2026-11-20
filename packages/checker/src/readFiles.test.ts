@@ -417,3 +417,44 @@ describe("readUploadedFiles — tekst en foto's", () => {
     ).rejects.toThrow('OneDrive');
   });
 });
+
+// De review van de upload tool van fullstack (november 2026).
+describe('readUploadedFiles — wat een docent en een leerling moeten weten', () => {
+  const pyAchtig: ReadOptions = {
+    classify: (path) => (path.endsWith('.py') ? 'py' : path.endsWith('.html') ? 'html' : 'other'),
+    textKinds: ['py', 'html'],
+  };
+
+  it('noemt een te groot bestand bij naam', async () => {
+    // Eerst stond er alleen "1 bestand(en) waren groter dan 2 MB": was dat
+    // main.py zelf, dan zocht de docent waar het aan lag.
+    const { warnings } = await readUploadedFiles(
+      [
+        makeFile('p/index.html', '<h1>Hoi</h1>'),
+        fakeFile('p/data/enorm.js', MAX_TEXT_FILE_SIZE + 1),
+      ],
+      webAchtig,
+    );
+    expect(warnings.join(' ')).toContain('data/enorm.js');
+  });
+
+  it('zegt dat een upload met alleen een venv geen eigen bestanden heeft', async () => {
+    await expect(
+      readUploadedFiles(
+        [makeFile('p/.venv/pyvenv.cfg', 'home = x'), makeFile('p/.venv/lib/a.py', 'x = 1')],
+        pyAchtig,
+      ),
+    ).rejects.toThrow(/virtual environment.*\.venv/);
+  });
+
+  it('waarschuwt bij twee projecten in één upload', async () => {
+    const { warnings } = await readUploadedFiles(
+      [makeFile('cursus/les3/main.py', 'x = 1'), makeFile('cursus/eindproject/main.py', 'y = 2')],
+      pyAchtig,
+    );
+    expect(warnings.join(' ')).toMatch(/2 keer main\.py.*eindproject\/main\.py.*les3\/main\.py/);
+    // Eén project met een main.py geeft geen waarschuwing.
+    const een = await readUploadedFiles([makeFile('p/main.py', 'x = 1')], pyAchtig);
+    expect(een.warnings).toEqual([]);
+  });
+});

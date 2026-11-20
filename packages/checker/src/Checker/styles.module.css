@@ -21,12 +21,6 @@
   color: var(--ifm-color-danger-dark, #c11);
 }
 
-.privacy {
-  margin-top: 0.75rem;
-  font-size: 0.9rem;
-  color: var(--ifm-color-emphasis-700);
-}
-
 .dropZone {
   border: 2px dashed var(--ifm-color-emphasis-300);
   border-radius: 12px;

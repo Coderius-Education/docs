@@ -256,6 +256,4 @@ export const roboticaConfig: CheckerConfig = {
     storageKey: storageKey('robotica', 'roboticaChecker.docentUnlocked'),
   },
   pdfFilename: (d) => `Beoordeling Robot - ${todayStamp(d)}.pdf`,
-  privacyNote:
-    'Let op: je bestanden gaan nooit naar een server. Alles gebeurt in je eigen browser.',
 };

@@ -262,12 +262,25 @@ export class Bewaarder {
     return this.cache.get(id);
   }
 
+  /**
+   * Een naam die nog niet in de lijst staat. Drie uploads zonder naam in
+   * dezelfde minuut heetten eerst alle drie "Leerling 20-11 07:28", en dan
+   * was in de lijst niet te zien welke welke was.
+   */
+  private vrijeNaam(basis: string): string {
+    const bezet = new Set(Array.from(this.cache.values(), (b) => b.naam));
+    if (!bezet.has(basis)) return basis;
+    let n = 2;
+    while (bezet.has(`${basis} (${n})`)) n++;
+    return `${basis} (${n})`;
+  }
+
   /** Een net geüpload project als nieuwe, lege beoordeling; bestaat meteen. */
   nieuw(naam: string, project: Project, track: string | null): Beoordeling {
     const nu = this.nu();
     const b: Beoordeling = {
       id: nieuwId(),
-      naam: naam.trim() || standaardNaam(nu),
+      naam: naam.trim() || this.vrijeNaam(standaardNaam(nu)),
       aangemaakt: nu.getTime(),
       bijgewerkt: nu.getTime(),
       handmatig: [],

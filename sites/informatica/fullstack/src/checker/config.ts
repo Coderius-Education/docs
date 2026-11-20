@@ -480,6 +480,4 @@ export const fullstackConfig: CheckerConfig = {
     storageKey: storageKey('fullstack', 'fullstackChecker.docentUnlocked'),
   },
   pdfFilename: (d) => `Beoordeling Fullstack Project - ${todayStamp(d)}.pdf`,
-  privacyNote:
-    'Let op: je bestanden gaan nooit naar een server. Alles gebeurt in je eigen browser.',
 };

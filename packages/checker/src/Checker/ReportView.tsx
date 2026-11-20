@@ -268,13 +268,7 @@ export function ReportView({
 
   return (
     <div className={styles.report}>
-      {report.warnings.length > 0 && (
-        <output className={styles.warnings} aria-live="polite">
-          {report.warnings.map((w) => (
-            <p key={w}>{w}</p>
-          ))}
-        </output>
-      )}
+      <Waarschuwingen warnings={report.warnings} />
 
       <FileStats report={report} config={config} />
 
@@ -296,5 +290,22 @@ export function ReportView({
 
       <BuitenLesstof vondsten={buiten.los} onToonPlekken={onToonPlekken} />
     </div>
+  );
+}
+
+/**
+ * Wat er bij het inlezen niet meetelde (een venv, een te groot bestand, een
+ * reservekopie). Ook de leerling ziet dit: eerst stond het alleen in de
+ * docentweergave, en zag een leerling bij een upload zonder code alleen
+ * tellers op nul.
+ */
+export function Waarschuwingen({ warnings }: { warnings: string[] }) {
+  if (warnings.length === 0) return null;
+  return (
+    <output className={styles.warnings} aria-live="polite">
+      {warnings.map((w) => (
+        <p key={w}>{w}</p>
+      ))}
+    </output>
   );
 }

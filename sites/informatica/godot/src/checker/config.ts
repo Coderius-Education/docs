@@ -432,6 +432,4 @@ export const godotConfig: CheckerConfig = {
     storageKey: storageKey('godot', 'godotChecker.docentUnlocked'),
   },
   pdfFilename: (d) => `Beoordeling Godot Project - ${todayStamp(d)}.pdf`,
-  privacyNote:
-    'Let op: je bestanden gaan nooit naar een server. Alles gebeurt in je eigen browser.',
 };

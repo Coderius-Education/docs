@@ -163,6 +163,4 @@ export const playConfig: CheckerConfig = {
     storageKey: storageKey('play', 'playChecker.docentUnlocked'),
   },
   pdfFilename: (d) => `Beoordeling play-project - ${todayStamp(d)}.pdf`,
-  privacyNote:
-    'Let op: je bestanden gaan nooit naar een server. Alles gebeurt in je eigen browser.',
 };
