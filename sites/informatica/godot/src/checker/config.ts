@@ -125,13 +125,13 @@ const BEKENDE_NODES = [
 // De waardes die in de cursus staan. Wie ze laat staan heeft overgetypt; wie
 // er iets anders neerzet heeft zijn spel van zichzelf gemaakt, en dát is wat
 // "snelheid veranderen" en "sprongkracht veranderen" in de tabel betekenen.
-// Hetzelfde geldt voor de drie animatienamen uit hoofdstuk 6.
+// "Animatie veranderen" is anders: dat is een animatie wisselen in code, ook
+// met de namen uit de les (zie ANIMATIE).
 // De power-up van hoofdstuk 7 zet de sprongkracht op -1300.0, en de oplossing
 // van zijn opdracht de snelheid op 600.0; config.test.ts eist dat elke waarde
 // uit de lessen hier staat.
 export const CURSUS_SNELHEID = ['300.0', '300', '600.0', '600'];
 export const CURSUS_SPRONG = ['-800.0', '-800', '-400.0', '-400', '-1300.0', '-1300'];
-const CURSUS_ANIMATIES = ['idle', 'run', 'jump'];
 // De eigen functies die hoofdstuk 1 tot en met 9 voorzegt. Wie ze overtypt
 // heeft geen code opgeknipt, en zo telde een nagedane cursus (reset() in de
 // global en spawn_muntje() in het level) al als "modulaire eigen functies".
@@ -156,51 +156,51 @@ const alt = (waardes: string[]) => waardes.map((w) => w.replace(/[.\-]/g, '\\$&'
 // = 450.0`) en met @export ervoor; het getal komt na de lookahead.
 const toekenning = (namen: string) => `\\b(?:${namen})\\s*(?::\\s*\\w+\\s*)?(?::=|=)\\s*`;
 
-// Een eigen animatie in code: een naam die niet uit de cursus komt, op elke
-// manier waarop een script een animatie kiest (issue 227). Eerst telde alleen
-// `play("lopen")` met de naam er letterlijk in. Een leerling die zijn spel van
-// zichzelf maakte, schrijft vaak iets anders, en dat telt nu ook:
-// - de naam ergens in de aanroep: `play("idle" if is_on_floor() else "vallen")`,
-//   ook als `StringName("lopen")`;
-// - `play_backwards`, `travel` en `queue` (AnimationTree, AnimationPlayer), of
-//   `animation = "lopen"` en `current_animation = "aanval"`;
-// - de naam in een variabele: `naam = "lopen"` en dan `play(naam)` of
-//   `animation = naam`, in welke volgorde ook in het script;
-// - de naam in een lijst of de waarde in een dictionary, en dan
-//   `play(animaties[richting])`;
-// - de naam als argument van een eigen functie: `speel("lopen")` met
-//   `func speel(naam):` en daarin `play(naam)`.
-// Een tekst of een aanroep in de aanroep wordt als geheel overgeslagen:
-// anders las het patroon `" if stil else "` als een naam. `default` heeft
-// elke AnimatedSprite2D vanzelf; die telt niet als eigen naam.
-// Een variabele kijkt niet naar zijn bereik: `var naam = "Sam"` voor een Label
-// en een parameter `naam` die naar `play(naam)` gaat, tellen samen ook.
-const NIET_EIGEN = [...CURSUS_ANIMATIES, 'default'];
-const NAAM = `(?:StringName\\s*\\(\\s*)?&?["'](?!(?:${NIET_EIGEN.join('|')})["'])[^"'\\n]+["']`;
+// Animatie veranderen: in code een animatie wisselen of spiegelen (issue
+// 227). Dat is wat les 6.2 leert, en het telt ook met de namen uit de les
+// (idle, run, jump): de docent bedoelt "via code een animatie aanpassen", niet
+// "een eigen naam". Eerst telde alleen een eigen naam, letterlijk in
+// `play("lopen")`. Nu telt elke manier waarop een script een animatie kiest:
+// - een naam ergens in `play`, `play_backwards`, `travel` of `queue`, ook na
+//   een aanroep (`play("idle" if is_on_floor() else "vallen")`) en als
+//   `StringName("…")`;
+// - `animation = …`, `current_animation = …`, `flip_h = …` of `flip_v = …`;
+// - een naam in een variabele, een lijst of een dictionary die naar zo'n
+//   aanroep gaat (`play(naam)`, `play(ANIMATIES[richting])`), in welke
+//   volgorde ook in het script;
+// - een naam als argument van een eigen functie die hem doorgeeft
+//   (`speel("run")` met `func speel(naam):` en daarin `play(naam)`).
+// Een geluid telt niet: `$Geluid.play()` en `play(1.5)` hebben geen naam.
+// Een variabele kijkt niet naar zijn bereik: `var naam = "Sam"` voor een
+// Label en een parameter `naam` die naar `play(naam)` gaat, tellen samen ook.
+const NAAM = `(?:StringName\\s*\\(\\s*)?&?(?:"[^"\\n]+"|'[^'\\n]+')`;
 const AFSPELEN = '\\b(?:play|play_backwards|set_animation|travel|queue)\\s*\\(\\s*';
 const ZETTEN = '\\b(?:current_)?animation\\s*=\\s*';
-const KIEZEN = `(?:${AFSPELEN}|${ZETTEN})`;
+// Spiegelen, zoals les 6.2 bij naar links lopen; `==` is een vergelijking.
+const SPIEGELEN = '\\bflip_[hv]\\s*=(?!=)';
 const TEKST = `"[^"\\n]*"|'[^'\\n]*'`;
 const BINNEN = `\\((?:[^()"'\\n]|${TEKST})*\\)`;
 const IN_AANROEP = `(?:[^()"'\\n]|${TEKST}|${BINNEN})*?`;
-// Na de naam van een variabele: het eind van de aanroep, of van de regel.
-const EINDE = '\\s*(?:[,)]|$)';
+// Na de naam van een variabele: het eind van een argument.
+const EINDE = '\\s*[,)]';
 const KRIJGT = '\\s*(?::\\s*[\\w\\[\\]]+\\s*)?:?=\\s*';
-// Een lijst met een eigen naam erin, of een dictionary met een eigen naam als waarde.
+// Een lijst met een naam erin, of een dictionary met een naam als waarde.
 const LIJST = `(?:\\[[^\\]]*?|\\{[^}]*?:\\s*)${NAAM}`;
 const ERNA = '(?=[\\s\\S]*?';
 const ANIMATIE = new RegExp(
   [
     `${AFSPELEN}${IN_AANROEP}${NAAM}`,
-    `${ZETTEN}${NAAM}`,
-    `\\b(\\w+)${KRIJGT}${NAAM}${ERNA}${KIEZEN}\\1${EINDE})`,
-    `${KIEZEN}(\\w+)${EINDE}${ERNA}\\b\\2${KRIJGT}${NAAM})`,
-    `\\b(\\w+)${KRIJGT}${LIJST}${ERNA}${KIEZEN}\\3\\s*\\[)`,
-    `${KIEZEN}(\\w+)\\s*\\[${ERNA}\\b\\4${KRIJGT}${LIJST})`,
-    `\\b(\\w+)\\s*\\(\\s*${NAAM}${ERNA}\\bfunc\\s+\\5\\s*\\(\\s*(\\w+)[^)]*\\)[\\s\\S]*?${KIEZEN}\\6${EINDE})`,
-    `\\bfunc\\s+(\\w+)\\s*\\(\\s*(\\w+)[^)]*\\)${ERNA}${KIEZEN}\\8${EINDE})${ERNA}\\b\\7\\s*\\(\\s*${NAAM})`,
+    // Elke waarde telt, ook een variabele; `==` is een vergelijking.
+    `${ZETTEN}(?!=)\\S`,
+    SPIEGELEN,
+    `\\b(\\w+)${KRIJGT}${NAAM}${ERNA}${AFSPELEN}\\1${EINDE})`,
+    `${AFSPELEN}(\\w+)${EINDE}${ERNA}\\b\\2${KRIJGT}${NAAM})`,
+    `\\b(\\w+)${KRIJGT}${LIJST}${ERNA}${AFSPELEN}\\3\\s*\\[)`,
+    `${AFSPELEN}(\\w+)\\s*\\[${ERNA}\\b\\4${KRIJGT}${LIJST})`,
+    `\\b(\\w+)\\s*\\(\\s*${NAAM}${ERNA}\\bfunc\\s+\\5\\s*\\(\\s*(\\w+)[^)]*\\)[\\s\\S]*?${AFSPELEN}\\6${EINDE})`,
+    `\\bfunc\\s+(\\w+)\\s*\\(\\s*(\\w+)[^)]*\\)${ERNA}${AFSPELEN}\\8${EINDE})${ERNA}\\b\\7\\s*\\(\\s*${NAAM})`,
   ].join('|'),
-  'gm',
+  'g',
 );
 
 // De callbacks die Godot zelf aanroept. Een eigen functie met een _ ervoor
