@@ -456,11 +456,7 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
           busy={busy || exporting}
           setBusy={setBusy}
         />
-        {busy && (
-          <p className={styles.status} role="status">
-            Bezig met analyseren...
-          </p>
-        )}
+        {busy && <output className={styles.status}>Bezig met analyseren...</output>}
         {error && (
           <p className={styles.error} role="alert">
             {error}

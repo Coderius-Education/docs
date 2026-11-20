@@ -151,12 +151,11 @@ const DETECTIE: Record<string, ConceptDetect> = {
       'gm',
     ),
   ),
-  ),
   // Direct (`db[k] = {…}`), of eerst in een variabele (`nieuw = {…}` en dan
   // `db[k] = nieuw`), zoals leerlingen het vaak schrijven.
   'db-dictionary': inDb(
     (d, v) =>
-      String.raw`(?:\b${terug(d)}${SCHRIJFT}\s*(?:\{|dict\s*\()|\b(\w+)\s*=\s*(?:\{|dict\s*\()$ZELFDE_FUNCTIE\b$terug(d)$SCHRIJFT\s*$terug(v)\b)`,
+      String.raw`(?:\b${terug(d)}${SCHRIJFT}\s*(?:\{|dict\s*\()|\b(\w+)\s*=\s*(?:\{|dict\s*\()${ZELFDE_FUNCTIE}\b${terug(d)}${SCHRIJFT}\s*${terug(v)}\b)`,
     1,
   ),
   // Ophalen in een variabele (\2), die aanpassen, en hem terugzetten. Wie
@@ -166,7 +165,7 @@ const DETECTIE: Record<string, ConceptDetect> = {
   // `sara["vakken"].append(…)` is het voorbeeld van de les zelf.
   'db-aanpassen': inDb(
     (d, v) =>
-      String.raw`\b(\w+)\s*=\s*$terug(d)\s*(?:\[[^\]]+\]|\.get\s*\([^)]*\))$ZELFDE_FUNCTIE\b$terug(v)\s*(?:(?:\[[^\]]+\]\s*)+[-+*/]?=(?!=)|(?:\[[^\]]+\]\s*)*\.(?:append|extend|update|remove|pop|insert|clear)\s*\()$ZELFDE_FUNCTIE\b$terug(d)\s*\[[^\]]+\]\s*=\s*$terug(v)\b`,
+      String.raw`\b(\w+)\s*=\s*${terug(d)}\s*(?:\[[^\]]+\]|\.get\s*\([^)]*\))${ZELFDE_FUNCTIE}\b${terug(v)}\s*(?:(?:\[[^\]]+\]\s*)+[-+*/]?=(?!=)|(?:\[[^\]]+\]\s*)*\.(?:append|extend|update|remove|pop|insert|clear)\s*\()${ZELFDE_FUNCTIE}\b${terug(d)}\s*\[[^\]]+\]\s*=\s*${terug(v)}\b`,
     1,
   ),
   // Gebruikt, niet alleen geïmporteerd.
@@ -174,11 +173,12 @@ const DETECTIE: Record<string, ConceptDetect> = {
   // In een template of in Python; in de cursus komt hij voor het eerst als
   // het lege geval in een template. `{%- … %}` is dezelfde tag, met de
   // witruimte ervoor weggehaald; dat geldt ook voor for en include.
-  'if-else': 
+  'if-else': {
     type: 'regex',
     // `if __name__ == "__main__":` telt niet: dat is geen keuze van de leerling.
-    pattern: /\%-?\s*if\b|^[ \t]*if\b(?!\s+__name__\b)[^\n]*:/gm,
-    in: ['py', 'html'],,
+    pattern: /\{%-?\s*if\b|^[ \t]*if\b(?!\s+__name__\b)[^\n]*:/gm,
+    in: ['py', 'html'],
+  },
   // Niet "aanmelden": dat is in het Nederlands meestal inloggen. Ook de
   // Engelse namen (`/register`, `/sign-up`); `account` alleen als hele naam,
   // anders telde `/account/inloggen` als registreren.
@@ -197,7 +197,7 @@ const DETECTIE: Record<string, ConceptDetect> = {
   'account-wachtwoord': py(
     new RegExp(
       [
-        String.raw`[\w)\]](?<!herhaal\w*|bevestig\w*|confirm\w*|repeat\w*|opnieuw\w*|2|_again)\s*[!=]=\s*(?!$HERHAAL)$WACHTWOORD`,
+        String.raw`[\w)\]](?<!herhaal\w*|bevestig\w*|confirm\w*|repeat\w*|opnieuw\w*|2|_again)\s*[!=]=\s*(?!${HERHAAL})${WACHTWOORD}`,
         String.raw`(?<![\w"'])(?!${HERHAAL}\s*[!=]=)${WACHTWOORD}\s*[!=]=\s*(?!["'\d]|${HERHAAL}|None\b)\w`,
         String.raw`\[\s*["']${WACHTWOORD}["']\s*\]\s*[!=]=\s*(?!["'\d]|None\b)\w`,
         String.raw`\.verify\s*\(`,
@@ -215,25 +215,25 @@ const DETECTIE: Record<string, ConceptDetect> = {
   // aan. Een bestand dat erbij hoort (Dockerfile, compose.yaml) herkent de
   // nakijker aan zijn naam; de inhoud leest hij niet, want alleen .py, .html,
   // .css en .js zijn tekst voor hem.
-  'lx-mappen': type: 'handmatig' ,
-  'lx-bestanden': type: 'handmatig' ,
-  'lx-rechten': type: 'handmatig' ,
-  'lx-apt': type: 'handmatig' ,
-  'lx-nano': type: 'handmatig' ,
-  'lx-ssh': type: 'handmatig' ,
-  'lx-zoeken': type: 'handmatig' ,
-  'lx-diensten': type: 'handmatig' ,
-  'lx-groepen': type: 'handmatig' ,
-  'lx-scp': type: 'handmatig' ,
+  'lx-mappen': { type: 'handmatig' },
+  'lx-bestanden': { type: 'handmatig' },
+  'lx-rechten': { type: 'handmatig' },
+  'lx-apt': { type: 'handmatig' },
+  'lx-nano': { type: 'handmatig' },
+  'lx-ssh': { type: 'handmatig' },
+  'lx-zoeken': { type: 'handmatig' },
+  'lx-diensten': { type: 'handmatig' },
+  'lx-groepen': { type: 'handmatig' },
+  'lx-scp': { type: 'handmatig' },
   // Alle drie de adressen uit, zoals in de les; alleen docs_url is genoeg.
   // `openapi_url=None` zet alle drie de adressen uit, ook /docs.
   'vh-docs': py(/\b(?:docs_url|openapi_url)\s*=\s*None\b/g),
-  'vh-gitignore': type: 'path', pattern: /(^|\/)\.gitignore$/ ,
+  'vh-gitignore': { type: 'path', pattern: /(^|\/)\.gitignore$/ },
   // Een grens in Form: lengte of waarde. Form(...) alleen is geen controle.
   'vh-invoer': py(/\bForm\s*\([^)]*\b(?:max_length|min_length|ge|le|gt|lt)\s*=/g),
   // Templates escapen vanzelf: wie niets doet, doet het goed. Of er nergens
   // |safe op tekst van een bezoeker staat, beoordeelt de docent.
-  'vh-xss': type: 'handmatig' ,
+  'vh-xss': { type: 'handmatig' },
   'vh-toegang': py(/HTTPException\s*\(\s*(?:status_code\s*=\s*)?(?:403\b|status\.HTTP_403)/g),
   'vh-limiet': py(/@limiter\.limit\s*\(/g),
   // httponly=True op een cookie. samesite hoeft niet: FastAPI zet "lax" al
@@ -242,16 +242,17 @@ const DETECTIE: Record<string, ConceptDetect> = {
   'vh-hash': py(/\bPasswordHasher\s*\(/g),
   // De limiet op het inlog-endpoint, zoals in de les: direct onder @app.post.
   'vh-pogingen': py(/@\w+\.post\s*\(\s*["']\/(?:inlog|login)[^\n]*\n\s*@limiter\.limit\s*\(/gi),
-  'on-requirements': type: 'path', pattern: /(^|\/)requirements\.txt$/ ,
-  'on-readme': type: 'path', pattern: /(^|\/)README\.md$/i ,
-  'on-linux': type: 'handmatig' ,
-  'on-dockerfile': type: 'path', pattern: /(^|\/)Dockerfile$/ ,
-  'on-compose': type: 'path', pattern: /(^|\/)(?:docker-)?compose\.ya?ml$/ ,
-  'on-server': type: 'handmatig' ,
-  'on-dichtzetten': type: 'handmatig' ,
-  'on-https': type: 'handmatig' ,
-  'on-backup': type: 'handmatig' ,
-  'on-nieuwe-versie': type: 'handmatig' ,;
+  'on-requirements': { type: 'path', pattern: /(^|\/)requirements\.txt$/ },
+  'on-readme': { type: 'path', pattern: /(^|\/)README\.md$/i },
+  'on-linux': { type: 'handmatig' },
+  'on-dockerfile': { type: 'path', pattern: /(^|\/)Dockerfile$/ },
+  'on-compose': { type: 'path', pattern: /(^|\/)(?:docker-)?compose\.ya?ml$/ },
+  'on-server': { type: 'handmatig' },
+  'on-dichtzetten': { type: 'handmatig' },
+  'on-https': { type: 'handmatig' },
+  'on-backup': { type: 'handmatig' },
+  'on-nieuwe-versie': { type: 'handmatig' },
+};
 
 // Wat de nakijker daarnaast laat zien. Het telt niet voor de moeilijkheid,
 // maar zegt wel wat er in het project zit: elk item van de cheatsheet heeft

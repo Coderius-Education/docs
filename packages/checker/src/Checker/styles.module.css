@@ -8,6 +8,7 @@
 }
 
 .status {
+  display: block;
   margin-top: 0.75rem;
   color: var(--ifm-color-emphasis-700);
 }

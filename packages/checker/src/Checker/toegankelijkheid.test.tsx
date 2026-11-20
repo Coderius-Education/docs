@@ -34,7 +34,7 @@ describe('de upload tool met het toetsenbord', () => {
     // Eerst kwam Tab twee keer op een onzichtbaar bestandsveld uit, en hoorde
     // een schermlezer vier knoppen.
     expect(screen.getAllByRole('button')).toHaveLength(2);
-    for (const input of container.querySelectorAll('input[type=file]')) {
+    for (const input of Array.from(container.querySelectorAll('input[type=file]'))) {
       expect(input.getAttribute('tabindex')).toBe('-1');
       expect(input.getAttribute('aria-hidden')).toBe('true');
     }

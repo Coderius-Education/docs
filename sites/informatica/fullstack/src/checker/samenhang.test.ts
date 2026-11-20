@@ -579,8 +579,10 @@ describe('samenhang — review van de upload tool', () => {
     p['static/js/htmx.min.js'] = '/* htmx */';
     p[FORM] = p[FORM].replace('</head>', '<script src="/static/js/htmx.min.js"></script></head>');
     expect(analyze(project(p), fullstackConfig).samenhang).toEqual([]);
-    delete p['static/js/htmx.min.js'];
-    expect(analyze(project(p), fullstackConfig).samenhang?.map((f) => f.titel)).toEqual([
+    const zonder = Object.fromEntries(
+      Object.entries(p).filter(([pad]) => pad !== 'static/js/htmx.min.js'),
+    );
+    expect(analyze(project(zonder), fullstackConfig).samenhang?.map((f) => f.titel)).toEqual([
       '/static/js/htmx.min.js wijst naar een bestand dat er niet is',
     ]);
   });
