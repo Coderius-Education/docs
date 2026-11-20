@@ -1663,6 +1663,16 @@ de pagina niet. Het adres van de download blijft een minuut geldig
 Op Linux in Chromium, met het echte venster Opslaan als onder Xvfb, schreef de
 nakijker een PDF van 471 KB; de fout van het issue kwam daar niet terug.
 
+**Elke pagina van de PDF zegt van wie hij is**: een kopregel met de naam van
+het bestand (cursus, datum, leerling) en "pagina 2 van 3" (`kopregel` in
+`exportPdf.ts`). De browser tekent die regel in het plaatje van de pagina,
+niet jsPDF: de letters van jsPDF kennen alleen Latin-1, en "Şükrü" kwam er
+verminkt in. Een kop in het laatste zesde van een pagina begint de volgende
+pagina (`knipPunten` met de plek van elke h2 en h3, gemeten in de kloon van
+html2canvas). Wie dit in Chromium op Linux naspeelt: zonder UTF-8-locale
+(`LANG=C.UTF-8`) heet een download met een naam als Zoë "download"; dat ligt
+aan de machine, niet aan de nakijker.
+
 ## Begrippen
 
 Een cursus met moeilijke woorden heeft `src/begrippen.json`: per begrip een

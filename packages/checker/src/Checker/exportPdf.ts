@@ -153,22 +153,32 @@ export async function bewaarPdf(
  * Waar de pagina's van de PDF beginnen, in pixels van het plaatje. Een pagina
  * eindigt op een lege (witte) rij vlak boven de volle hoogte, zodat een regel
  * tekst niet doormidden gaat; is er in het laatste kwart geen lege rij, dan
- * op de volle hoogte.
+ * op de volle hoogte. Begint er onderaan een pagina een kop (`koppen`: de
+ * bovenkant van elke h2 en h3, in het laatste zesde van de pagina), dan
+ * begint de volgende pagina met die kop: eerst stond Samenhang of
+ * Vragen als laatste regel van een pagina, en de rest erna.
  */
 export function knipPunten(
   hoogte: number,
   paginaHoogte: number,
   isLeeg: (y: number) => boolean,
+  koppen: number[] = [],
 ): number[] {
   const starts = [0];
   let start = 0;
   while (start + paginaHoogte < hoogte) {
     let knip = start + paginaHoogte;
-    const ondergrens = start + Math.floor(paginaHoogte * 0.75);
-    for (let y = knip; y > ondergrens; y--) {
-      if (isLeeg(y)) {
-        knip = y;
-        break;
+    const kopGrens = start + Math.floor(paginaHoogte * (5 / 6));
+    const kop = Math.max(-1, ...koppen.filter((y) => y > kopGrens && y <= knip));
+    if (kop !== -1) {
+      knip = kop - 1;
+    } else {
+      const ondergrens = start + Math.floor(paginaHoogte * 0.75);
+      for (let y = knip; y > ondergrens; y--) {
+        if (isLeeg(y)) {
+          knip = y;
+          break;
+        }
       }
     }
     starts.push(knip);
@@ -177,32 +187,66 @@ export function knipPunten(
   return starts;
 }
 
+/**
+ * De regel boven elke pagina: de naam van het bestand (cursus, datum en
+ * leerling) en het paginanummer. Een losse tweede pagina zei eerst niet van
+ * wie hij was.
+ */
+export function kopregel(
+  bestand: string,
+  pagina: number,
+  totaal: number,
+): { links: string; rechts: string } {
+  return {
+    links: bestand.replace(/\.pdf$/i, ''),
+    rechts: `pagina ${pagina} van ${totaal}`,
+  };
+}
+
+/** Hoogte van de kopregel, in millimeter van de pagina. */
+const KOP_MM = 10;
+
 export function exportReportToPdf(
   element: HTMLElement,
   exportingClass: string,
   filename: string,
 ): Promise<Bewaard | null> {
-  return bewaarPdf(() => maakPdf(element, exportingClass), filename);
+  return bewaarPdf(() => maakPdf(element, exportingClass, filename), filename);
 }
 
 /** Het rapport als PDF: een plaatje van de DOM, over pagina's verdeeld. */
-async function maakPdf(element: HTMLElement, exportingClass: string): Promise<Blob> {
+async function maakPdf(
+  element: HTMLElement,
+  exportingClass: string,
+  bestand: string,
+): Promise<Blob> {
   const { default: html2canvas } = await import('html2canvas-pro');
+  const schaal = 2;
+  // De bovenkant van elke kop, gemeten in de kloon: daar staan de knoppen
+  // weg en de opmerkingen als tekst, dus de plek is anders dan op het scherm.
+  let koppen: number[] = [];
   const canvas = await html2canvas(element, {
-    scale: 2,
+    scale: schaal,
     backgroundColor: '#ffffff',
     onclone: (doc, cloned) => {
       (cloned as HTMLElement).classList.add(exportingClass);
       // Altijd het lichte thema: in donker kwam lichte tekst op het witte
       // papier, en waren de kaarten zwarte blokken.
       doc.documentElement.setAttribute('data-theme', 'light');
+      const boven = cloned.getBoundingClientRect().top;
+      koppen = Array.from(cloned.querySelectorAll('h2, h3'))
+        .map((h) => h.getBoundingClientRect())
+        .filter((r) => r.height > 0)
+        .map((r) => Math.round((r.top - boven) * schaal));
     },
   });
 
   const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const pageW = pdf.internal.pageSize.getWidth();
   const pageH = pdf.internal.pageSize.getHeight();
-  const paginaPx = Math.floor((canvas.width * pageH) / pageW);
+  const mmNaarPx = canvas.width / pageW;
+  const kopPx = Math.round(KOP_MM * mmNaarPx);
+  const paginaPx = Math.floor((pageH - KOP_MM) * mmNaarPx);
   const ctx = canvas.getContext('2d');
   const isLeeg = (y: number) => {
     if (!ctx) return false;
@@ -212,18 +256,30 @@ async function maakPdf(element: HTMLElement, exportingClass: string): Promise<Bl
     }
     return true;
   };
-  const starts = knipPunten(canvas.height, paginaPx, isLeeg);
+  const starts = knipPunten(canvas.height, paginaPx, isLeeg, koppen);
 
   starts.forEach((start, i) => {
     const eind = starts[i + 1] ?? canvas.height;
     const stuk = document.createElement('canvas');
     stuk.width = canvas.width;
-    stuk.height = eind - start;
+    stuk.height = kopPx + eind - start;
     const s = stuk.getContext('2d');
     if (!s) return;
     s.fillStyle = '#ffffff';
     s.fillRect(0, 0, stuk.width, stuk.height);
-    s.drawImage(canvas, 0, -start);
+    // De kopregel tekent de browser, niet jsPDF: de letters van jsPDF kennen
+    // alleen Latin-1, en een naam als Şükrü kwam er dan verminkt in.
+    const kop = kopregel(bestand, i + 1, starts.length);
+    const marge = Math.round(12 * mmNaarPx);
+    s.fillStyle = '#555555';
+    s.font = `${Math.round(3 * mmNaarPx)}px system-ui, sans-serif`;
+    s.textBaseline = 'middle';
+    s.textAlign = 'right';
+    s.fillText(kop.rechts, stuk.width - marge, kopPx / 2);
+    const rechtsBreed = s.measureText(kop.rechts).width;
+    s.textAlign = 'left';
+    s.fillText(kop.links, marge, kopPx / 2, stuk.width - 3 * marge - rechtsBreed);
+    s.drawImage(canvas, 0, kopPx - start);
     if (i > 0) pdf.addPage();
     pdf.addImage(
       stuk.toDataURL('image/jpeg', 0.85),
