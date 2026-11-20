@@ -87,7 +87,7 @@ describe('Cijfer', () => {
   it('vraagt eerst om een denkvaardigheid, en geeft dan cijfer en zin', () => {
     render(<Opstelling gebruikt={['h-basis', 'h-gev', 'c-basis']} />);
     expect(screen.queryByText(/daarbij hoort het cijfer/)).toBeNull();
-    expect(screen.getByText(/maar bij CSS geen concept op gevorderd/)).toBeTruthy();
+    expect(screen.getByText(/maar bij "CSS" geen concept op gevorderd/)).toBeTruthy();
 
     fireEvent.click(screen.getByRole('button', { name: 'Toepassen' }));
     expect(

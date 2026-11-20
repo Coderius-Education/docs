@@ -9,15 +9,19 @@ import { fullstackConfig } from '@site/src/checker/config';
 
 # Project checken
 
-Heb je je FastAPI-project af, of ben je een eind op weg? Upload je projectbestanden (`main.py`, je `static/`-map en je `templates/`) en zie meteen hoeveel bestanden je hebt.
+Heb je je FastAPI-project af, of ben je een eind op weg? Upload je projectmap (met `main.py`, je `static/`-map en je `templates/`) en zie meteen hoeveel bestanden je hebt.
 
 **Let op:** je bestanden gaan nooit naar een server. Alles gebeurt in je eigen browser.
 
 ## Wat kun je uploaden?
 
-- Een **.zip-bestand** van je project
-- **Losse bestanden** (`main.py`, `style.css`, `home.html`, …)
 - Een **hele map** met je project
+- Een **.zip-bestand** van je project
+- **Losse bestanden** (`main.py`, `style.css`, `home.html`, …). Dan ziet de nakijker je mappen niet, en kan hij niet nagaan of je links en templates kloppen. Kies liever je map of een zip.
+
+Laat je scripts uit Gegevens opslaan (zoals `aanpassen.py`) in je map staan: de nakijker telt ze mee.
+
+Doe je Veiligheid of Online zetten, neem dan ook je `.gitignore`, `requirements.txt`, `README.md`, `Dockerfile` en `compose.yaml` mee: die herkent de nakijker aan hun naam. Je `.venv` en je databases (`*.db`) hoeven er niet in.
 
 <Checker config={fullstackConfig} variant="leerling" />
 

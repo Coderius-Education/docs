@@ -5,7 +5,7 @@ import styles from './styles.module.css';
 
 interface UploadZoneProps {
   config: CheckerConfig;
-  onLoaded: (files: ProjectFiles, warnings: string[]) => void;
+  onLoaded: (files: ProjectFiles, warnings: string[], losseBestanden?: boolean) => void;
   onError: (message: string) => void;
   busy: boolean;
   setBusy: (busy: boolean) => void;
@@ -20,12 +20,12 @@ export function UploadZone({ config, onLoaded, onError, busy, setBusy }: UploadZ
     async (source: FileList | File[] | DataTransferItemList) => {
       setBusy(true);
       try {
-        const { files, warnings } = await readUploadedFiles(source, {
+        const { files, warnings, losseBestanden } = await readUploadedFiles(source, {
           classify: config.classify,
           textKinds: config.textKinds,
           imageKinds: config.imageKinds,
         });
-        onLoaded(files, warnings);
+        onLoaded(files, warnings, losseBestanden);
       } catch (err) {
         onError(err instanceof Error ? err.message : String(err));
       } finally {
@@ -100,7 +100,11 @@ export function UploadZone({ config, onLoaded, onError, busy, setBusy }: UploadZ
         accept={config.accept}
         className={styles.hiddenInput}
         onChange={handleFileInputChange}
-        aria-label="Kies bestanden of een zip-bestand"
+        // De knoppen erboven openen dit veld; zelf is het onzichtbaar. Zonder
+        // deze twee kwam Tab er twee keer op uit, en hoorde een schermlezer
+        // vier knoppen.
+        tabIndex={-1}
+        aria-hidden="true"
       />
       <input
         ref={folderInputRef}
@@ -110,7 +114,11 @@ export function UploadZone({ config, onLoaded, onError, busy, setBusy }: UploadZ
         webkitdirectory=""
         className={styles.hiddenInput}
         onChange={handleFileInputChange}
-        aria-label="Kies een map met je projectbestanden"
+        // De knoppen erboven openen dit veld; zelf is het onzichtbaar. Zonder
+        // deze twee kwam Tab er twee keer op uit, en hoorde een schermlezer
+        // vier knoppen.
+        tabIndex={-1}
+        aria-hidden="true"
       />
     </div>
   );

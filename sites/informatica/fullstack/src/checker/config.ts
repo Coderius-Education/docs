@@ -24,7 +24,13 @@ import { samenhang } from './samenhang';
 
 const IMAGE_EXT = new Set(['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.ico', '.bmp']);
 
+// De bestanden van niveau 3 die de nakijker aan hun naam herkent. Ze worden
+// ook gelezen: een lege Dockerfile of README telde eerst als gedaan.
+const INSTELLING =
+  /(?:^|\/)(?:Dockerfile|(?:docker-)?compose\.ya?ml|requirements\.txt|README\.md|\.gitignore)$/i;
+
 function classify(path: string): string {
+  if (INSTELLING.test(path)) return 'instelling';
   const dot = path.lastIndexOf('.');
   const ext = dot === -1 ? '' : path.slice(dot).toLowerCase();
   if (ext === '.py') return 'py';
@@ -58,6 +64,10 @@ const MET_DB = String.raw`SqliteDict\s*${DB_HAAKJES}\s+as\s+(\w+)\s*[:,]`;
 // Of één database voor het hele bestand: `db = SqliteDict("…",
 // autocommit=True)` bovenaan. Die geldt tot het eind van het bestand.
 const GLOBALE_DB = String.raw`^(\w+)\s*=\s*SqliteDict\s*${DB_HAAKJES}`;
+// Of een database die een functie zelf opent: `db = SqliteDict("…")`
+// ingesprongen, met `db.close()` aan het eind, zoals in de README van
+// sqlitedict. Die geldt tot het einde van de functie.
+const LOKALE_DB = String.raw`^[ \t]+(\w+)\s*=\s*SqliteDict\s*${DB_HAAKJES}`;
 // Alles tot de volgende regel die helemaal links begint: het einde van de
 // functie of het script. Zo telt een `Form` in het ene endpoint niet mee voor
 // een database in het volgende. Een `):` helemaal links hoort nog bij de
@@ -77,14 +87,23 @@ const terug = (n: number) => `\\${n}`;
 const inDb = (na: (db: number, eigen: number) => string, eigenGroepen = 0): ConceptDetect =>
   py(
     new RegExp(
-      `(?:${MET_DB}${ZELFDE_FUNCTIE}${na(1, 2)})|(?:${GLOBALE_DB}[\\s\\S]*?${na(2 + eigenGroepen, 3 + eigenGroepen)})`,
+      [
+        `(?:${MET_DB}${ZELFDE_FUNCTIE}${na(1, 2)})`,
+        `(?:${GLOBALE_DB}[\\s\\S]*?${na(2 + eigenGroepen, 3 + eigenGroepen)})`,
+        `(?:${LOKALE_DB}${ZELFDE_FUNCTIE}${na(3 + 2 * eigenGroepen, 4 + 2 * eigenGroepen)})`,
+      ].join('|'),
       'gm',
     ),
   );
 
 // De naam van een wachtwoordveld, en van het veld waarin je hem herhaalt.
-const WACHTWOORD = String.raw`(?:wachtwoord|password|passwd|ww|pw)\b`;
-const HERHAAL = String.raw`(?:herhaal\w*|bevestig\w*|\w*2\b|\w*_again\b)`;
+// Ook met iets ervoor of erachter (`ingevuld_wachtwoord`, `wachtwoord_invoer`):
+// welk veld het herhaalveld is, zegt HERHAAL.
+const WACHTWOORD = String.raw`(?:\w*(?:wachtwoord|password|passwd|pwd)\w*|(?:ww|pw)\b)`;
+const HERHAAL = String.raw`(?:\w*(?:herhaal|bevestig|confirm|repeat|opnieuw)\w*|\w*2\b|\w*_again\b)`;
+// Het herhaalveld rechts van een vergelijking, ook uit een dictionary of
+// formulier (`form["password_confirm"]`, `data.get("wachtwoord_herhaal")`).
+const RECHTS_HERHAAL = String.raw`[\w.]*(?:(?:\[|\(\s*)\s*["'])?${HERHAAL}`;
 
 // Het controlescript van de cursus (static/controleer.py): de leerling zet
 // het naast main.py, en zijn routes, cookies en if's telden eerst als die van
@@ -108,16 +127,20 @@ const DETECTIE: Record<string, ConceptDetect> = {
   'html-css-link': html(
     /<link\b(?=[^>]*stylesheet)(?=[^>]*\bhref\s*=\s*["'](?!https?:|\/\/))[^>]*>/gi,
   ),
-  'html-img': html(/<img\b/gi),
+  // Een eigen afbeelding: een plaatje van internet telt niet, net als een
+  // stylesheet van een CDN.
+  // Alleen het attribuut src, niet data-src van een plaatje dat later laadt.
+  'html-img': html(/<img\b(?![^>]*(?<![\w-])src\s*=\s*["']?(?:https?:|\/\/))[^>]*>/gi),
   // Een link naar een route van de eigen server; een link naar een bestand in
   // /static/ of naar een andere site is geen pagina via een endpoint.
   'html-link': html(/<a\b[^>]*\bhref\s*=\s*["']\/(?!static\/)[^"']*["']/gi),
   // Met variabelen: een dictionary met een sleutel. Alleen `request` telt
   // niet; dat gaf de oude vorm mee zonder iets in het template te zetten.
   // Of een dictionary in een variabele die je meegeeft (`context = {…}`).
+  // `request` mag in die variabele als eerste sleutel staan (de oude vorm).
   'fastapi-templates': py(
     new RegExp(
-      String.raw`TemplateResponse\s*\([^)]*\{[^}]*?["'](?!request["'])\w+["']\s*:|\b(\w+)\s*=\s*\{\s*["'](?!request["'])\w+["']\s*:${ZELFDE_FUNCTIE}TemplateResponse\s*\([^)]*\b\1\b`,
+      String.raw`TemplateResponse\s*\([^)]*\{[^}]*?["'](?!request["'])\w+["']\s*:|\b(\w+)\s*=\s*\{[^}]*?["'](?!request["'])\w+["']\s*:${ZELFDE_FUNCTIE}TemplateResponse\s*\([^)]*\b\1\b`,
       'g',
     ),
   ),
@@ -130,11 +153,21 @@ const DETECTIE: Record<string, ConceptDetect> = {
   // beschreven: wat het formulier stuurt, komt in de database.
   'db-formulier': py(
     new RegExp(
-      String.raw`(?:Form\s*\(${ZELFDE_FUNCTIE}${MET_DB}${ZELFDE_FUNCTIE}\b\1${SCHRIJFT})|(?:${GLOBALE_DB}[\s\S]*?Form\s*\(${ZELFDE_FUNCTIE}\b\2${SCHRIJFT})`,
+      [
+        String.raw`(?:Form\s*\(${ZELFDE_FUNCTIE}${MET_DB}${ZELFDE_FUNCTIE}\b\1${SCHRIJFT})`,
+        String.raw`(?:${GLOBALE_DB}[\s\S]*?Form\s*\(${ZELFDE_FUNCTIE}\b\2${SCHRIJFT})`,
+        String.raw`(?:Form\s*\(${ZELFDE_FUNCTIE}${LOKALE_DB}${ZELFDE_FUNCTIE}\b\3${SCHRIJFT})`,
+      ].join('|'),
       'gm',
     ),
   ),
-  'db-dictionary': inDb((d) => String.raw`\b${terug(d)}${SCHRIJFT}\s*(?:\{|dict\s*\()`),
+  // Direct (`db[k] = {…}`), of eerst in een variabele (`nieuw = {…}` en dan
+  // `db[k] = nieuw`), zoals leerlingen het vaak schrijven.
+  'db-dictionary': inDb(
+    (d, v) =>
+      String.raw`(?:\b${terug(d)}${SCHRIJFT}\s*(?:\{|dict\s*\()|\b(\w+)\s*=\s*(?:\{|dict\s*\()${ZELFDE_FUNCTIE}\b${terug(d)}${SCHRIJFT}\s*${terug(v)}\b)`,
+    1,
+  ),
   // Ophalen in een variabele (\2), die aanpassen, en hem terugzetten. Wie
   // `db["sara"]["klas"] = …` schrijft past een kopie aan; dat telt niet.
   // Aanpassen is een sleutel een waarde geven (ook dieper of met `+=`), of
@@ -156,19 +189,29 @@ const DETECTIE: Record<string, ConceptDetect> = {
     pattern: /\{%-?\s*if\b|^[ \t]*if\b(?!\s+__name__\b)[^\n]*:/gm,
     in: ['py', 'html'],
   },
-  // Niet "aanmelden": dat is in het Nederlands meestal inloggen.
-  'account-registreren': py(/@\w+\.post\s*\(\s*["']\/(?:registr|account|signup)/gi),
+  // Niet "aanmelden": dat is in het Nederlands meestal inloggen. Ook de
+  // Engelse namen (`/register`, `/sign-up`); `account` alleen als hele naam,
+  // anders telde `/account/inloggen` als registreren.
+  'account-registreren': py(
+    /@\w+\.post\s*\(\s*["']\/(?:regist(?:r|er)|sign-?up|nieuw-account|account["'])/gi,
+  ),
   // Een formulier met precies één wachtwoordveld: een registreerformulier
   // heeft er twee (wachtwoord en herhalen), ook als het naar /aanmelden gaat.
   'account-inloggen': html(
-    /<form\b(?![^>]*registr)[^>]*>(?:(?!<\/form>|type\s*=\s*["']?password)[\s\S])*type\s*=\s*["']?password(?:(?!<\/form>|type\s*=\s*["']?password)[\s\S])*<\/form>/gi,
+    /<form\b(?![^>]*(?:regist|sign-?up))[^>]*>(?:(?!<\/form>|type\s*=\s*["']?password)[\s\S])*type\s*=\s*["']?password(?:(?!<\/form>|type\s*=\s*["']?password)[\s\S])*<\/form>/gi,
   ),
   // Het wachtwoord vergelijken met wat opgeslagen is (`opgeslagen !=
-  // wachtwoord`), of een hash controleren. Niet met een lege tekst, en niet
-  // met het herhaalveld bij registreren.
+  // wachtwoord`, `account["wachtwoord"] != invoer`), of een hash
+  // controleren. Niet met een lege tekst, en niet met het herhaalveld bij
+  // registreren (`password != password_confirm`).
   'account-wachtwoord': py(
     new RegExp(
-      String.raw`[\w)\]](?<!herhaal\w*|bevestig\w*|2|_again)\s*[!=]=\s*${WACHTWOORD}|\b${WACHTWOORD}\s*[!=]=\s*(?!["'\d]|${HERHAAL}|None\b)\w|\.verify\s*\(`,
+      [
+        String.raw`[\w)\]](?<!herhaal\w*|bevestig\w*|confirm\w*|repeat\w*|opnieuw\w*|2|_again)\s*[!=]=\s*(?!${HERHAAL})${WACHTWOORD}`,
+        String.raw`(?<![\w"'])(?!${HERHAAL}\s*[!=]=)${WACHTWOORD}\s*[!=]=\s*(?!["'\d]|${RECHTS_HERHAAL}|None\b)\w`,
+        String.raw`\[\s*["']${WACHTWOORD}["']\s*\]\s*[!=]=\s*(?!["'\d]|${RECHTS_HERHAAL}|None\b)\w`,
+        String.raw`\.verify\s*\(`,
+      ].join('|'),
       'g',
     ),
   ),
@@ -193,8 +236,10 @@ const DETECTIE: Record<string, ConceptDetect> = {
   'lx-groepen': { type: 'handmatig' },
   'lx-scp': { type: 'handmatig' },
   // Alle drie de adressen uit, zoals in de les; alleen docs_url is genoeg.
-  'vh-docs': py(/\bdocs_url\s*=\s*None\b/g),
-  'vh-gitignore': { type: 'path', pattern: /(^|\/)\.gitignore$/ },
+  // `openapi_url=None` zet alle drie de adressen uit, ook /docs.
+  'vh-docs': py(/\b(?:docs_url|openapi_url)\s*=\s*None\b/g),
+  // Elk bestand met inhoud: een lege .gitignore, README of Dockerfile telt niet.
+  'vh-gitignore': { type: 'path', pattern: /(^|\/)\.gitignore$/, inhoud: /^\s*[^#\s]/m },
   // Een grens in Form: lengte of waarde. Form(...) alleen is geen controle.
   'vh-invoer': py(/\bForm\s*\([^)]*\b(?:max_length|min_length|ge|le|gt|lt)\s*=/g),
   // Templates escapen vanzelf: wie niets doet, doet het goed. Of er nergens
@@ -208,11 +253,19 @@ const DETECTIE: Record<string, ConceptDetect> = {
   'vh-hash': py(/\bPasswordHasher\s*\(/g),
   // De limiet op het inlog-endpoint, zoals in de les: direct onder @app.post.
   'vh-pogingen': py(/@\w+\.post\s*\(\s*["']\/(?:inlog|login)[^\n]*\n\s*@limiter\.limit\s*\(/gi),
-  'on-requirements': { type: 'path', pattern: /(^|\/)requirements\.txt$/ },
-  'on-readme': { type: 'path', pattern: /(^|\/)README\.md$/i },
+  'on-requirements': {
+    type: 'path',
+    pattern: /(^|\/)requirements\.txt$/,
+    inhoud: /^\s*[A-Za-z][\w.-]*/m,
+  },
+  'on-readme': { type: 'path', pattern: /(^|\/)README\.md$/i, inhoud: /\S/ },
   'on-linux': { type: 'handmatig' },
-  'on-dockerfile': { type: 'path', pattern: /(^|\/)Dockerfile$/ },
-  'on-compose': { type: 'path', pattern: /(^|\/)(?:docker-)?compose\.ya?ml$/ },
+  'on-dockerfile': { type: 'path', pattern: /(^|\/)Dockerfile$/, inhoud: /^\s*FROM\s+\S/im },
+  'on-compose': {
+    type: 'path',
+    pattern: /(^|\/)(?:docker-)?compose\.ya?ml$/,
+    inhoud: /^services\s*:/m,
+  },
   'on-server': { type: 'handmatig' },
   'on-dichtzetten': { type: 'handmatig' },
   'on-https': { type: 'handmatig' },
@@ -229,14 +282,14 @@ const OOK_GEBRUIKT: ExtraConcept[] = [
     subject: 'fastapi',
     group: 'App & endpoints',
     label: 'GET endpoint (@app.get)',
-    detect: py(/@app\.get\s*\(/g),
+    detect: py(/@\w+\.get\s*\(/g),
   },
   {
     id: 'fastapi-post',
     subject: 'fastapi',
     group: 'App & endpoints',
     label: 'POST endpoint (@app.post)',
-    detect: py(/@app\.post\s*\(/g),
+    detect: py(/@\w+\.post\s*\(/g),
   },
   {
     id: 'fastapi-static',
@@ -257,21 +310,23 @@ const OOK_GEBRUIKT: ExtraConcept[] = [
     subject: 'fastapi',
     group: 'Formulieren & templates',
     label: 'Request-object',
-    detect: py(/\bRequest\b/g),
+    // Gebruikt, niet alleen geïmporteerd: een parameter `request: Request`.
+    detect: py(/:\s*Request\b/g),
   },
   {
     id: 'fastapi-httpexception',
     subject: 'fastapi',
     group: 'Doorsturen & fouten',
     label: '404 sturen (HTTPException)',
-    detect: py(/HTTPException/g),
+    // Gebruikt, niet alleen geïmporteerd.
+    detect: py(/\bHTTPException\s*\(/g),
   },
   {
     id: 'fastapi-delete',
     subject: 'fastapi',
     group: 'Doorsturen & fouten',
     label: 'DELETE endpoint (@app.delete)',
-    detect: py(/@app\.delete\s*\(/g),
+    detect: py(/@\w+\.delete\s*\(/g),
   },
   {
     id: 'html-basis',
@@ -366,7 +421,8 @@ const OOK_GEBRUIKT: ExtraConcept[] = [
     subject: 'database',
     group: 'sqlitedict',
     label: 'Alles bekijken (.items())',
-    detect: py(/\.items\s*\(\s*\)/g),
+    // Van de database, niet van een gewone dictionary (`DIEREN.items()`).
+    detect: inDb((d) => String.raw`\b${terug(d)}\.items\s*\(\s*\)`),
   },
   {
     id: 'db-del',
@@ -423,11 +479,12 @@ export const fullstackConfig: CheckerConfig = {
     { id: 'css', label: 'CSS' },
     { id: 'js', label: 'JavaScript' },
     { id: 'image', label: 'Afbeeldingen' },
+    { id: 'instelling', label: 'Instellingen' },
     { id: 'other', label: 'Overig' },
   ],
 
   classify,
-  textKinds: ['py', 'html', 'css', 'js'],
+  textKinds: ['py', 'html', 'css', 'js', 'instelling'],
   // Ook de bestanden van niveau 3 (requirements.txt, README.md, compose.yaml).
   // Een Dockerfile of .gitignore heeft geen extensie en is hier niet te
   // kiezen; die komen mee met Kies een map of een zip.
@@ -444,6 +501,4 @@ export const fullstackConfig: CheckerConfig = {
     storageKey: storageKey('fullstack', 'fullstackChecker.docentUnlocked'),
   },
   pdfFilename: (d) => `Beoordeling Fullstack Project - ${todayStamp(d)}.pdf`,
-  privacyNote:
-    'Let op: je bestanden gaan nooit naar een server. Alles gebeurt in je eigen browser.',
 };

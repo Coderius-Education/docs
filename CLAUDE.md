@@ -1620,9 +1620,11 @@ Krathwohl (2002).
 Hoe je een rij of een niveau toevoegt: `packages/shared/leerdoelen/README.md`.
 Het voorstel kijkt naar de onderwerpen, en als een leerroute er maar één
 heeft naar de groepen daarin (`voorstelOnderdelen` in `packages/checker`;
-fullstack niveau 1 en 2). Voor basis telt een onderdeel met
-basisconcepten, voor gevorderd en expert een onderdeel met concepten op die
-moeilijkheid of hoger. Is een moeilijkheid ergens alleen met een vinkje te
+fullstack niveau 1 en 2). Voor elke moeilijkheid telt een onderdeel
+met concepten op precies die moeilijkheid; toegepast mag ook een moeilijker
+concept zijn. Een groep met alleen expert telt voor gevorderd dus niet mee:
+eerst wel, en dan vroeg gevorderd op fullstack niveau 1 een htmx-verzoek en
+een path parameter, en vielen gevorderd en expert samen. Is een moeilijkheid ergens alleen met een vinkje te
 halen, dan zegt het voorstel dat. Een gekozen moeilijkheid geldt alleen op de
 leerroute waarvoor de docent hem koos (`moeilijkheidRoute`), en de PDF noemt
 niveau, voorstel en reden.
@@ -1660,6 +1662,16 @@ de pagina niet. Het adres van de download blijft een minuut geldig
 (`DOWNLOAD_BEWAREN_MS`): Firefox en Safari halen hem soms pas na de klik op.
 Op Linux in Chromium, met het echte venster Opslaan als onder Xvfb, schreef de
 nakijker een PDF van 471 KB; de fout van het issue kwam daar niet terug.
+
+**Elke pagina van de PDF zegt van wie hij is**: een kopregel met de naam van
+het bestand (cursus, datum, leerling) en "pagina 2 van 3" (`kopregel` in
+`exportPdf.ts`). De browser tekent die regel in het plaatje van de pagina,
+niet jsPDF: de letters van jsPDF kennen alleen Latin-1, en "Şükrü" kwam er
+verminkt in. Een kop in het laatste zesde van een pagina begint de volgende
+pagina (`knipPunten` met de plek van elke h2 en h3, gemeten in de kloon van
+html2canvas). Wie dit in Chromium op Linux naspeelt: zonder UTF-8-locale
+(`LANG=C.UTF-8`) heet een download met een naam als Zoë "download"; dat ligt
+aan de machine, niet aan de nakijker.
 
 ## Begrippen
 

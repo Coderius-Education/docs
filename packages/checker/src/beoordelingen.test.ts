@@ -164,6 +164,18 @@ describe('Bewaarder: beoordelingen bewaren', () => {
     expect(b.wijzig(x.id, { naam: '' })?.naam).toBe('Leerling 19-10 09:00');
   });
 
+  it('geeft drie uploads zonder naam in dezelfde minuut elk een eigen naam', () => {
+    // Eerst heetten ze alle drie "Leerling 19-10 09:00". De klok staat stil.
+    const { b } = bewaarder(geheugenOpslag(), () => new Date(2026, 9, 19, 9, 0));
+    for (let i = 0; i < 3; i++) b.nieuw('', project(String(i)), null);
+    expect(
+      b
+        .lijst()
+        .map((x) => x.naam)
+        .sort(),
+    ).toEqual(['Leerling 19-10 09:00', 'Leerling 19-10 09:00 (2)', 'Leerling 19-10 09:00 (3)']);
+  });
+
   it('bewaart een vinkje dat de docent zet terwijl het project nog wordt weggeschreven', async () => {
     const nep = nepOpslag();
     const wacht = uitgesteld();

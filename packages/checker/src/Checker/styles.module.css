@@ -7,7 +7,14 @@
   color: var(--ifm-color-emphasis-700);
 }
 
+.privacy {
+  margin: 0.75rem 0 0;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.9rem;
+}
+
 .status {
+  display: block;
   margin-top: 0.75rem;
   color: var(--ifm-color-emphasis-700);
 }
@@ -19,12 +26,6 @@
   border-radius: 8px;
   background: var(--ifm-color-danger-contrast-background, #ffebe6);
   color: var(--ifm-color-danger-dark, #c11);
-}
-
-.privacy {
-  margin-top: 0.75rem;
-  font-size: 0.9rem;
-  color: var(--ifm-color-emphasis-700);
 }
 
 .dropZone {

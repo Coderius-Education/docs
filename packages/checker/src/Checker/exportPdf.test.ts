@@ -6,6 +6,7 @@ import {
   bewaarPdf,
   download,
   knipPunten,
+  kopregel,
   meldingNaBewaren,
   meldingVan,
 } from './exportPdf';
@@ -23,6 +24,26 @@ describe('knipPunten', () => {
 
   it('heeft één pagina als alles past', () => {
     expect(knipPunten(80, 100, () => true)).toEqual([0]);
+  });
+
+  it('begint een pagina met een kop die anders onderaan de vorige stond', () => {
+    // Overal wit: zonder kop knipt hij op 100. Met een kop op 90 begint de
+    // tweede pagina met die kop.
+    expect(knipPunten(250, 100, () => true, [90])).toEqual([0, 89, 189]);
+    // Een kop hoger op de pagina laat de grens staan.
+    expect(knipPunten(250, 100, () => true, [50])).toEqual([0, 100, 200]);
+    // Twee koppen onderaan: de bovenste begint de volgende pagina, niet de
+    // onderste (dan bleef de h2 met één regel achter).
+    expect(knipPunten(300, 100, () => true, [86, 95]).slice(0, 2)).toEqual([0, 85]);
+  });
+});
+
+describe('kopregel', () => {
+  it('noemt het bestand zonder .pdf en de pagina', () => {
+    expect(kopregel('Beoordeling Fullstack Project - 2026-11-20 - Şükrü.pdf', 2, 3)).toEqual({
+      links: 'Beoordeling Fullstack Project - 2026-11-20 - Şükrü',
+      rechts: 'pagina 2 van 3',
+    });
   });
 });
 

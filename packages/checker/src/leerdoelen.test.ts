@@ -18,7 +18,6 @@ const minimaal = {
   accept: '.py',
   teacher: { password: 'x', storageKey: 'coderius:test:docent' },
   pdfFilename: () => 'x.pdf',
-  privacyNote: 'x',
 } as unknown as Omit<CheckerConfig, 'subjects' | 'concepts'>;
 
 const detect: ConceptDetect = { type: 'regex', pattern: /x/g };

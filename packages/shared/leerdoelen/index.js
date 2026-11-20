@@ -579,7 +579,10 @@ function moeilijkheidVoorstel(perOnderwerp) {
       }),
       { used: 0, total: 0 },
     );
-  const lijst = opsomming;
+  // De namen tussen aanhalingstekens: een groep als Gegevens opslaan of
+  // Online zetten liep anders door de zin heen ("bij Online zetten geen
+  // concept op expert").
+  const lijst = (namen) => opsomming(namen.map((n) => `"${n}"`));
 
   // Een onderdeel kan voor gevorderd meer groepen vragen (gevorderdInGroepen):
   // dan telt hoeveel groepen een gevorderd concept hebben, niet of er één is.
@@ -593,20 +596,22 @@ function moeilijkheidVoorstel(perOnderwerp) {
   // zonder concepten op die moeilijkheid telt daar niet mee.
   let geteld = [];
   for (let i = 0; i < CONCEPT_MOEILIJKHEDEN.length; i++) {
-    // Voor basis telt een onderwerp met basisconcepten; voor gevorderd en
-    // expert een onderwerp met concepten op die moeilijkheid of moeilijker.
-    // Een groep met alleen gevorderde concepten (Accounts bij fullstack) hoeft
-    // voor basis dus niets te hebben.
-    const telt = perOnderwerp.filter((o) =>
-      i === 0 ? (o.basis?.total ?? 0) > 0 : vanaf(o, i).total > 0,
-    );
+    // Voor elke moeilijkheid telt een onderwerp met concepten op precies die
+    // moeilijkheid; toegepast mag ook een moeilijker concept zijn (vanaf). Een
+    // groep met alleen gevorderde concepten (Accounts bij fullstack) hoeft
+    // voor basis dus niets te hebben, en een groep met alleen expert
+    // (Uitbreidingen op fullstack niveau 1) telt voor gevorderd niet mee.
+    // Eerst telde die daar wel, en vroeg gevorderd op niveau 1 een concept op
+    // expert: het nagedane project bleef basis, en één htmx-verzoek maakte
+    // het meteen expert.
+    const telt = perOnderwerp.filter((o) => (o[CONCEPT_MOEILIJKHEDEN[i]]?.total ?? 0) > 0);
     const zonder = telt.filter((o) => vanaf(o, i).used === 0).map((o) => o.label);
     const teWeinig = telt.filter((o) => vanaf(o, i).used > 0 && teWeinigGroepen(o, i));
     if (telt.length === 0 || zonder.length > 0 || teWeinig.length > 0) {
       mist = zonder;
       groepenMist = teWeinig.map(
         (o) =>
-          `bij ${o.label} in ${o.gevorderdGroepen.gehaald} van de ${o.gevorderdGroepen.nodig} groepen die nodig zijn een concept op gevorderd`,
+          `bij "${o.label}" in ${o.gevorderdGroepen.gehaald} van de ${o.gevorderdGroepen.nodig} groepen die nodig zijn een concept op gevorderd`,
       );
       break;
     }
@@ -635,7 +640,7 @@ function moeilijkheidVoorstel(perOnderwerp) {
       ...(mist.length > 0 ? [`bij ${lijst(mist)} geen concept op ${label(volgende)}`] : []),
       ...groepenMist,
     ];
-    reden = `${bijElk} een concept op ${label(gehaald)}, maar ${lijst(delen)}.`;
+    reden = `${bijElk} een concept op ${label(gehaald)}, maar ${opsomming(delen)}.`;
   } else {
     reden = `${bijElk} een concept op ${label(gehaald)}.`;
   }

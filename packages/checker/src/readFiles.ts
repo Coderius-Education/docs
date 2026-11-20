@@ -116,6 +116,13 @@ export interface ReadOptions {
 export interface ReadFilesResult {
   files: ProjectFiles;
   warnings: string[];
+  /**
+   * Losse bestanden, zonder map of zip (Kies bestanden). Dan staat alles
+   * zonder map, ook wat in templates/ of static/ hoort, en is een ontbrekend
+   * template geen fout van de leerling. Een map of zip met alles bovenin is
+   * dat wel: daar vindt de server het template ook niet.
+   */
+  losseBestanden?: boolean;
 }
 
 interface RawEntry {
@@ -335,16 +342,36 @@ async function entriesToProjectFiles(
   const paden = stripCommonRoot(schoon.map((e) => e.relativePath));
   const kopieen = new Set<string>();
   const gekozen: { entry: RawEntry; path: string }[] = [];
+  let genegeerd = 0;
   schoon.forEach((entry, i) => {
     const path = paden[i];
-    if (isIgnoredPath(path)) return;
+    if (isIgnoredPath(path)) {
+      genegeerd++;
+      return;
+    }
     const kopie = kopieMap(path);
     if (kopie) kopieen.add(kopie);
     else gekozen.push({ entry, path });
   });
 
   if (gekozen.length === 0) {
-    throw new LeesFout('Geen bruikbare bestanden gevonden in de upload.');
+    // Zeg wat er wel in zat: een venv of een reservekopie telt niet mee, en
+    // dan was "geen bruikbare bestanden" een raadsel.
+    // Elke reden die geldt, en "alleen" pas als er verder niets was: een venv
+    // naast een reservekopie met main.py noemde eerst alleen de venv.
+    const delen = [
+      ...(venvs.length > 0
+        ? [`een virtual environment (${opsomming(venvs.map((v) => v.replace(/\/$/, '')))})`]
+        : []),
+      ...(kopieen.size > 0 ? [`een reservekopie (${opsomming([...kopieen].sort())})`] : []),
+    ];
+    const wat =
+      delen.length === 0
+        ? ''
+        : ` Er stond ${genegeerd === 0 ? 'alleen ' : ''}${opsomming(delen)} in, en ${delen.length > 1 ? 'die tellen' : 'die telt'} niet mee.`;
+    throw new LeesFout(
+      `Geen bruikbare bestanden gevonden in de upload.${wat} Kies de map met je eigen bestanden.`,
+    );
   }
   if (gekozen.length > MAX_FILE_COUNT) {
     throw new LeesFout(
@@ -354,7 +381,7 @@ async function entriesToProjectFiles(
 
   const files: ProjectFiles = {};
   const warnings: string[] = [];
-  let skippedTooLarge = 0;
+  const teGroteTekst: string[] = [];
   const teGroteFotos: string[] = [];
   const nietGelezen: string[] = [];
   let textBudget = MAX_TEXT_TOTAL_SIZE;
@@ -381,7 +408,7 @@ async function entriesToProjectFiles(
     // vallen, terwijl dezelfde upload als map wél een waarschuwing geeft.
     if (isTextKind && entry.size > MAX_TEXT_FILE_SIZE) {
       tooLarge = true;
-      skippedTooLarge++;
+      teGroteTekst.push(path);
     } else if (isTextKind && entry.getBytes) {
       if (entry.size > textBudget) {
         nietGelezen.push(path);
@@ -407,9 +434,11 @@ async function entriesToProjectFiles(
     files[path] = { path, kind, content, sizeBytes: entry.size, tooLarge };
   }
 
-  if (skippedTooLarge > 0) {
+  // Welke: eerst stond er alleen een aantal, en als main.py zelf te groot
+  // was, zocht de docent waar het aan lag.
+  if (teGroteTekst.length > 0) {
     warnings.push(
-      `${skippedTooLarge} bestand(en) waren groter dan ${MAX_TEXT_FILE_SIZE / (1024 * 1024)} MB en zijn overgeslagen bij de analyse (ze tellen wel mee in het bestandsoverzicht).`,
+      `Niet gelezen, want groter dan ${MAX_TEXT_FILE_SIZE / (1024 * 1024)} MB: ${opsomming(teGroteTekst)}. Ze tellen wel mee in het bestandsoverzicht.`,
     );
   }
   if (teGroteFotos.length > 0) {
@@ -425,6 +454,14 @@ async function entriesToProjectFiles(
   if (kopieen.size > 0) {
     warnings.push(
       `Niet meegeteld, want het lijkt een reservekopie: ${opsomming([...kopieen].sort())}. Hoort die map wel bij je project, geef hem dan een andere naam.`,
+    );
+  }
+  // Twee projecten in één upload (de hele cursusmap, met elke les in een
+  // eigen map) tellen samen mee: concepten uit een oude les tellen dan ook.
+  const mains = gekozen.map(({ path }) => path).filter((p) => /(?:^|\/)main\.py$/.test(p));
+  if (mains.length > 1) {
+    warnings.push(
+      `Er staan meer projecten in de upload, want er zijn ${mains.length} keer main.py: ${opsomming(mains.sort())}. Alles telt samen mee. Upload alleen het project dat je wilt laten nakijken.`,
     );
   }
   const heic = gekozen.filter(({ path }) => HEIC.test(path)).map(({ path }) => path);
@@ -498,6 +535,8 @@ async function leesUpload(
   }
 
   const resultaat = await entriesToProjectFiles(alles, opts);
+  resultaat.losseBestanden =
+    zips.length === 0 && rawEntries.every((e) => !e.relativePath.includes('/'));
   if (archieven.length > 0) {
     resultaat.warnings.push(
       `Niet geopend: ${opsomming(archieven)}. De nakijker kan alleen een .zip openen; pak het uit of maak er een .zip van.`,

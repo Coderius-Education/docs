@@ -839,7 +839,7 @@ describe('moeilijkheidVoorstel: de vuistregels', () => {
     expect(moeilijkheidVoorstel(play(1))).toEqual({
       moeilijkheid: 'basis',
       reden:
-        'Bij elk onderwerp een concept op basis, maar bij coderius-play in 1 van de 2 groepen die nodig zijn een concept op gevorderd.',
+        'Bij elk onderwerp een concept op basis, maar bij "coderius-play" in 1 van de 2 groepen die nodig zijn een concept op gevorderd.',
     });
     expect(moeilijkheidVoorstel(play(2)).moeilijkheid).toBe('gevorderd');
   });
@@ -851,14 +851,14 @@ describe('moeilijkheidVoorstel: de vuistregels', () => {
   it('gevorderd in HTML en JavaScript maar niet in CSS is basis, en zegt waarom', () => {
     expect(moeilijkheidVoorstel(web([3, 1], [2, 0], [2, 2]))).toEqual({
       moeilijkheid: 'basis',
-      reden: 'Bij elk onderwerp een concept op basis, maar bij CSS geen concept op gevorderd.',
+      reden: 'Bij elk onderwerp een concept op basis, maar bij "CSS" geen concept op gevorderd.',
     });
   });
 
   it('heel veel van hetzelfde concept telt één keer: alleen HTML is niet aan basis', () => {
     expect(moeilijkheidVoorstel(web([6, 0], [0, 0], [0, 0]))).toEqual({
       moeilijkheid: 'niet-aan-basis',
-      reden: 'Geen concept toegepast bij CSS en JavaScript.',
+      reden: 'Geen concept toegepast bij "CSS" en "JavaScript".',
     });
   });
 
@@ -875,7 +875,7 @@ describe('moeilijkheidVoorstel: de vuistregels', () => {
     // klopte niet, want Database heeft geen expert.
     expect(moeilijkheidVoorstel(fullstack)).toEqual({
       moeilijkheid: 'expert',
-      reden: 'Bij FastAPI een concept op expert.',
+      reden: 'Bij "FastAPI" een concept op expert.',
     });
   });
 
@@ -888,12 +888,12 @@ describe('moeilijkheidVoorstel: de vuistregels', () => {
     expect(moeilijkheidVoorstel(niveau3)).toEqual({
       moeilijkheid: 'gevorderd',
       reden:
-        'Bij elk onderwerp een concept op gevorderd, maar bij Online zetten geen concept op expert.',
+        'Bij elk onderwerp een concept op gevorderd, maar bij "Online zetten" geen concept op expert.',
     });
     niveau3[2].expert = t(1, 4);
     expect(moeilijkheidVoorstel(niveau3)).toEqual({
       moeilijkheid: 'expert',
-      reden: 'Bij Online zetten een concept op expert.',
+      reden: 'Bij "Online zetten" een concept op expert.',
     });
   });
 

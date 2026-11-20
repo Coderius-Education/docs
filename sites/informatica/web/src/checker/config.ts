@@ -393,8 +393,6 @@ export const webConfig: CheckerConfig = {
     storageKey: storageKey('web', 'webChecker.docentUnlocked'),
   },
   pdfFilename: (d) => `Beoordeling Web Project - ${todayStamp(d)}.pdf`,
-  privacyNote:
-    'Let op: je bestanden gaan nooit naar een server. Alles gebeurt in je eigen browser.',
 
   concepts: uitLeerdoelen.concepts,
   leerdoelen: uitLeerdoelen.leerdoelen,

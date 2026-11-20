@@ -72,6 +72,12 @@ export type ConceptDetect =
       /** "Aanwezig" als een bestandspad hierop matcht (mappenstructuur-check). */
       type: 'path';
       pattern: RegExp;
+      /**
+       * Optioneel: en de inhoud van dat bestand past hierop. Een leeg
+       * bestand met de goede naam telde eerst ook. Het bestand moet dan wel
+       * gelezen worden: zijn soort staat in `textKinds`.
+       */
+      inhoud?: RegExp;
     }
   | {
       /**
@@ -227,8 +233,6 @@ export interface CheckerConfig {
   teacher: { password: string; storageKey: string };
   /** Voorgestelde PDF-bestandsnaam. */
   pdfFilename: (date: Date) => string;
-  /** Korte privacy-belofte onder de uploadzone. */
-  privacyNote?: string;
   /**
    * Optioneel: toon een "Bekijk in Online Editor"-knop die het project via
    * window.open + postMessage naar de IDE stuurt (alleen zinvol voor projecten
@@ -249,8 +253,16 @@ export interface CheckerConfig {
    * meegeeft. Zulke fouten geven vaak geen melding: een lege plek, een 422 of
    * een 404 in een ander bestand dan waar de fout zit. Het rapport toont ze
    * ook aan de leerling, want het is terugkoppeling op zijn eigen code.
+   * `files` zijn de bestanden van de leerling, `alle` ook de bibliotheken:
+   * een link naar een meegeleverde `htmx.min.js` is geen kapotte link.
+   * `opties.losseBestanden`: de upload had geen map en geen zip (Kies
+   * bestanden). Onbekend bij een beoordeling van vóór deze vlag.
    */
-  samenhang?: (files: ProjectFiles) => Samenhangfout[];
+  samenhang?: (
+    files: ProjectFiles,
+    alle: ProjectFiles,
+    opties?: { losseBestanden?: boolean },
+  ) => Samenhangfout[];
 }
 
 /** Iets dat tussen twee bestanden van het project niet aansluit. */

@@ -22,6 +22,12 @@ interface Route {
   regel: number;
   /** De formuliervelden, of null als de controle ze niet zeker kent. */
   velden: Veld[] | null;
+  /**
+   * Gewone parameters zonder standaardwaarde en zonder Form(...): FastAPI
+   * zoekt die in de URL. Bij een POST uit een formulier is dat bijna altijd
+   * een vergeten `= Form(...)`, en dan geeft FastAPI een 422.
+   */
+  inUrl: { naam: string; regel: number }[];
   body: string;
   bodyStart: number;
 }
@@ -37,7 +43,16 @@ interface Formulier {
   regel: number;
   methode: string;
   action: string;
-  velden: { naam: string; regel: number }[];
+  /** `knop`: een button of submit-input, die stuurt zijn naam alleen als je erop klikt. */
+  velden: { naam: string; regel: number; knop: boolean }[];
+  /**
+   * Velden die de controle niet ziet: een `{% include %}` of `{% block %}` in
+   * het formulier, of een name met `{{ … }}`. Dan meldt hij geen ontbrekend
+   * veld.
+   */
+  onzeker: boolean;
+  /** Een hx-get, hx-post, … op het formulier: dan stuurt htmx, niet de browser. */
+  htmx: boolean;
 }
 
 const MAP_VAN = (pad: string) => (pad.includes('/') ? pad.slice(0, pad.lastIndexOf('/') + 1) : '');
@@ -137,6 +152,13 @@ function formVelden(params: string, paramsStart: number, tekst: string): Veld[] 
   const velden: Veld[] = [];
   for (const { deel, start } of splitsArgumenten(params)) {
     const p = deel.trim();
+    // Een model uit Depends(...) of een body: welke velden dat zijn, weten
+    // we niet. Eerst gaf `data: Bericht = Depends(Bericht.as_form)` voor
+    // elk veld "komt nergens aan". Een andere afhankelijkheid (een database,
+    // `db = Depends(get_db)`) is geen formulierveld: die slaat hij over, en
+    // de Form-parameters ernaast controleert hij gewoon.
+    if (/\bBody\(|\bDepends\(\s*(?:\)|[\w.]*\.as_form\b)/.test(p)) return null;
+    if (/\bDepends\(/.test(p)) continue;
     if (!/\b(Form|File)\(/.test(p)) continue;
     const m = p.match(/^(\w+)\s*:\s*(.+?)\s*(?:=\s*(.+))?$/s);
     if (!m) return null;
@@ -168,6 +190,29 @@ function formVelden(params: string, paramsStart: number, tekst: string): Veld[] 
     });
   }
   return velden;
+}
+
+const GEEN_VELD = /^(Request|Response|BackgroundTasks|WebSocket)$/;
+
+/** Gewone parameters zonder standaardwaarde: die zoekt FastAPI in de URL. */
+function urlParams(
+  params: string,
+  paramsStart: number,
+  tekst: string,
+  pad: string,
+): { naam: string; regel: number }[] {
+  const uit: { naam: string; regel: number }[] = [];
+  for (const { deel, start } of splitsArgumenten(params)) {
+    const m = deel.trim().match(/^(\w+)\s*(?::\s*([^=]+?))?\s*$/);
+    if (!m || m[1] === 'self' || pad.includes(`{${m[1]}`)) continue;
+    const type = m[2]?.trim();
+    if (type && (GEEN_VELD.test(type) || !ENKELVOUDIG.test(type))) continue;
+    uit.push({
+      naam: m[1],
+      regel: regelVan(tekst, paramsStart + start + (deel.length - deel.trimStart().length)),
+    });
+  }
+  return uit;
 }
 
 function routes(files: ProjectFiles): { routes: Route[]; zeker: boolean } {
@@ -206,6 +251,7 @@ function routes(files: ProjectFiles): { routes: Route[]; zeker: boolean } {
         bestand: f.path,
         regel: regelVan(tekst, m.index + d.index),
         velden: leestZelf ? null : formVelden(params, open + 1, tekst),
+        inUrl: urlParams(params, open + 1, tekst, m[3]),
         body,
         bodyStart: na + 1,
       });
@@ -254,11 +300,19 @@ function formulieren(files: ProjectFiles): Formulier[] {
       const action = attribuut(tag, 'action');
       if (action === undefined) continue;
       const binnenStart = (m.index ?? 0) + tag.length;
-      const velden: { naam: string; regel: number }[] = [];
+      const velden: Formulier['velden'] = [];
+      let onzeker = /\{%/.test(m[1]);
       for (const v of m[1].matchAll(/<(input|textarea|select|button)\b[^>]*>/gi)) {
         const naam = attribuut(v[0], 'name');
-        if (naam === undefined || naam.includes('{')) continue;
-        velden.push({ naam, regel: regelVan(tekst, binnenStart + (v.index ?? 0)) });
+        if (naam === undefined) continue;
+        if (naam.includes('{')) {
+          onzeker = true;
+          continue;
+        }
+        const knop =
+          v[1].toLowerCase() === 'button' ||
+          /^(submit|image|reset)$/i.test(attribuut(v[0], 'type') ?? '');
+        velden.push({ naam, regel: regelVan(tekst, binnenStart + (v.index ?? 0)), knop });
       }
       uit.push({
         bestand: f.path,
@@ -266,6 +320,8 @@ function formulieren(files: ProjectFiles): Formulier[] {
         methode: (attribuut(tag, 'method') ?? 'get').toUpperCase(),
         action,
         velden,
+        onzeker,
+        htmx: /\shx-(get|post|put|patch|delete)\s*=/i.test(tag),
       });
     }
   }
@@ -277,6 +333,19 @@ const plek = (bestand: string, regel: number): Plek => ({ bestand, regel });
 function controleerFormulieren(lijst: Route[], fouten: Samenhangfout[], files: ProjectFiles) {
   for (const form of formulieren(files)) {
     if (!form.action.startsWith('/') || form.action.startsWith('//')) continue;
+    // Een HTML-formulier kent alleen get en post; een andere method stuurt de
+    // browser als GET. Wie `hx-delete` kent, schrijft snel method="delete".
+    // Met method="dialog" stuurt hij niets, en met een hx-attribuut stuurt
+    // htmx het verzoek: dan doet method er niet toe.
+    if (form.methode !== 'GET' && form.methode !== 'POST') {
+      if (form.methode === 'DIALOG' || form.htmx) continue;
+      fouten.push({
+        titel: `Een formulier kan geen ${form.methode} sturen`,
+        uitleg: `Een HTML-formulier kent alleen method="get" en method="post". Bij method="${form.methode.toLowerCase()}" stuurt de browser een GET naar ${form.action}, en een route met @app.${form.methode.toLowerCase()} krijgt dan 405 Method Not Allowed. Gebruik een formulier met method="post" en @app.post, of htmx met hx-${form.methode.toLowerCase()}.`,
+        plekken: [plek(form.bestand, form.regel)],
+      });
+      continue;
+    }
     const adres = adresMetJokers(form.action);
     if (adres === null) continue;
     const bijAdres = lijst.filter((r) => past(adres, r.pad));
@@ -303,8 +372,21 @@ function controleerFormulieren(lijst: Route[], fouten: Samenhangfout[], files: P
     const params = new Set(route.velden.map((v) => v.naam));
     // Radioknoppen delen een naam: één melding per naam, niet per knop.
     const gemeld = new Set<string>();
+    // Een veld waarvan de functie een gewone parameter heeft: `= Form(...)`
+    // vergeten. FastAPI zoekt hem dan in de URL en geeft een 422; eerst zei
+    // de melding dat het veld weggegooid werd.
+    for (const v of form.velden) {
+      const inUrl = route.inUrl.find((p) => p.naam === v.naam);
+      if (!inUrl || params.has(v.naam) || gemeld.has(v.naam)) continue;
+      gemeld.add(v.naam);
+      fouten.push({
+        titel: `${route.functie}() zoekt "${v.naam}" in de URL, niet in het formulier`,
+        uitleg: `De parameter ${v.naam} heeft geen = Form(...) erachter. Dan zoekt FastAPI hem in de URL (?${v.naam}=…), vindt hem niet en weigert het verzoek met 422 Unprocessable Entity, met "query" in de melding. Zet = Form(...) achter de parameter.`,
+        plekken: [plek(route.bestand, inUrl.regel), plek(form.bestand, v.regel)],
+      });
+    }
     for (const p of route.velden) {
-      if (!p.verplicht || namen.has(p.naam)) continue;
+      if (!p.verplicht || namen.has(p.naam) || form.onzeker) continue;
       fouten.push({
         titel: `De functie verwacht het veld "${p.naam}", het formulier stuurt het niet`,
         uitleg: `${route.functie}() heeft een parameter ${p.naam} met Form(...), maar het formulier heeft geen veld met name="${p.naam}". FastAPI weigert het verzoek dan met 422 Unprocessable Entity. Zet de name in het formulier en de parameter in Python gelijk.`,
@@ -312,7 +394,9 @@ function controleerFormulieren(lijst: Route[], fouten: Samenhangfout[], files: P
       });
     }
     for (const v of form.velden) {
-      if (params.has(v.naam) || gemeld.has(v.naam)) continue;
+      // Een knop met een name (welke knop je koos) is geen fout als de
+      // functie hem niet leest.
+      if (v.knop || params.has(v.naam) || gemeld.has(v.naam)) continue;
       gemeld.add(v.naam);
       fouten.push({
         titel: `Het veld "${v.naam}" komt nergens aan`,
@@ -328,6 +412,7 @@ function controleerLinks(
   fouten: Samenhangfout[],
   files: ProjectFiles,
   statisch: Statisch[],
+  bestaat: (pad: string) => boolean,
 ) {
   const ingebouwd = ['/docs', '/redoc', '/openapi.json'];
   for (const f of Object.values(files)) {
@@ -336,8 +421,13 @@ function controleerLinks(
     for (const m of tekst.matchAll(/<(a|link|img|script|source|video|audio|iframe)\b[^>]*>/gi)) {
       const attr = m[1].toLowerCase() === 'a' || m[1].toLowerCase() === 'link' ? 'href' : 'src';
       const doel = attribuut(m[0], attr);
-      if (!doel?.startsWith('/') || doel.startsWith('//')) continue;
+      if (!doel) continue;
       const regel = regelVan(tekst, m.index ?? 0);
+      if (!doel.startsWith('/')) {
+        meldRelatief(doel, f.path, regel, statisch, fouten);
+        continue;
+      }
+      if (doel.startsWith('//')) continue;
       const mount = statisch.find((s) => doel === s.prefix || doel.startsWith(`${s.prefix}/`));
       if (mount) {
         // Een berekende map (BASE_DIR / "static"): welk bestand erbij hoort,
@@ -352,7 +442,7 @@ function controleerLinks(
           continue;
         }
         const pad = `${mount.map}${rest}`;
-        if (rest !== '' && !(pad in files)) {
+        if (rest !== '' && !bestaat(pad)) {
           fouten.push({
             titel: `${doel} wijst naar een bestand dat er niet is`,
             uitleg: `Alles onder ${mount.prefix}/ haalt de server uit de map ${mount.map || '(hoofdmap)'}, maar ${pad} staat niet in je project. De browser krijgt 404 Not Found. Kijk naar de spelling en de hoofdletters van de map en het bestand.`,
@@ -365,6 +455,15 @@ function controleerLinks(
       const adres = adresMetJokers(doel);
       if (adres === null || ingebouwd.includes(adres.split(/[?#]/)[0])) continue;
       if (lijst.some((r) => r.methode === 'GET' && past(adres, r.pad))) continue;
+      const ander = lijst.find((r) => past(adres, r.pad));
+      if (ander) {
+        fouten.push({
+          titel: `De link naar ${doel} gaat naar een route die alleen ${ander.methode} kent`,
+          uitleg: `Een link stuurt altijd een GET, maar bij ${doel.split(/[?#]/)[0]} staat alleen @app.${ander.methode.toLowerCase()}. Wie op de link klikt, krijgt 405 Method Not Allowed. Maak er een formulier met method="post" van, of zet een @app.get bij dat pad.`,
+          plekken: [plek(f.path, regel), plek(ander.bestand, ander.regel)],
+        });
+        continue;
+      }
       fouten.push({
         titel: `De link naar ${doel} heeft geen route`,
         uitleg: `Er is geen @app.get die bij ${doel.split(/[?#]/)[0]} hoort. Wie op de link klikt, krijgt 404 Not Found. Kijk of het pad in de link precies hetzelfde is als in Python.`,
@@ -372,6 +471,35 @@ function controleerLinks(
       });
     }
   }
+}
+
+/**
+ * Een link als `static/style.css` zonder / vooraan. Op de pagina / werkt hij,
+ * maar de browser zoekt hem vanaf de map van de pagina: op /berichten/3 vraagt
+ * hij /berichten/static/style.css, en dan staat de pagina zonder opmaak. Alleen
+ * als de link met de naam van een StaticFiles-mount begint; een link naar een
+ * andere pagina of een adres met een schema laat hij met rust.
+ */
+function meldRelatief(
+  doel: string,
+  bestand: string,
+  regel: number,
+  statisch: Statisch[],
+  fouten: Samenhangfout[],
+) {
+  if (doel.includes('{') || /^[a-z][\w+.-]*:/i.test(doel)) return;
+  const zonder = doel.replace(/^\.\//, '');
+  const mount = statisch.find((s) => {
+    const naam = s.prefix.replace(/^\//, '');
+    return naam !== '' && (zonder === naam || zonder.startsWith(`${naam}/`));
+  });
+  if (!mount) return;
+  const goed = `/${zonder}`;
+  fouten.push({
+    titel: `${doel} mist een / vooraan`,
+    uitleg: `Zonder / zoekt de browser ${doel} vanaf het adres van de pagina. Op / gaat dat goed, maar op een pagina als /berichten/3 vraagt hij /berichten/${zonder}, en dat geeft 404 Not Found. Schrijf ${goed}.`,
+    plekken: [plek(bestand, regel), plek(mount.bestand, mount.regel)],
+  });
 }
 
 interface Statisch {
@@ -472,7 +600,12 @@ function templateNamen(tekst: string): { naam: string; regel: number }[] | null 
   return uit;
 }
 
-function controleerTemplates(lijst: Route[], fouten: Samenhangfout[], files: ProjectFiles) {
+function controleerTemplates(
+  lijst: Route[],
+  fouten: Samenhangfout[],
+  files: ProjectFiles,
+  bestaat: (pad: string) => boolean,
+) {
   for (const f of Object.values(files)) {
     if (f.kind !== 'py' || !f.content) continue;
     const tekst = f.content;
@@ -501,7 +634,7 @@ function controleerTemplates(lijst: Route[], fouten: Samenhangfout[], files: Pro
       );
       const waar = route ? `${route.functie}()` : 'Python';
       const template = files[pad];
-      if (!template) {
+      if (!template && !bestaat(pad)) {
         fouten.push({
           titel: `Het template ${naam} bestaat niet`,
           uitleg: `${waar} vraagt om ${naam}, maar ${pad} staat niet in je project. De server geeft dan een foutmelding en de browser toont 500 Internal Server Error. Kijk of het bestand in de map ${map.replace(/\/$/, '')} staat, met precies deze naam.`,
@@ -511,7 +644,7 @@ function controleerTemplates(lijst: Route[], fouten: Samenhangfout[], files: Pro
       }
       // De context: alleen een dictionary dat hier letterlijk staat.
       const ctxArg = args.find((a) => /^(context\s*=\s*)?\{/.test(a.deel));
-      if (!ctxArg || !template.content) continue;
+      if (!ctxArg || !template?.content) continue;
       const dict = ctxArg.deel.replace(/^context\s*=\s*/, '');
       const binnen = dict.slice(1, sluitHaakje(dict, 0));
       const sleutels = new Set<string>();
@@ -539,15 +672,51 @@ function controleerTemplates(lijst: Route[], fouten: Samenhangfout[], files: Pro
   }
 }
 
-function controleerBestandsantwoorden(fouten: Samenhangfout[], files: ProjectFiles) {
+function controleerBestandsantwoorden(
+  fouten: Samenhangfout[],
+  files: ProjectFiles,
+  bestaat: (pad: string) => boolean,
+) {
   for (const f of Object.values(files)) {
     if (f.kind !== 'py' || !f.content) continue;
-    for (const m of f.content.matchAll(/\bFileResponse\(\s*["']([^"']+)["']/g)) {
+    // Alleen een pad dat helemaal tekst is: bij "static/pages/" + naam is de
+    // tekst maar het begin van het pad.
+    for (const m of f.content.matchAll(/\bFileResponse\(\s*["']([^"']+)["']\s*[,)]/g)) {
       const pad = opzoeken(files, f.path, m[1]);
-      if (pad in files) continue;
+      if (bestaat(pad)) continue;
       fouten.push({
         titel: `FileResponse wijst naar ${m[1]}, en dat bestand is er niet`,
         uitleg: `De server zoekt ${m[1]} vanaf de map waarin je main.py staat, en vindt het niet. De browser krijgt dan een foutmelding. Kijk naar de map, de spelling en de hoofdletters.`,
+        plekken: [plek(f.path, regelVan(f.content, m.index ?? 0))],
+      });
+    }
+  }
+}
+
+/**
+ * Een RedirectResponse naar een pad waar geen enkele route bij hoort. Dat
+ * patroon staat vanaf Doorsturen na opslaan in elke stand van main.py; een
+ * tikfout geeft na het opslaan een 404, terwijl het bericht wel bewaard is.
+ * Alleen een pad dat helemaal tekst is (bij `"/bericht/" + sleutel` is de
+ * tekst maar het begin), en niet naar een StaticFiles-mount of de handleiding
+ * van FastAPI: die bestaan zonder @app.get. Met een mount op `/` kan elk pad
+ * een bestand zijn, en dan zwijgt hij.
+ */
+function controleerDoorsturen(lijst: Route[], fouten: Samenhangfout[], files: ProjectFiles) {
+  const { mappen, zeker } = statischeMappen(files);
+  if (!zeker || mappen.some((m) => m.prefix === '')) return;
+  const ingebouwd = ['/docs', '/redoc', '/openapi.json'];
+  for (const f of Object.values(files)) {
+    if (f.kind !== 'py' || !f.content) continue;
+    const doorsturen = /\bRedirectResponse\(\s*(?:url\s*=\s*)?["'](\/[^"'?#]*)[^"']*["']\s*[,)]/g;
+    for (const m of f.content.matchAll(doorsturen)) {
+      const adres = m[1];
+      if (adres.startsWith('//') || ingebouwd.includes(adres)) continue;
+      if (mappen.some((s) => adres === s.prefix || adres.startsWith(`${s.prefix}/`))) continue;
+      if (lijst.some((r) => past(adres, r.pad))) continue;
+      fouten.push({
+        titel: `RedirectResponse stuurt door naar ${adres}, en die route bestaat niet`,
+        uitleg: `Na dit antwoord vraagt de browser ${adres} op, maar geen functie in je Python-code hoort bij dat pad. De bezoeker krijgt dan 404 Not Found, ook als het opslaan wel gelukt is. Kijk of het pad precies hetzelfde is als in een @app.get(...).`,
         plekken: [plek(f.path, regelVan(f.content, m.index ?? 0))],
       });
     }
@@ -592,13 +761,25 @@ function controleerImports(fouten: Samenhangfout[], files: ProjectFiles) {
   }
 }
 
-export function samenhang(project: ProjectFiles): Samenhangfout[] {
+/**
+ * @param project de bestanden van de leerling
+ * @param alle ook de bibliotheken (`htmx.min.js` in static/): die zijn niet
+ *   van de leerling, maar een link ernaar is geen kapotte link. Eerst gaf elk
+ *   project met de htmx-uitbreiding een valse 404.
+ */
+export function samenhang(
+  project: ProjectFiles,
+  alle: ProjectFiles = project,
+  opties: { losseBestanden?: boolean } = {},
+): Samenhangfout[] {
   begins.clear();
   const files = zonderCommentaar(project);
   const fouten: Samenhangfout[] = [];
+  const bestaat = (pad: string) => pad in files || pad in alle;
   const { routes: lijst, zeker } = routes(files);
   if (lijst.length > 0 && zeker) {
     controleerFormulieren(lijst, fouten, files);
+    controleerDoorsturen(lijst, fouten, files);
   }
   // Zonder routes (alleen HTML, of een router met prefix) weet hij niet
   // welke links goed zijn; static-bestanden kan hij dan nog wel nalopen.
@@ -608,7 +789,18 @@ export function samenhang(project: ProjectFiles): Samenhangfout[] {
   // Alleen main.py geüpload (via Kies bestanden): dan ontbreekt elk
   // template en elk bestand, en dat zijn geen fouten van de leerling. Eerst
   // gaf dat twaalf meldingen. Zonder één HTML-bestand slaat hij die over.
-  const metHtml = Object.values(files).some((f) => f.kind === 'html');
+  // Losse bestanden (Kies bestanden, zonder map of zip) hebben geen mappen:
+  // dan ontbreekt elk static-bestand en elk template op zijn plek, terwijl
+  // ze net geüpload zijn. Die controles slaat hij dan over; de pagina zegt
+  // dat de leerling zijn projectmap moet kiezen. Een map of zip met alles
+  // bovenin is wel een fout: daar vindt de server het template ook niet. Het
+  // inlezen weet welke van de twee het was; een oude beoordeling zonder die
+  // vlag kijkt of er ergens een map in het pad staat.
+  const metMappen =
+    opties.losseBestanden === undefined
+      ? Object.keys(alle).some((p) => p.includes('/'))
+      : !opties.losseBestanden;
+  const metHtml = metMappen && Object.values(files).some((f) => f.kind === 'html');
   const { mappen, zeker: mountsZeker } = statischeMappen(files);
   const opWortel = mappen.some((m) => m.prefix === '');
   if (metHtml) {
@@ -617,11 +809,21 @@ export function samenhang(project: ProjectFiles): Samenhangfout[] {
       fouten,
       files,
       mappen.filter((m) => m.prefix !== ''),
+      bestaat,
     );
-    controleerTemplates(lijst, fouten, files);
-    controleerBestandsantwoorden(fouten, files);
+    controleerTemplates(lijst, fouten, files, bestaat);
+    controleerBestandsantwoorden(fouten, files, bestaat);
   }
   controleerImports(fouten, files);
   begins.clear();
-  return fouten;
+  // Twee keer dezelfde fout op dezelfde plek (een link die twee keer op een
+  // regel staat) is één melding; eerst kregen ze in het rapport ook dezelfde
+  // React-key.
+  const gezien = new Set<string>();
+  return fouten.filter((f) => {
+    const sleutel = `${f.titel}|${f.plekken.map((p) => `${p.bestand}:${p.regel}`).join(',')}`;
+    if (gezien.has(sleutel)) return false;
+    gezien.add(sleutel);
+    return true;
+  });
 }

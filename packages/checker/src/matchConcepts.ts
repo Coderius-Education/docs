@@ -45,6 +45,8 @@ export interface AnalyzeOpties {
    * vastzat, voor een uitkomst die niemand zag.
    */
   concepten?: boolean;
+  /** Losse bestanden, zonder map of zip; zie ReadFilesResult. */
+  losseBestanden?: boolean;
 }
 
 export function analyze(
@@ -130,7 +132,10 @@ export function analyze(
     }
     if (c.detect.type === 'path') {
       const re = withoutGlobal(c.detect.pattern);
-      const paden = allPaths.filter((p) => re.test(p));
+      const inhoud = c.detect.inhoud ? withoutGlobal(c.detect.inhoud) : null;
+      const paden = allPaths.filter(
+        (p) => re.test(p) && (!inhoud || inhoud.test(files[p]?.content ?? '')),
+      );
       const used = paden.length > 0;
       if (!metPlekken) return { id: c.id, count: used ? 1 : 0, used };
       const plekken = paden
@@ -224,7 +229,8 @@ export function analyze(
     extra,
     buitenLesstof:
       (opties.buitenLesstof ?? true) ? (config.buitenLesstof?.(eigenBestanden) ?? []) : [],
-    samenhang: config.samenhang?.(eigenBestanden) ?? [],
+    samenhang:
+      config.samenhang?.(eigenBestanden, files, { losseBestanden: opties.losseBestanden }) ?? [],
     warnings,
   };
 }

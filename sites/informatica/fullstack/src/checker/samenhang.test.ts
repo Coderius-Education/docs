@@ -363,6 +363,28 @@ async def verwijder(sleutel: str):
   });
 
   describe('links en bestanden', () => {
+    it('een static-link zonder / vooraan', () => {
+      const files = compleetMet((p) => {
+        p['templates/berichten.html'] = p['templates/berichten.html'].replace(
+          '"/static/css/style.css"',
+          '"static/css/style.css"',
+        );
+      });
+      expect(titels(files)).toEqual(['static/css/style.css mist een / vooraan']);
+      const [fout] = samenhang(files);
+      expect(fout.uitleg).toContain('Schrijf /static/css/style.css.');
+    });
+
+    it('een relatieve link naar iets anders dan static is geen melding', () => {
+      const files = compleetMet((p) => {
+        p['templates/berichten.html'] = p['templates/berichten.html'].replace(
+          '</body>',
+          '<a href="gastenboek">Gastenboek</a><a href="https://example.com/static/x.css">x</a><a href="#static">y</a>\n</body>',
+        );
+      });
+      expect(samenhang(files)).toEqual([]);
+    });
+
     it('een static-bestand dat er niet is', () => {
       const files = compleetMet((p) => {
         p['templates/berichten.html'] = p['templates/berichten.html'].replace(
@@ -489,7 +511,8 @@ async def bestand(pad: str):
           `${KOP}@app.get("/weg")\nasync def weg():\n    return RedirectResponse(url="/", status_code=303)\n`,
         ),
       );
-      expect(fouten[0].uitleg).toContain('`from fastapi.responses import HTMLResponse`');
+      const importFout = fouten.find((f) => f.titel.startsWith('RedirectResponse wordt gebruikt'));
+      expect(importFout?.uitleg).toContain('`from fastapi.responses import HTMLResponse`');
       const zonderRegel = samenhang(
         main(`${KOP}app.mount("/static", StaticFiles(directory="static"), name="static")\n`),
       );
@@ -562,5 +585,203 @@ describe('samenhang — geen valse meldingen bij een gewone opzet', () => {
       '    return naam',
     ].join('\n');
     expect(samenhang(project({ 'main.py': main }))).toEqual([]);
+  });
+});
+
+// De review van november 2026 van de hele nakijker vond deze valse en gemiste
+// meldingen. Elk geval is nagedaan met het gastenboek uit de fixture.
+describe('samenhang — review van de upload tool', () => {
+  const FORM = 'static/pages/gastenboek_form.html';
+
+  it('een meegeleverde htmx.min.js is geen ontbrekend bestand', () => {
+    // isBibliotheek telt elk .min.js als bibliotheek, en de samenhang kreeg
+    // alleen de bestanden van de leerling: elke leerling met de htmx-
+    // uitbreiding kreeg "wijst naar een bestand dat er niet is".
+    const p = leesFixture('compleet');
+    p['static/js/htmx.min.js'] = '/* htmx */';
+    p[FORM] = p[FORM].replace('</head>', '<script src="/static/js/htmx.min.js"></script></head>');
+    expect(analyze(project(p), fullstackConfig).samenhang).toEqual([]);
+    const zonder = Object.fromEntries(
+      Object.entries(p).filter(([pad]) => pad !== 'static/js/htmx.min.js'),
+    );
+    expect(analyze(project(zonder), fullstackConfig).samenhang?.map((f) => f.titel)).toEqual([
+      '/static/js/htmx.min.js wijst naar een bestand dat er niet is',
+    ]);
+  });
+
+  it('losse bestanden zonder mappen geven geen meldingen over mappen', () => {
+    // Kies bestanden met de zeven bestanden van het gastenboek: elk template
+    // en elk static-bestand "bestond niet", terwijl ze net geüpload waren.
+    const los = Object.fromEntries(
+      Object.entries(leesFixture('compleet')).map(([pad, inhoud]) => [
+        pad.split('/').at(-1),
+        inhoud,
+      ]),
+    ) as Record<string, string>;
+    expect(titels(project(los))).toEqual([]);
+    expect(samenhang(project(los), project(los), { losseBestanden: true })).toEqual([]);
+  });
+
+  it('een map of zip met de templates naast main.py geeft wel de melding', () => {
+    // Zelfde paden als bij losse bestanden, maar uit een map: de server zoekt
+    // in templates/ en vindt het template niet.
+    const plat = {
+      'main.py': `from fastapi import FastAPI, Request
+from fastapi.templating import Jinja2Templates
+
+app = FastAPI()
+templates = Jinja2Templates(directory="templates")
+
+
+@app.get("/")
+async def home(request: Request):
+    return templates.TemplateResponse(request, "home.html")
+`,
+      'home.html': '<h1>Hoi</h1>',
+    };
+    expect(
+      samenhang(project(plat), project(plat), { losseBestanden: false }).map((f) => f.titel),
+    ).toEqual(['Het template home.html bestaat niet']);
+  });
+
+  it('een vergeten Form(...) is een 422 uit de URL, geen veld dat weggegooid wordt', () => {
+    const fouten = samenhang(
+      compleetMet((p) => {
+        p['main.py'] = p['main.py'].replace(
+          'naam: str = Form(...), bericht: str = Form(...)',
+          'naam: str, bericht: str',
+        );
+      }),
+    );
+    expect(fouten.map((f) => f.titel)).toEqual([
+      'gastenboek_opslaan() zoekt "naam" in de URL, niet in het formulier',
+      'gastenboek_opslaan() zoekt "bericht" in de URL, niet in het formulier',
+    ]);
+    expect(fouten[0].uitleg).toMatch(/= Form\(\.\.\.\).*422/s);
+  });
+
+  it('meldt geen ontbrekend veld als het formulier velden uit een include of block heeft', () => {
+    for (const binnen of [
+      '{% include "velden.html" %}',
+      '{% block velden %}{% endblock %}',
+      '<input name="{{ veld }}"><input name="bericht">',
+    ]) {
+      const p = compleetMet((q) => {
+        q[FORM] = q[FORM].replace(/<form([^>]*)>[\s\S]*<\/form>/, `<form$1>${binnen}</form>`);
+      });
+      expect(titels(p), binnen).toEqual([]);
+    }
+  });
+
+  it('een model uit Depends geeft geen "komt nergens aan"', () => {
+    const p = compleetMet((q) => {
+      q['main.py'] = q['main.py'].replace(
+        'naam: str = Form(...), bericht: str = Form(...)',
+        'data: Bericht = Depends(Bericht.as_form)',
+      );
+    });
+    expect(titels(p)).toEqual([]);
+    const leeg = compleetMet((q) => {
+      q['main.py'] = q['main.py'].replace(
+        'naam: str = Form(...), bericht: str = Form(...)',
+        'data: Bericht = Depends()',
+      );
+    });
+    expect(titels(leeg)).toEqual([]);
+  });
+
+  it('een database uit Depends naast Form slaat de controle niet over', () => {
+    const p = compleetMet((q) => {
+      q['main.py'] = q['main.py'].replace(
+        'naam: str = Form(...), bericht: str = Form(...)',
+        'naam: str = Form(...), bericht: str = Form(...), db = Depends(get_db)',
+      );
+      q[FORM] = q[FORM].replace('name="naam"', 'name="nam"');
+    });
+    expect(titels(p)).toContain('Het veld "nam" komt nergens aan');
+  });
+
+  it('een knop met een name komt niet als ontbrekend veld terug', () => {
+    const p = compleetMet((q) => {
+      q[FORM] = q[FORM].replace(
+        '<button type="submit">',
+        '<button type="submit" name="actie" value="opslaan">',
+      );
+    });
+    expect(titels(p)).toEqual([]);
+  });
+
+  it('een formulier met method="delete" krijgt uitleg over get en post', () => {
+    const p = compleetMet((q) => {
+      q[FORM] = q[FORM].replace('method="post"', 'method="delete"');
+    });
+    expect(titels(p)).toEqual(['Een formulier kan geen DELETE sturen']);
+    // Met hx-delete stuurt htmx de DELETE; method="dialog" stuurt niets.
+    for (const tag of ['method="delete" hx-delete="/gastenboek"', 'method="dialog"']) {
+      const goed = compleetMet((q) => {
+        q[FORM] = q[FORM].replace('method="post"', tag);
+      });
+      expect(titels(goed), tag).toEqual([]);
+    }
+  });
+
+  it('een link naar een route die alleen POST kent, is een 405 en geen 404', () => {
+    const p = compleetMet((q) => {
+      q[FORM] = q[FORM].replace('</form>', '</form><a href="/gastenboek_opslaan">x</a>');
+      q['main.py'] = q['main.py'].replace(
+        '@app.post("/gastenboek")',
+        '@app.post("/gastenboek_opslaan")',
+      );
+      q[FORM] = q[FORM].replace('action="/gastenboek"', 'action="/gastenboek_opslaan"');
+    });
+    const fouten = samenhang(p);
+    expect(fouten.map((f) => f.titel)).toEqual([
+      'De link naar /gastenboek_opslaan gaat naar een route die alleen POST kent',
+    ]);
+    expect(fouten[0].uitleg).toContain('405');
+  });
+
+  it('een FileResponse met een stuk tekst ervoor wordt niet als pad gelezen', () => {
+    const p = compleetMet((q) => {
+      q['main.py'] = q['main.py'].replace(
+        'FileResponse("static/pages/gastenboek_form.html")',
+        'FileResponse("static/pages/" + "gastenboek_form.html")',
+      );
+    });
+    expect(titels(p)).toEqual([]);
+  });
+
+  it('een RedirectResponse naar een route die niet bestaat', () => {
+    const p = compleetMet((q) => {
+      q['main.py'] = q['main.py'].replace('url="/berichten"', 'url="/berichtenn"');
+    });
+    expect(titels(p)).toEqual([
+      'RedirectResponse stuurt door naar /berichtenn, en die route bestaat niet',
+    ]);
+    // Met een parameter of een query string past hij gewoon.
+    const goed = compleetMet((q) => {
+      q['main.py'] = q['main.py'].replace('url="/berichten"', 'url="/bericht/abc?nieuw=1"');
+    });
+    expect(titels(goed)).toEqual([]);
+  });
+
+  it('een RedirectResponse met een berekend pad, naar static of naar /docs is goed', () => {
+    for (const doel of [
+      '"/bericht/" + "abc"',
+      'url="/static/pages/gastenboek_form.html"',
+      'url="/docs"',
+    ]) {
+      const p = compleetMet((q) => {
+        q['main.py'] = q['main.py'].replace('url="/berichten"', doel);
+      });
+      expect(titels(p), doel).toEqual([]);
+    }
+  });
+
+  it('dezelfde kapotte link twee keer op een regel is één melding', () => {
+    const p = compleetMet((q) => {
+      q[FORM] = q[FORM].replace('</form>', '</form><a href="/weg">a</a> <a href="/weg">b</a>');
+    });
+    expect(titels(p)).toEqual(['De link naar /weg heeft geen route']);
   });
 });

@@ -1,4 +1,4 @@
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 import styles from './TeacherGate.module.css';
 import { isUnlocked, sessionStorageOrNull, tryUnlock } from './teacherGate';
 
@@ -17,18 +17,33 @@ export function TeacherGate({ password, storageKey, children }: TeacherGateProps
   );
   const [value, setValue] = useState('');
   const [wrong, setWrong] = useState(false);
+  // Na het ontgrendelen verdwijnt het formulier, en viel de focus op de
+  // pagina zelf. Nu gaat hij naar het eerste veld van de docentweergave (de
+  // naam van de leerling), of anders de eerste knop.
+  const [zojuist, setZojuist] = useState(false);
+  const wortel = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!zojuist || !wortel.current) return;
+    const doel =
+      wortel.current.querySelector<HTMLElement>(
+        'input:not([type=file]):not([type=hidden]):not([tabindex="-1"])',
+      ) ?? wortel.current.querySelector<HTMLElement>('button');
+    doel?.focus();
+    setZojuist(false);
+  }, [zojuist]);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (tryUnlock(sessionStorage, storageKey, value, password)) {
       setUnlocked(true);
       setWrong(false);
+      setZojuist(true);
     } else {
       setWrong(true);
     }
   };
 
-  if (unlocked) return <>{children}</>;
+  if (unlocked) return <div ref={wortel}>{children}</div>;
 
   return (
     <form className={styles.gate} onSubmit={submit}>
