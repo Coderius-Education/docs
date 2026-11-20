@@ -224,7 +224,7 @@ export function analyze(
     extra,
     buitenLesstof:
       (opties.buitenLesstof ?? true) ? (config.buitenLesstof?.(eigenBestanden) ?? []) : [],
-    samenhang: config.samenhang?.(eigenBestanden) ?? [],
+    samenhang: config.samenhang?.(eigenBestanden, files) ?? [],
     warnings,
   };
 }

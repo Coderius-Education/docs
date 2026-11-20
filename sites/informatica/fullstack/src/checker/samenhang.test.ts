@@ -489,7 +489,8 @@ async def bestand(pad: str):
           `${KOP}@app.get("/weg")\nasync def weg():\n    return RedirectResponse(url="/", status_code=303)\n`,
         ),
       );
-      expect(fouten[0].uitleg).toContain('`from fastapi.responses import HTMLResponse`');
+      const importFout = fouten.find((f) => f.titel.startsWith('RedirectResponse wordt gebruikt'));
+      expect(importFout?.uitleg).toContain('`from fastapi.responses import HTMLResponse`');
       const zonderRegel = samenhang(
         main(`${KOP}app.mount("/static", StaticFiles(directory="static"), name="static")\n`),
       );
@@ -562,5 +563,140 @@ describe('samenhang — geen valse meldingen bij een gewone opzet', () => {
       '    return naam',
     ].join('\n');
     expect(samenhang(project({ 'main.py': main }))).toEqual([]);
+  });
+});
+
+// De review van november 2026 van de hele nakijker vond deze valse en gemiste
+// meldingen. Elk geval is nagedaan met het gastenboek uit de fixture.
+describe('samenhang — review van de upload tool', () => {
+  const FORM = 'static/pages/gastenboek_form.html';
+
+  it('een meegeleverde htmx.min.js is geen ontbrekend bestand', () => {
+    // isBibliotheek telt elk .min.js als bibliotheek, en de samenhang kreeg
+    // alleen de bestanden van de leerling: elke leerling met de htmx-
+    // uitbreiding kreeg "wijst naar een bestand dat er niet is".
+    const p = leesFixture('compleet');
+    p['static/js/htmx.min.js'] = '/* htmx */';
+    p[FORM] = p[FORM].replace('</head>', '<script src="/static/js/htmx.min.js"></script></head>');
+    expect(analyze(project(p), fullstackConfig).samenhang).toEqual([]);
+    delete p['static/js/htmx.min.js'];
+    expect(analyze(project(p), fullstackConfig).samenhang?.map((f) => f.titel)).toEqual([
+      '/static/js/htmx.min.js wijst naar een bestand dat er niet is',
+    ]);
+  });
+
+  it('losse bestanden zonder mappen geven geen meldingen over mappen', () => {
+    // Kies bestanden met de zeven bestanden van het gastenboek: elk template
+    // en elk static-bestand "bestond niet", terwijl ze net geüpload waren.
+    const los = Object.fromEntries(
+      Object.entries(leesFixture('compleet')).map(([pad, inhoud]) => [
+        pad.split('/').at(-1),
+        inhoud,
+      ]),
+    ) as Record<string, string>;
+    expect(titels(project(los))).toEqual([]);
+  });
+
+  it('een vergeten Form(...) is een 422 uit de URL, geen veld dat weggegooid wordt', () => {
+    const fouten = samenhang(
+      compleetMet((p) => {
+        p['main.py'] = p['main.py'].replace(
+          'naam: str = Form(...), bericht: str = Form(...)',
+          'naam: str, bericht: str',
+        );
+      }),
+    );
+    expect(fouten.map((f) => f.titel)).toEqual([
+      'gastenboek_opslaan() zoekt "naam" in de URL, niet in het formulier',
+      'gastenboek_opslaan() zoekt "bericht" in de URL, niet in het formulier',
+    ]);
+    expect(fouten[0].uitleg).toMatch(/= Form\(\.\.\.\).*422/s);
+  });
+
+  it('meldt geen ontbrekend veld als het formulier velden uit een include of block heeft', () => {
+    for (const binnen of [
+      '{% include "velden.html" %}',
+      '{% block velden %}{% endblock %}',
+      '<input name="{{ veld }}"><input name="bericht">',
+    ]) {
+      const p = compleetMet((q) => {
+        q[FORM] = q[FORM].replace(/<form([^>]*)>[\s\S]*<\/form>/, `<form$1>${binnen}</form>`);
+      });
+      expect(titels(p), binnen).toEqual([]);
+    }
+  });
+
+  it('een model uit Depends geeft geen "komt nergens aan"', () => {
+    const p = compleetMet((q) => {
+      q['main.py'] = q['main.py'].replace(
+        'naam: str = Form(...), bericht: str = Form(...)',
+        'data: Bericht = Depends(Bericht.as_form)',
+      );
+    });
+    expect(titels(p)).toEqual([]);
+  });
+
+  it('een knop met een name komt niet als ontbrekend veld terug', () => {
+    const p = compleetMet((q) => {
+      q[FORM] = q[FORM].replace(
+        '<button type="submit">',
+        '<button type="submit" name="actie" value="opslaan">',
+      );
+    });
+    expect(titels(p)).toEqual([]);
+  });
+
+  it('een formulier met method="delete" krijgt uitleg over get en post', () => {
+    const p = compleetMet((q) => {
+      q[FORM] = q[FORM].replace('method="post"', 'method="delete"');
+    });
+    expect(titels(p)).toEqual(['Een formulier kan geen DELETE sturen']);
+  });
+
+  it('een link naar een route die alleen POST kent, is een 405 en geen 404', () => {
+    const p = compleetMet((q) => {
+      q[FORM] = q[FORM].replace('</form>', '</form><a href="/gastenboek_opslaan">x</a>');
+      q['main.py'] = q['main.py'].replace(
+        '@app.post("/gastenboek")',
+        '@app.post("/gastenboek_opslaan")',
+      );
+      q[FORM] = q[FORM].replace('action="/gastenboek"', 'action="/gastenboek_opslaan"');
+    });
+    const fouten = samenhang(p);
+    expect(fouten.map((f) => f.titel)).toEqual([
+      'De link naar /gastenboek_opslaan gaat naar een route die alleen POST kent',
+    ]);
+    expect(fouten[0].uitleg).toContain('405');
+  });
+
+  it('een FileResponse met een stuk tekst ervoor wordt niet als pad gelezen', () => {
+    const p = compleetMet((q) => {
+      q['main.py'] = q['main.py'].replace(
+        'FileResponse("static/pages/gastenboek_form.html")',
+        'FileResponse("static/pages/" + "gastenboek_form.html")',
+      );
+    });
+    expect(titels(p)).toEqual([]);
+  });
+
+  it('een RedirectResponse naar een route die niet bestaat', () => {
+    const p = compleetMet((q) => {
+      q['main.py'] = q['main.py'].replace('url="/berichten"', 'url="/berichtenn"');
+    });
+    expect(titels(p)).toEqual([
+      'RedirectResponse stuurt door naar /berichtenn, en die route bestaat niet',
+    ]);
+    // Met een parameter of een query string past hij gewoon.
+    const goed = compleetMet((q) => {
+      q['main.py'] = q['main.py'].replace('url="/berichten"', 'url="/bericht/abc?nieuw=1"');
+    });
+    expect(titels(goed)).toEqual([]);
+  });
+
+  it('dezelfde kapotte link twee keer op een regel is één melding', () => {
+    const p = compleetMet((q) => {
+      q[FORM] = q[FORM].replace('</form>', '</form><a href="/weg">a</a> <a href="/weg">b</a>');
+    });
+    expect(titels(p)).toEqual(['De link naar /weg heeft geen route']);
   });
 });

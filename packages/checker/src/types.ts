@@ -249,8 +249,10 @@ export interface CheckerConfig {
    * meegeeft. Zulke fouten geven vaak geen melding: een lege plek, een 422 of
    * een 404 in een ander bestand dan waar de fout zit. Het rapport toont ze
    * ook aan de leerling, want het is terugkoppeling op zijn eigen code.
+   * `files` zijn de bestanden van de leerling, `alle` ook de bibliotheken:
+   * een link naar een meegeleverde `htmx.min.js` is geen kapotte link.
    */
-  samenhang?: (files: ProjectFiles) => Samenhangfout[];
+  samenhang?: (files: ProjectFiles, alle: ProjectFiles) => Samenhangfout[];
 }
 
 /** Iets dat tussen twee bestanden van het project niet aansluit. */
