@@ -363,6 +363,28 @@ async def verwijder(sleutel: str):
   });
 
   describe('links en bestanden', () => {
+    it('een static-link zonder / vooraan', () => {
+      const files = compleetMet((p) => {
+        p['templates/berichten.html'] = p['templates/berichten.html'].replace(
+          '"/static/css/style.css"',
+          '"static/css/style.css"',
+        );
+      });
+      expect(titels(files)).toEqual(['static/css/style.css mist een / vooraan']);
+      const [fout] = samenhang(files);
+      expect(fout.uitleg).toContain('Schrijf /static/css/style.css.');
+    });
+
+    it('een relatieve link naar iets anders dan static is geen melding', () => {
+      const files = compleetMet((p) => {
+        p['templates/berichten.html'] = p['templates/berichten.html'].replace(
+          '</body>',
+          '<a href="gastenboek">Gastenboek</a><a href="https://example.com/static/x.css">x</a><a href="#static">y</a>\n</body>',
+        );
+      });
+      expect(samenhang(files)).toEqual([]);
+    });
+
     it('een static-bestand dat er niet is', () => {
       const files = compleetMet((p) => {
         p['templates/berichten.html'] = p['templates/berichten.html'].replace(

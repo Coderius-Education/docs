@@ -412,8 +412,13 @@ function controleerLinks(
     for (const m of tekst.matchAll(/<(a|link|img|script|source|video|audio|iframe)\b[^>]*>/gi)) {
       const attr = m[1].toLowerCase() === 'a' || m[1].toLowerCase() === 'link' ? 'href' : 'src';
       const doel = attribuut(m[0], attr);
-      if (!doel?.startsWith('/') || doel.startsWith('//')) continue;
+      if (!doel) continue;
       const regel = regelVan(tekst, m.index ?? 0);
+      if (!doel.startsWith('/')) {
+        meldRelatief(doel, f.path, regel, statisch, fouten);
+        continue;
+      }
+      if (doel.startsWith('//')) continue;
       const mount = statisch.find((s) => doel === s.prefix || doel.startsWith(`${s.prefix}/`));
       if (mount) {
         // Een berekende map (BASE_DIR / "static"): welk bestand erbij hoort,
@@ -457,6 +462,35 @@ function controleerLinks(
       });
     }
   }
+}
+
+/**
+ * Een link als `static/style.css` zonder / vooraan. Op de pagina / werkt hij,
+ * maar de browser zoekt hem vanaf de map van de pagina: op /berichten/3 vraagt
+ * hij /berichten/static/style.css, en dan staat de pagina zonder opmaak. Alleen
+ * als de link met de naam van een StaticFiles-mount begint; een link naar een
+ * andere pagina of een adres met een schema laat hij met rust.
+ */
+function meldRelatief(
+  doel: string,
+  bestand: string,
+  regel: number,
+  statisch: Statisch[],
+  fouten: Samenhangfout[],
+) {
+  if (doel.includes('{') || /^[a-z][\w+.-]*:/i.test(doel)) return;
+  const zonder = doel.replace(/^\.\//, '');
+  const mount = statisch.find((s) => {
+    const naam = s.prefix.replace(/^\//, '');
+    return naam !== '' && (zonder === naam || zonder.startsWith(`${naam}/`));
+  });
+  if (!mount) return;
+  const goed = `/${zonder}`;
+  fouten.push({
+    titel: `${doel} mist een / vooraan`,
+    uitleg: `Zonder / zoekt de browser ${doel} vanaf het adres van de pagina. Op / gaat dat goed, maar op een pagina als /berichten/3 vraagt hij /berichten/${zonder}, en dat geeft 404 Not Found. Schrijf ${goed}.`,
+    plekken: [plek(bestand, regel), plek(mount.bestand, mount.regel)],
+  });
 }
 
 interface Statisch {
