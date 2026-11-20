@@ -1008,7 +1008,6 @@ describe('godotConfig — review van de upload tool', () => {
 
   it('snelheid: een sprint en andere namen voor de snelheid', () => {
     for (const code of [
-      'velocity.x = direction * SPEED * 2',
       'const SPRINT_SPEED = 500.0',
       'const LOOPSNELHEID = 250.0',
       'const MOVE_SPEED = 250.0',
@@ -1021,8 +1020,19 @@ describe('godotConfig — review van de upload tool', () => {
       'const SPEED = 300.0\nfunc f():\n\tvelocity.x = direction * SPEED',
       'func f():\n\t$Anim.speed_scale = 2.0',
       'const JUMP_SPEED = -600.0',
+      // Verdubbelen is de power-up uit les 7.6; de oplossing daar (600.0)
+      // telt ook niet.
+      'func geef_snelheidsboost():\n\tsnelheid = snelheid * 2',
+      'velocity.x = direction * SPEED * 2',
+      'func f():\n\t$Camera2D.position_smoothing_speed = 3.0',
     ])
       expect(een('gd-snelheid', { 'speler.gd': code }), code).toBe(false);
+    // Een instelling van de camera in de scène (les 5.4) is geen loopsnelheid.
+    expect(
+      een('gd-snelheid', {
+        'level.tscn': '[node name="Camera2D" type="Camera2D"]\nposition_smoothing_speed = 3.0',
+      }),
+    ).toBe(false);
   });
 
   it('sprongkracht: ook met een Nederlandse of andere naam', () => {
@@ -1033,6 +1043,14 @@ describe('godotConfig — review van de upload tool', () => {
     ])
       expect(een('gd-sprongkracht', { 'speler.gd': code }), code).toBe(true);
     expect(een('gd-sprongkracht', { 'speler.gd': 'const JUMP_VELOCITY = -400.0' })).toBe(false);
+    // Een teller voor een dubbele sprong is geen sprongkracht.
+    for (const code of [
+      'var jump_count = 0',
+      'const MAX_JUMPS = 2',
+      'var coyote_jump_time = 0.1',
+      'var aantal_sprongen = 0',
+    ])
+      expect(een('gd-sprongkracht', { 'speler.gd': code }), code).toBe(false);
   });
 
   it('een snelheid die in de Inspector is aangepast (@export)', () => {
@@ -1118,6 +1136,14 @@ describe('godotConfig — review van de upload tool', () => {
       .map((t) => `[node name="${t}" type="${t}"]`)
       .join('\n');
     expect(een('2d-nieuwe-nodes-meer', { 'a.tscn': scene })).toBe(false);
+    // Parallax2D (Godot 4.3) staat op zichzelf: dat is wel een eigen soort.
+    expect(
+      een('2d-nieuwe-nodes-meer', {
+        'a.tscn': ['Parallax2D', 'PointLight2D', 'AudioStreamPlayer2D']
+          .map((t) => `[node name="${t}" type="${t}"]`)
+          .join('\n'),
+      }),
+    ).toBe(true);
     expect(
       een('2d-nieuwe-nodes-meer', {
         'a.tscn': `${scene}\n[node name="Licht" type="PointLight2D"]`,
@@ -1163,6 +1189,15 @@ describe('godotConfig — review van de upload tool', () => {
     const toets =
       '[input]\n\nui_accept={\n"deadzone": 0.5,\n"events": [Object(InputEventKey,"resource_local_to_scene":false,"keycode":87)\n]\n}\n';
     expect(een('gd-keybindings', { 'project.godot': toets })).toBe(true);
+    // Eerst een actie zonder toets, dan een met: de tweede telt.
+    expect(
+      een('gd-keybindings', {
+        'project.godot': toets.replace(
+          '[input]\n\n',
+          '[input]\n\naanval={\n"deadzone": 0.5,\n"events": []\n}\n',
+        ),
+      }),
+    ).toBe(true);
     expect(
       een('gd-keybindings', {
         'project.godot': '[input]\n\nspringen={\n"deadzone": 0.5,\n"events": []\n}\n',
@@ -1175,6 +1210,13 @@ describe('godotConfig — review van de upload tool', () => {
     expect(
       een('gd-json', {
         'a.gd': 'func f(t):\n\tvar s = JSON.stringify({"a": 1})\n\tvar d = JSON.parse_string(t)',
+      }),
+    ).toBe(true);
+    // Lezen zoals de documentatie van Godot het laat zien: een JSON-object.
+    expect(
+      een('gd-json', {
+        'a.gd':
+          'func f(t):\n\tvar s = JSON.stringify({"a": 1})\n\tvar json = JSON.new()\n\tjson.parse(t)',
       }),
     ).toBe(true);
   });
@@ -1190,6 +1232,10 @@ describe('godotConfig — review van de upload tool', () => {
     ).toBe(true);
     expect(
       een('gd-timers', { 'a.gd': 'func f():\n\tawait get_tree().create_timer(5.0).timeout' }),
+    ).toBe(true);
+    // Een Timer-node die je start en waarop je wacht.
+    expect(
+      een('gd-timers', { 'a.gd': 'func f():\n\t$Cooldown.start()\n\tawait $Cooldown.timeout' }),
     ).toBe(true);
   });
 
@@ -1237,6 +1283,8 @@ describe('godotConfig — review van de upload tool', () => {
     expect(w({ 'index.pck': 'x', 'index.html': '<html>' }).join(' ')).toMatch(
       /export van je game \(index\.pck\)/,
     );
+    // Eén melding, niet ook nog de algemene over geen leesbare code.
+    expect(w({ 'index.pck': 'x', 'index.html': '<html>' })).toHaveLength(1);
     // Een gewoon project krijgt geen van deze meldingen.
     expect(
       w({ 'speler.gd': 'extends Node', 'level.tscn': '[node name="L" type="Node2D"]' }),

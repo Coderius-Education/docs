@@ -149,13 +149,11 @@ export function analyze(
     if (c.detect.type === 'path') {
       const re = withoutGlobal(c.detect.pattern);
       const inhoud = c.detect.inhoud ? withoutGlobal(c.detect.inhoud) : null;
-      // Een bestand van een bibliotheek telt ook hier niet: de scènes van een
-      // addon gaven Godot eerst "scènes in eigen mappen".
+      // Een bibliotheek telt hier wel: een static/-map met alleen htmx.min.js
+      // is bij fullstack nog steeds een static/-map. Een cursus die een map
+      // niet wil zien (de addons van Godot), zet dat in zijn eigen patroon.
       const paden = allPaths.filter(
-        (p) =>
-          re.test(p) &&
-          !config.bibliotheek?.(p, files[p]?.content ?? '') &&
-          (!inhoud || inhoud.test(files[p]?.content ?? '')),
+        (p) => re.test(p) && (!inhoud || inhoud.test(files[p]?.content ?? '')),
       );
       const used = paden.length > 0;
       if (!metPlekken) return { id: c.id, count: used ? 1 : 0, used };
@@ -231,7 +229,10 @@ export function analyze(
   const extra = metConcepten ? (config.extra ?? []).map(meet) : [];
 
   const warnings: string[] = [];
-  if (tekstbestanden === 0) {
+  // Wat de cursus zelf over de upload zegt, gaat voor de algemene melding:
+  // bij alleen een export van een Godot-game stonden er eerst twee.
+  const vanCursus = config.waarschuwingen?.(files) ?? [];
+  if (tekstbestanden === 0 && vanCursus.length === 0) {
     warnings.push(
       'Geen leesbare codebestanden gevonden — controleer of je de juiste map of zip hebt geüpload.',
     );
@@ -246,7 +247,7 @@ export function analyze(
       `Niet meegeteld: ${namen}. ${lijst.length === 1 ? 'Dat is een bibliotheek' : 'Dat zijn bibliotheken'}, geen eigen code.`,
     );
   }
-  warnings.push(...(config.waarschuwingen?.(files) ?? []));
+  warnings.push(...vanCursus);
   return {
     fileStats: { total: values.length, byKind, skippedTooLarge },
     concepts,

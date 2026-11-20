@@ -142,7 +142,7 @@ const BEKENDE_NODES = [
 // Een node die alleen onder een andere bestaat, is met die andere één
 // ontdekking: Path2D met zijn PathFollow2D, een parallax met zijn laag. Voor
 // "drie soorten" telden ze eerst als twee.
-const HULPNODES = ['PathFollow2D', 'ParallaxLayer', 'Parallax2D'];
+const HULPNODES = ['PathFollow2D', 'ParallaxLayer'];
 
 // De waardes die in de cursus staan. Wie ze laat staan heeft overgetypt; wie
 // er iets anders neerzet heeft zijn spel van zichzelf gemaakt, en dát is wat
@@ -174,19 +174,52 @@ export const CURSUS_FUNCTIES = [
 // waarde ten onrechte als cursuswaarde zou tellen. Vandaar `(?![\d.])`.
 const alt = (waardes: string[]) => waardes.map((w) => w.replace(/[.\-]/g, '\\$&')).join('|');
 
-// Een toekenning aan een van deze namen, ook met een type (`const SPEED: float
-// = 450.0`) en met @export ervoor; het getal komt na de lookahead.
-const toekenning = (namen: string) => `\\b(?:${namen})\\s*(?::\\s*\\w+\\s*)?(?::=|=)\\s*`;
 // De namen: alles met speed of snelheid erin (SPRINT_SPEED, LOOPSNELHEID),
-// maar niet de snelheid van een animatie (speed_scale) of van een sprong.
-// Eerst telden alleen SPEED en snelheid zelf, en sprinten (opdracht 5.7.b)
-// nooit.
-const SNELHEID_NAAM = '(?![\\w]*(?:jump|sprong|spring|_scale))\\w*(?:speed|snelheid)\\w*';
-const SPRONG_NAAM = '\\w*(?:jump|sprong|spring)\\w*';
-// Een eigen waarde: een getal dat niet uit de les komt, of een getal uit de
-// les met een berekening erachter (`300.0 * 1.5`).
+// maar niet de snelheid van een animatie (speed_scale), van de camera
+// (position_smoothing_speed) of van een sprong. Voor een sprong: de kracht of
+// snelheid ervan (JUMP_VELOCITY, SPRINGKRACHT), niet een teller als
+// jump_count of MAX_JUMPS. Eerst telden alleen SPEED, snelheid en vier namen
+// voor de sprong.
+const SNELHEID_NAAM = '(?!\\w*(?:jump|sprong|spring|_scale|smoothing))\\w*(?:speed|snelheid)\\w*';
+const SPRONG_NAAM =
+  '\\w*(?:jump|sprong|spring)_?(?:velocity|force|speed|power|strength|impulse|kracht|snelheid)\\w*';
+
+// Een eigen waarde: een getal dat niet uit de les komt, of een getal met een
+// berekening erachter (`300.0 * 1.5`). Niet keer of gedeeld door twee: de
+// power-up uit les 7.6 verdubbelt de snelheid, en de oplossing (600.0) telt
+// ook niet.
 const eigenWaarde = (cursus: string[]) =>
-  `(?:(?!(?:${alt(cursus)})(?![\\d.]))-?\\d|-?\\d[\\d.]*\\s*[*/+-]\\s*\\d)`;
+  `(?:(?!(?:${alt(cursus)})(?![\\d.]))-?\\d|-?\\d[\\d.]*\\s*[*/+-]\\s*(?!2(?:\\.0*)?(?![\\d.]))\\d)`;
+
+/**
+ * Een eigen waarde voor een naam: in een script na `const` of `var` (ook met
+ * een type en @export), of ingesprongen in een functie; in een scène alleen
+ * voor een `@export`-naam uit een script (`speed = 450.0` onder de node). Een
+ * instelling van Godot zelf in een scène telt niet:
+ * `position_smoothing_speed = 3.0` uit de les over de camera gaf eerst
+ * "snelheid veranderen".
+ */
+function eigenWaardeVoor(naam: string, cursus: string[], exports: string[]): ConceptDetect {
+  const inScript = `(?:\\b(?:const|var)\\s+|^[ \\t]+)${naam}\\s*(?::\\s*\\w+\\s*)?(?::=|=)\\s*${eigenWaarde(cursus)}`;
+  const inScene = exports.length ? `|^(?:${exports.join('|')})\\s*=\\s*${eigenWaarde(cursus)}` : '';
+  return {
+    type: 'regex',
+    pattern: new RegExp(`${inScript}${inScene}`, 'gim'),
+    in: ['gd', 'tscn-gd', 'tscn'],
+  };
+}
+
+/** De `@export`-namen in de scripts die bij een naam passen. */
+export function exportNamen(files: ProjectFiles, naam: string): string[] {
+  const re = new RegExp(`@export\\w*(?:\\([^)]*\\))?\\s+var\\s+(${naam})\\b`, 'gi');
+  return [
+    ...new Set(
+      Object.values(files)
+        .filter((f) => f.kind === 'gd' && f.content)
+        .flatMap((f) => Array.from((f.content ?? '').matchAll(re), (m) => m[1])),
+    ),
+  ];
+}
 
 // Animatie veranderen: in code een animatie wisselen of spiegelen (issue
 // 227). Dat is wat les 6.2 leert, en het telt ook met de namen uit de les
@@ -371,26 +404,15 @@ const DETECTIE: Record<string, ConceptDetect> = {
   // Ook in een scène: een @export-waarde die je in de Inspector aanpast,
   // staat als `speed = 450.0` onder de node. En de snelheid keer iets in de
   // regel met velocity (sprinten).
-  'gd-snelheid': {
-    type: 'regex',
-    pattern: new RegExp(
-      `${toekenning(SNELHEID_NAAM)}${eigenWaarde(CURSUS_SNELHEID)}|\\b(?![\\w]*(?:jump|sprong|spring|_scale))\\w*(?:speed|snelheid)\\w*\\s*[*/]\\s*\\d`,
-      'gi',
-    ),
-    in: ['gd', 'tscn-gd', 'tscn'],
-  },
-  'gd-sprongkracht': {
-    type: 'regex',
-    pattern: new RegExp(`${toekenning(SPRONG_NAAM)}${eigenWaarde(CURSUS_SPRONG)}`, 'gi'),
-    in: ['gd', 'tscn-gd', 'tscn'],
-  },
+  'gd-snelheid': eigenWaardeVoor(SNELHEID_NAAM, CURSUS_SNELHEID, []),
+  'gd-sprongkracht': eigenWaardeVoor(SPRONG_NAAM, CURSUS_SPRONG, []),
   // Eigen toetsen staan als [input]-sectie in project.godot, met per actie
   // de toetsen (`"events": [Object(InputEventKey, …`). Les 5.7 zet W, A en D
   // aan ui_accept, ui_left en ui_right: wie de les volgt, heeft dit. Een
   // [input] met alleen lege acties telde eerst ook.
   'gd-keybindings': {
     type: 'regex',
-    pattern: /^\[input\][^[]*?"events":\s*\[\s*Object\(/gm,
+    pattern: /^\[input\](?:(?!^\[)[\s\S])*?"events":\s*\[\s*Object\(/gm,
     in: ['godot'],
   },
   // `&"zwemmen"` is een StringName; dat schrijft Godot zelf als je een
@@ -439,11 +461,14 @@ const DETECTIE: Record<string, ConceptDetect> = {
   // JSON, niet elk bestand: FileAccess op een .txt is geen JSON. Lezen én
   // schrijven, zoals de rij zegt: alleen de print van stringify uit de
   // voorspelvraag van les 10.4 telde eerst al.
+  // Lezen ook met een JSON-object, zoals de documentatie van Godot het doet
+  // (`var json = JSON.new()` en `json.parse(tekst)`).
   'gd-json': {
     type: 'regex',
-    pattern: /\bJSON\.(stringify|parse)(?:_string)?\s*\(/g,
+    pattern:
+      /\b(?:(?<d0>JSON\.stringify)|(?<d1>JSON\.parse(?:_string)?|JSON\.new\s*\(\s*\)[\s\S]*?\.parse))\s*\(/g,
     in: ['gd', 'tscn-gd'],
-    delen: true,
+    delen: ['schrijven', 'lezen'],
     minDelen: 2,
   },
   'gd-loops': gd(/^[ \t]*(?:for|while)\s/gm, 2),
@@ -456,7 +481,7 @@ const DETECTIE: Record<string, ConceptDetect> = {
   'gd-timers': {
     type: 'regex',
     pattern:
-      /\bcreate_timer\s*\(|\bTimer\.new\s*\(|\.timeout\.connect\s*\(|\[connection signal="timeout"/g,
+      /\bcreate_timer\s*\(|\bTimer\.new\s*\(|\.timeout\.connect\s*\(|\bawait\b[^\n]*\.timeout\b|\[connection signal="timeout"/g,
     in: ['gd', 'tscn-gd', 'tscn'],
   },
 };
@@ -500,7 +525,8 @@ const OOK_GEBRUIKT: ExtraConcept[] = [
     // mogelijkheid; wie dat doet heeft zelf over de indeling nagedacht. De
     // uploader haalt de gedeelde bovenmap er al af, dus `mijn-game/wereld.tscn`
     // telt niet als submap.
-    detect: { type: 'path', pattern: /\/[^/]+\.tscn$/i },
+    // Niet in een addon: die scènes zijn niet van de leerling.
+    detect: { type: 'path', pattern: /^(?!(?:.*\/)?addons\/).*\/[^/]+\.tscn$/i },
   },
 ];
 
@@ -588,6 +614,16 @@ export const godotConfig: CheckerConfig = {
     return {
       'gd-globals': gd(new RegExp(`\\b(?:${namen.join('|')})\\.\\w+`, 'g'), 2),
       ...overScripts(files, namen),
+      'gd-snelheid': eigenWaardeVoor(
+        SNELHEID_NAAM,
+        CURSUS_SNELHEID,
+        exportNamen(files, SNELHEID_NAAM),
+      ),
+      'gd-sprongkracht': eigenWaardeVoor(
+        SPRONG_NAAM,
+        CURSUS_SPRONG,
+        exportNamen(files, SPRONG_NAAM),
+      ),
       'gd-modulaire-functies': modulaireFuncties(koppelingen(files)),
     };
   },
