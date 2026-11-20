@@ -1095,3 +1095,114 @@ describe('fullstackConfig — wat niet van de leerling is, en wat er net naast l
     expect(fullstackConfig.zonderLeerroute).toBe('1');
   });
 });
+
+// De review van november 2026 van de upload tool vond deze gemiste en valse
+// herkenningen. Elk geval is een stukje code zoals een leerling het schrijft.
+describe('fullstackConfig — review van de upload tool', () => {
+  const met = (id: string, entries: Record<string, string>) =>
+    perId(analyze(files(entries), fullstackConfig)).get(id);
+  const py = (id: string, code: string) => met(id, { 'main.py': code });
+
+  it('registreren en inloggen met Engelse namen', () => {
+    expect(py('account-registreren', '@app.post("/register")\ndef r(): pass')).toBe(true);
+    expect(py('account-registreren', '@app.post("/sign-up")\ndef r(): pass')).toBe(true);
+    expect(py('account-registreren', '@app.post("/account/inloggen")\ndef r(): pass')).toBe(false);
+    // Een registreerformulier met één wachtwoordveld is geen inlogformulier.
+    const form = (action: string) =>
+      met('account-inloggen', {
+        'templates/a.html': `<form method="post" action="${action}"><input name="naam"><input type="password" name="password"></form>`,
+      });
+    expect(form('/register')).toBe(false);
+    expect(form('/signup')).toBe(false);
+    expect(form('/inloggen')).toBe(true);
+  });
+
+  it('het wachtwoord controleren, met elke naam van de leerling', () => {
+    for (const code of [
+      'if account["wachtwoord"] != invoer:',
+      'if opgeslagen != ingevuld_wachtwoord:',
+      'if gebruikers.get(naam) != wachtwoord_invoer:',
+      'if gebruikers.get(naam) != pwd:',
+    ])
+      expect(py('account-wachtwoord', code), code).toBe(true);
+    // Het herhaalveld bij registreren is geen controle.
+    for (const code of [
+      'if password != password_confirm:',
+      'if confirm_password != password:',
+      'if wachtwoord != wachtwoord_opnieuw:',
+      'if wachtwoord != bevestig_wachtwoord:',
+      'if wachtwoord == "":',
+    ])
+      expect(py('account-wachtwoord', code), code).toBe(false);
+  });
+
+  it('de handleiding uitzetten, ook met openapi_url', () => {
+    expect(py('vh-docs', 'app = FastAPI(openapi_url=None)')).toBe(true);
+    expect(py('vh-docs', 'app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)')).toBe(
+      true,
+    );
+    expect(py('vh-docs', 'app = FastAPI(title="x")')).toBe(false);
+  });
+
+  it('een context in een variabele met request als eerste sleutel', () => {
+    const code = [
+      '@app.get("/berichten")',
+      'async def berichten(request: Request):',
+      '    context = {"request": request, "berichten": alle}',
+      '    return templates.TemplateResponse("berichten.html", context)',
+    ].join('\n');
+    expect(py('fastapi-templates', code)).toBe(true);
+  });
+
+  it('een database die een functie zelf opent, en een dictionary uit een variabele', () => {
+    const code = [
+      '@app.post("/gastenboek")',
+      'async def opslaan(naam: str = Form(...)):',
+      '    db = SqliteDict("gastenboek.db")',
+      '    nieuw = {"naam": naam}',
+      '    db[naam] = nieuw',
+      '    db.commit()',
+      '    print(db.get(naam))',
+      '    db.close()',
+    ].join('\n');
+    for (const id of ['db-write', 'db-lezen', 'db-formulier', 'db-dictionary'])
+      expect(py(id, code), id).toBe(true);
+    // Een gewone dictionary in een andere functie telt niet.
+    const anders = [
+      'def a():',
+      '    db = SqliteDict("gastenboek.db")',
+      '    db.close()',
+      'def b():',
+      '    DIEREN = {}',
+      '    DIEREN["kat"] = {"x": 1}',
+    ].join('\n');
+    expect(py('db-write', anders)).toBe(false);
+    expect(py('db-dictionary', anders)).toBe(false);
+  });
+
+  it('een plaatje van internet is geen eigen afbeelding', () => {
+    const img = (src: string) =>
+      met('html-img', { 'templates/a.html': `<img src="${src}" alt="">` });
+    expect(img('https://example.com/a.png')).toBe(false);
+    expect(img('//cdn.example.com/a.png')).toBe(false);
+    expect(img('/static/logo.png')).toBe(true);
+    expect(img("{{ url_for('static', path='logo.png') }}")).toBe(true);
+  });
+
+  it('Ook gebruikt: gebruikt, niet alleen geïmporteerd, en van de database', () => {
+    const alleenImport = 'from fastapi import FastAPI, HTTPException, Request\napp = FastAPI()';
+    expect(py('fastapi-request', alleenImport)).toBe(false);
+    expect(py('fastapi-httpexception', alleenImport)).toBe(false);
+    expect(py('db-items', 'for k, v in DIEREN.items():\n    print(k)')).toBe(false);
+    expect(
+      py(
+        'db-items',
+        'with SqliteDict("a.db") as db:\n    for k, v in db.items():\n        print(k)',
+      ),
+    ).toBe(true);
+    // Een APIRouter telt ook bij de losse endpoints.
+    const router = '@router.get("/a")\ndef a(): pass\n@router.post("/b")\ndef b(): pass';
+    expect(py('fastapi-get', router)).toBe(true);
+    expect(py('fastapi-post', router)).toBe(true);
+  });
+});
