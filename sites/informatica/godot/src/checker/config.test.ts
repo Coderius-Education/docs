@@ -11,7 +11,13 @@ import { BLOOM } from '@coderius/shared/leerdoelen';
 import { describe, expect, it } from 'vitest';
 import { blokkenInVolgorde, functies } from '../godot-tests/lessen';
 import leerdoelen from '../leerdoelen.json';
-import { CURSUS_FUNCTIES, CURSUS_SNELHEID, CURSUS_SPRONG, godotConfig } from './config';
+import {
+  CURSUS_FUNCTIES,
+  CURSUS_SNELHEID,
+  CURSUS_SPRONG,
+  godotConfig,
+  ingebouwdeScripts,
+} from './config';
 
 function files(entries: Record<string, string | null>): ProjectFiles {
   return Object.fromEntries(
@@ -118,18 +124,19 @@ describe('godotConfig — voorbeeldprojecten scoren', () => {
         'gd-timers',
         // Groups staan in 7.5 in het hoofdpad: de muntjes tellen.
         'gd-groups',
+        // Les 6.2 wisselt de animatie in code (idle, run, jump).
+        'gd-animatie',
       ],
       [
-        // Dit project is de cursus nagedaan, en dat is precies wat deze vier
-        // concepten meten: het gebruikt de waardes en de animatienamen uit de
-        // les (SPEED 300.0, sprong -800.0 en de -1300.0 van de power-up,
-        // idle/run/jump) en heeft geen eigen
+        // Dit project is de cursus nagedaan, en dat is precies wat deze drie
+        // concepten meten: het gebruikt de waardes uit de les (SPEED 300.0,
+        // sprong -800.0 en de -1300.0 van de power-up) en heeft geen eigen
         // toetsen in project.godot. Wie niets aanpast, heeft het spel nog niet
-        // van zichzelf gemaakt.
+        // van zichzelf gemaakt. Animatie veranderen telt wel: dat is een
+        // animatie wisselen in code, en dat leert les 6.2.
         'gd-snelheid',
         'gd-sprongkracht',
         'gd-keybindings',
-        'gd-animatie',
         // Het bouwt met de nodes die de cursus aanleert, dus er is niets
         // zelf ontdekt.
         '2d-nieuwe-nodes',
@@ -159,8 +166,7 @@ describe('godotConfig — voorbeeldprojecten scoren', () => {
         'gd-sprongkracht',
         // Eigen toetsen ("duiken", "boost") in een [input]-sectie.
         'gd-keybindings',
-        // Eigen animaties ("zwemmen", "drijven"); het "run" dat er ook in
-        // staat komt uit de cursus en telt dus niet.
+        // Het wisselt animaties in code ("zwemmen", "drijven", "run").
         'gd-animatie',
         // AudioStreamPlayer2D en PathFollow2D staan in geen enkele les.
         '2d-nieuwe-nodes',
@@ -353,7 +359,7 @@ describe('godotConfig — Bloom als tweede as', () => {
   });
 
   it('meet nadoen en manipuleren aan hetzelfde stuk code', () => {
-    // De cursus-nodes zijn onthouden (nagedaan); de vier "veranderen"-
+    // De cursus-nodes zijn onthouden (nagedaan); de "veranderen"-
     // concepten zijn toepassen. Dat onderscheid is de reden dat Bloom geen
     // derde niveau is maar een eigen kolom.
     const bloomVan = new Map(godotConfig.concepts.map((c) => [c.id, c.bloom]));
@@ -375,8 +381,6 @@ describe('godotConfig — patronen die er net naast zitten', () => {
           'const SPEED = 300.0',
           'const JUMP_VELOCITY = -800.0',
           'var sprongkracht = -400.0',
-          '$AnimatedSprite2D.play("idle")',
-          '$AnimatedSprite2D.play("run")',
         ].join('\n'),
       }),
       godotConfig,
@@ -385,18 +389,13 @@ describe('godotConfig — patronen die er net naast zitten', () => {
 
     expect(perId.get('gd-snelheid')).toBe(false);
     expect(perId.get('gd-sprongkracht')).toBe(false);
-    expect(perId.get('gd-animatie')).toBe(false);
   });
 
   it('telt één cijfer verschil wél als eigen waarde', () => {
     // De grens moet op de waarde liggen en niet op "er staat een getal".
     const report = analyze(
       files({
-        'speler.gd': [
-          'const SPEED = 300.5',
-          'var sprongkracht = -799.0',
-          '$AnimatedSprite2D.play("zweven")',
-        ].join('\n'),
+        'speler.gd': ['const SPEED = 300.5', 'var sprongkracht = -799.0'].join('\n'),
       }),
       godotConfig,
     );
@@ -404,7 +403,144 @@ describe('godotConfig — patronen die er net naast zitten', () => {
 
     expect(perId.get('gd-snelheid')).toBe(true);
     expect(perId.get('gd-sprongkracht')).toBe(true);
-    expect(perId.get('gd-animatie')).toBe(true);
+  });
+
+  // Issue 227: "play animations are not detected from within gdscript".
+  // Animatie veranderen is: in code een animatie wisselen, ook met de namen
+  // uit de les. Eerst telde alleen een eigen naam, en die alleen letterlijk in
+  // `play("lopen")`; een les nagedaan, een variabele, een if-expressie,
+  // `animation =` of `play_backwards` zag de nakijker niet.
+  const animatie = (...regels: string[]) => {
+    const report = analyze(
+      files({ 'speler.gd': ['extends CharacterBody2D', ...regels].join('\n') }),
+      godotConfig,
+    );
+    return report.concepts.find((c) => c.id === 'gd-animatie')?.used;
+  };
+
+  it('herkent een animatie die in code wisselt, op elke manier', () => {
+    const gevallen: Record<string, string[]> = {
+      // Zoals les 6.2, met de namen uit de les.
+      'zoals de les': ['func _ready():', "\t$AnimatedSprite2D.play('run')"],
+      'spiegelen zoals de les': ['func _ready():', '\t$AnimatedSprite2D.flip_h = true'],
+      'if-expressie met de namen uit de les': [
+        'func _ready():',
+        '\t$AnimatedSprite2D.play("run" if velocity.x else "idle")',
+      ],
+      'variabele met een naam uit de les': [
+        'func _ready():',
+        '\tvar naam = "run"',
+        '\t$AnimatedSprite2D.play(naam)',
+      ],
+      letterlijk: ['func _ready():', '\t$AnimatedSprite2D.play("lopen")'],
+      'via @onready': [
+        '@onready var anim = $AnimatedSprite2D',
+        'func _ready():',
+        "\tanim.play('lopen')",
+      ],
+      'naam in een variabele': [
+        'func _ready():',
+        '\tvar naam = "idle"',
+        '\tif velocity.x:',
+        '\t\tnaam = "lopen"',
+        '\t$AnimatedSprite2D.play(naam)',
+      ],
+      'variabele na de aanroep': [
+        'func _ready():',
+        '\t$AnimatedSprite2D.play(naam)',
+        'func kies():',
+        '\tnaam = "lopen"',
+      ],
+      'getypte StringName': [
+        'var naam: StringName = &"lopen"',
+        'func _ready():',
+        '\t$AnimatedSprite2D.play(naam)',
+      ],
+      'if-expressie': [
+        'func _ready():',
+        '\t$AnimatedSprite2D.play("idle" if velocity.x == 0 else "lopen")',
+      ],
+      'animation =': [
+        'func _ready():',
+        '\t$AnimatedSprite2D.animation = "lopen"',
+        '\t$AnimatedSprite2D.play()',
+      ],
+      play_backwards: ['func _ready():', '\t$AnimatedSprite2D.play_backwards("lopen")'],
+      AnimationPlayer: ['func _ready():', '\t$AnimationPlayer.play("aanval")'],
+      // De vorm die een leerling met is_on_floor() het vaakst schrijft.
+      'if-expressie met een aanroep': [
+        'func _physics_process(delta):',
+        '\t$AnimatedSprite2D.play("idle" if is_on_floor() else "vallen")',
+      ],
+      StringName: ['func _ready():', '\t$AnimatedSprite2D.play(StringName("lopen"))'],
+      'animation = variabele': [
+        'var naam = "lopen"',
+        'func _ready():',
+        '\t$AnimatedSprite2D.animation = naam',
+      ],
+      current_animation: ['func _ready():', '\t$AnimationPlayer.current_animation = "aanval"'],
+      'AnimationTree travel': [
+        '@onready var staat = $AnimationTree.get("parameters/playback")',
+        'func _ready():',
+        '\tstaat.travel("aanval")',
+      ],
+      'eigen functie': [
+        'func _ready():',
+        '\tspeel("lopen")',
+        'func speel(naam: String):',
+        '\t$AnimatedSprite2D.play(naam)',
+      ],
+      'eigen functie, aanroep erna': [
+        'func speel(naam):',
+        '\t$AnimatedSprite2D.play(naam)',
+        'func _ready():',
+        '\tspeel("lopen")',
+      ],
+      dictionary: [
+        'const ANIMATIES = {"links": "lopen_links", "rechts": "lopen_rechts"}',
+        'func _ready():',
+        '\t$AnimatedSprite2D.play(ANIMATIES[richting])',
+      ],
+      lijst: [
+        'func _ready():',
+        '\t$AnimatedSprite2D.play(namen[0])',
+        'var namen: Array[String] = ["zwemmen", "duiken"]',
+      ],
+    };
+    for (const [naam, regels] of Object.entries(gevallen))
+      expect(animatie(...regels), naam).toBe(true);
+  });
+
+  it('telt code die geen animatie wisselt niet', () => {
+    const gevallen: Record<string, string[]> = {
+      // Een geluid heeft geen naam: play() of play(vanaf_seconde).
+      geluid: ['func _ready():', '\t$Geluid.play()', '\t$Geluid.play(1.5)'],
+      'animatie opvragen': [
+        'func _ready():',
+        '\tif $AnimatedSprite2D.animation == "lopen":',
+        '\t\tpass',
+      ],
+      'spiegeling opvragen': [
+        'func _ready():',
+        '\tif $AnimatedSprite2D.flip_h == true:',
+        '\t\tpass',
+      ],
+      'tekst die niet naar play gaat': [
+        'var tekst = "Game over"',
+        'func _ready():',
+        '\tprint(tekst)',
+      ],
+      'een functie die op play eindigt': ['func _ready():', '\tdisplay("hallo")'],
+      'eigen functie zonder animatie': [
+        'func _ready():',
+        '\tzeg("hallo")',
+        'func zeg(tekst):',
+        '\tprint(tekst)',
+      ],
+      'tween.play()': ['func _ready():', '\tvar t = create_tween()', '\tt.play()'],
+    };
+    for (const [naam, regels] of Object.entries(gevallen))
+      expect(animatie(...regels), naam).toBe(false);
   });
 
   it('telt alleen comments met een reden erin, en pas vanaf twee', () => {
@@ -728,6 +864,23 @@ describe('godotConfig — wat niet van de leerling is, en wat er net naast ligt'
     expect(perId.get('gd-timers')).toBe(false);
   });
 
+  it('maakt van \\" in een ingebouwd script weer een gewoon aanhalingsteken', () => {
+    // Een `\"` werd eerst een spatie en een aanhalingsteken: `play( "run ")`.
+    // Een naam was dan `run `, met een spatie (issue 227). De regels houden
+    // hun lengte, zodat een treffer op dezelfde plek in het bestand staat.
+    const tscn = [
+      '[sub_resource type="GDScript" id="1"]',
+      'script/source = "extends Node',
+      'func _ready():',
+      '\t$A.play(\\"run\\") # \\"commentaar\\"',
+      '"',
+    ].join('\n');
+    const uit = ingebouwdeScripts(tscn);
+    expect(uit).toContain('\t$A.play("run")');
+    expect(uit).not.toContain('commentaar');
+    expect(uit.split('\n').map((r) => r.length)).toEqual(tscn.split('\n').map((r) => r.length));
+  });
+
   it('telt een lijst of dictionary pas als je hem ook gebruikt', () => {
     const lijst = (code: string) => gebruikt({ 'a.gd': `extends Node\n${code}` }).get('gd-lijsten');
     const dict = (code: string) =>
@@ -766,11 +919,12 @@ describe('godotConfig — wat niet van de leerling is, en wat er net naast ligt'
   });
 
   it('vindt elk GDScript-concept in de code van zijn eigen les', () => {
-    // Wie de les volgt, heeft het concept. Uitgezonderd: de vier concepten die
+    // Wie de les volgt, heeft het concept. Uitgezonderd: de drie concepten die
     // juist meten dat je níet de waarde van de les gebruikt, en loops: de les
     // toont één lus (en call_group als afkorting), en nuttig gebruik vraagt er
-    // twee. Die tweede schrijft de leerling zelf.
-    const ANDERS = ['gd-snelheid', 'gd-sprongkracht', 'gd-keybindings', 'gd-animatie', 'gd-loops'];
+    // twee. Die tweede schrijft de leerling zelf. Animatie veranderen hoort
+    // er sinds issue 227 niet meer bij: dat is een animatie wisselen in code.
+    const ANDERS = ['gd-snelheid', 'gd-sprongkracht', 'gd-keybindings', 'gd-loops'];
     const mis: string[] = [];
     for (const c of leerdoelen.concepten) {
       if (!c.id.startsWith('gd-') || ANDERS.includes(c.id)) continue;
