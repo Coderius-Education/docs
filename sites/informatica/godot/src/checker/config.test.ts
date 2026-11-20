@@ -407,6 +407,93 @@ describe('godotConfig — patronen die er net naast zitten', () => {
     expect(perId.get('gd-animatie')).toBe(true);
   });
 
+  // Issue 227: "play animations are not detected from within gdscript". Alleen
+  // `play("lopen")` met de naam er letterlijk in telde; een eigen animatie
+  // die via een variabele, een if-expressie, `animation =` of
+  // `play_backwards` gekozen wordt, zag de nakijker niet.
+  const animatie = (...regels: string[]) => {
+    const report = analyze(
+      files({ 'speler.gd': ['extends CharacterBody2D', ...regels].join('\n') }),
+      godotConfig,
+    );
+    return report.concepts.find((c) => c.id === 'gd-animatie')?.used;
+  };
+
+  it('herkent een eigen animatie op elke manier waarop een script hem kiest', () => {
+    const gevallen: Record<string, string[]> = {
+      letterlijk: ['func _ready():', '\t$AnimatedSprite2D.play("lopen")'],
+      'via @onready': [
+        '@onready var anim = $AnimatedSprite2D',
+        'func _ready():',
+        "\tanim.play('lopen')",
+      ],
+      'naam in een variabele': [
+        'func _ready():',
+        '\tvar naam = "idle"',
+        '\tif velocity.x:',
+        '\t\tnaam = "lopen"',
+        '\t$AnimatedSprite2D.play(naam)',
+      ],
+      'variabele na de aanroep': [
+        'func _ready():',
+        '\t$AnimatedSprite2D.play(naam)',
+        'func kies():',
+        '\tnaam = "lopen"',
+      ],
+      'getypte StringName': [
+        'var naam: StringName = &"lopen"',
+        'func _ready():',
+        '\t$AnimatedSprite2D.play(naam)',
+      ],
+      'if-expressie': [
+        'func _ready():',
+        '\t$AnimatedSprite2D.play("idle" if velocity.x == 0 else "lopen")',
+      ],
+      'animation =': [
+        'func _ready():',
+        '\t$AnimatedSprite2D.animation = "lopen"',
+        '\t$AnimatedSprite2D.play()',
+      ],
+      play_backwards: ['func _ready():', '\t$AnimatedSprite2D.play_backwards("lopen")'],
+      AnimationPlayer: ['func _ready():', '\t$AnimationPlayer.play("aanval")'],
+    };
+    for (const [naam, regels] of Object.entries(gevallen))
+      expect(animatie(...regels), naam).toBe(true);
+  });
+
+  it('telt een animatie uit de cursus of een tekst die geen animatie is niet', () => {
+    const gevallen: Record<string, string[]> = {
+      'if-expressie met cursusnamen': [
+        'func _ready():',
+        '\t$AnimatedSprite2D.play("run" if velocity.x else "idle")',
+      ],
+      'variabele met een cursusnaam': [
+        'func _ready():',
+        '\tvar naam = "run"',
+        '\t$AnimatedSprite2D.play(naam)',
+      ],
+      vergelijking: [
+        'func _ready():',
+        '\tif $AnimatedSprite2D.animation == "lopen":',
+        '\t\t$AnimatedSprite2D.play("run")',
+      ],
+      'tekst die niet naar play gaat': [
+        'var tekst = "Game over"',
+        'func _ready():',
+        '\tprint(tekst)',
+        '\t$AnimatedSprite2D.play("idle")',
+      ],
+      'een functie die op play eindigt': ['func _ready():', '\tdisplay("hallo")'],
+      'tekst na de aanroep': [
+        'func _ready():',
+        '\t$AnimatedSprite2D.play("run")',
+        '\tprint("klaar")',
+      ],
+    };
+    for (const [naam, regels] of Object.entries(gevallen))
+      expect(animatie(...regels), naam).toBe(false);
+  });
+
   it('telt alleen comments met een reden erin, en pas vanaf twee', () => {
     const toelichting = (gd: string) =>
       score(analyze(files({ 'speler.gd': gd }), godotConfig), 'gd-toelichting');

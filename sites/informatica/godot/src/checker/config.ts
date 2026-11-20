@@ -147,6 +147,30 @@ const alt = (waardes: string[]) => waardes.map((w) => w.replace(/[.\-]/g, '\\$&'
 // = 450.0`) en met @export ervoor; het getal komt na de lookahead.
 const toekenning = (namen: string) => `\\b(?:${namen})\\s*(?::\\s*\\w+\\s*)?(?::=|=)\\s*`;
 
+// Een eigen animatie in code: een naam die niet uit de cursus komt, op elke
+// manier waarop een script een animatie kiest (issue 227). Eerst telde alleen
+// `play("lopen")` met de naam er letterlijk in. Een leerling die zijn spel van
+// zichzelf maakte, schrijft vaak iets anders:
+// - de naam in een variabele: `naam = "lopen"` en dan `play(naam)`, in welke
+//   volgorde ook in het script;
+// - de naam ergens in de aanroep: `play("idle" if stil else "lopen")`;
+// - `play_backwards("lopen")`, of `animation = "lopen"` met `play()` erna.
+// Een tekst in de aanroep wordt als geheel overgeslagen: anders las het
+// patroon `" if stil else "` als een naam.
+const NAAM = `&?["'](?!(?:${CURSUS_ANIMATIES.join('|')})["'])[^"'\\n]+["']`;
+const AFSPELEN = '\\b(?:play|play_backwards|set_animation)\\s*\\(\\s*';
+const IN_AANROEP = `(?:[^()"'\\n]|"[^"\\n]*"|'[^'\\n]*')*?`;
+const KRIJGT = '\\s*(?::\\s*\\w+\\s*)?:?=\\s*';
+const ANIMATIE = new RegExp(
+  [
+    `${AFSPELEN}${IN_AANROEP}${NAAM}`,
+    `\\banimation\\s*=\\s*${NAAM}`,
+    `\\b(\\w+)${KRIJGT}${NAAM}(?=[\\s\\S]*?${AFSPELEN}\\1\\s*[,)])`,
+    `${AFSPELEN}(\\w+)\\s*[,)](?=[\\s\\S]*?\\b\\2${KRIJGT}${NAAM})`,
+  ].join('|'),
+  'g',
+);
+
 // De callbacks die Godot zelf aanroept. Een eigen functie met een _ ervoor
 // (zoals de stijlgids van Godot voor een private functie voorschrijft) telt
 // wel; eerst telde geen enkele functie met een _.
@@ -229,10 +253,8 @@ const DETECTIE: Record<string, ConceptDetect> = {
   // sectie gebruikt het project alleen de ingebouwde ui_*-acties.
   'gd-keybindings': { type: 'regex', pattern: /^\[input\]/gm, in: ['godot'] },
   // `&"zwemmen"` is een StringName; dat schrijft Godot zelf als je een
-  // animatie uit de lijst sleept.
-  'gd-animatie': gd(
-    new RegExp(`play\\s*\\(\\s*&?["'](?!(?:${CURSUS_ANIMATIES.join('|')})["'])[^"']+["']`, 'g'),
-  ),
+  // animatie uit de lijst sleept. Zie ANIMATIE hieronder.
+  'gd-animatie': gd(ANIMATIE),
   // Een handler die de editor maakt (_on_…), of een eigen signal dat je in
   // code verbindt.
   'gd-signal': gd(/\bfunc\s+_on_\w+|^[ \t]*signal\s+\w+|\.connect\s*\(/gm),
