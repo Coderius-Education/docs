@@ -1,4 +1,5 @@
 import { inTrack, levelVoor } from './conceptLevel';
+import { geldigeTrack } from './leerdoelen';
 import { type CheckReport, type CheckerConfig, LEVELS, type Level } from './types';
 
 // Vat het rapport samen als basis/gevorderd-tellingen, per onderwerp. Een
@@ -31,11 +32,23 @@ export interface LevelSummaryResult {
   bySubject: SubjectConcepts[];
 }
 
+/**
+ * Een leerroute die de config niet (meer) kent, telt als de route die
+ * geldigeTrack ervan maakt. Anders hoorde elk concept erbij, ook een dat op
+ * de eerste route `null` is, en telde elk op zijn eerste niveau. Zonder route
+ * (null), of zonder lijst met routes in de config, blijft het zoals het was.
+ */
+function bekendeRoute(config: CheckerConfig, track: string | null): string | null {
+  if (track === null || !config.tracks?.length) return track;
+  return geldigeTrack(config, track);
+}
+
 export function computeLevelSummary(
   report: CheckReport,
   config: CheckerConfig,
-  track: string | null = null,
+  gevraagd: string | null = null,
 ): LevelSummaryResult {
+  const track = bekendeRoute(config, gevraagd);
   const usedById = new Map(report.concepts.map((m) => [m.id, m.used]));
 
   const bySubject: SubjectConcepts[] = config.subjects.map((s) => {
@@ -77,8 +90,9 @@ export function computeLevelSummary(
 export function voorstelOnderdelen(
   report: CheckReport,
   config: CheckerConfig,
-  track: string | null = null,
+  gevraagd: string | null = null,
 ): SubjectConcepts[] {
+  const track = bekendeRoute(config, gevraagd);
   const usedById = new Map(report.concepts.map((m) => [m.id, m.used]));
   // Vraagt gevorderd bij een onderwerp meer groepen (gevorderdInGroepen),
   // tel dan in hoeveel groepen een gevorderd of expert-concept is toegepast.

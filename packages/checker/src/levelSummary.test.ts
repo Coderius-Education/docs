@@ -161,6 +161,30 @@ describe('computeLevelSummary — tracks', () => {
     expect(s.gevorderd).toEqual({ used: 0, total: 0 });
   });
 
+  it('een onbekende route telt als de eerste, een oude als zijn opvolger', () => {
+    const metNull = {
+      ...config,
+      concepts: [
+        ...concepten,
+        { ...concepten[0], id: 'kleur', level: { start: null, verdieping: 'basis' } },
+      ],
+      oudeLeerroutes: { diep: 'verdieping' },
+    } as CheckerConfig;
+    const r = {
+      ...rapport,
+      concepts: [...rapport.concepts, { id: 'kleur', count: 1, used: true }],
+    };
+    expect(computeLevelSummary(r, metNull, 'bestaat-niet')).toEqual(
+      computeLevelSummary(r, metNull, 'start'),
+    );
+    expect(computeLevelSummary(r, metNull, 'diep')).toEqual(
+      computeLevelSummary(r, metNull, 'verdieping'),
+    );
+    expect(voorstelOnderdelen(r, metNull, 'bestaat-niet')).toEqual(
+      voorstelOnderdelen(r, metNull, 'start'),
+    );
+  });
+
   it('zonder track valt alles terug op het eerste niveau', () => {
     const s = computeLevelSummary(rapport, config);
     expect(s.basis.total + s.gevorderd.total).toBe(2);
