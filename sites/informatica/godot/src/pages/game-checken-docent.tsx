@@ -13,6 +13,10 @@ export default function NakijkenDocent(): ReactNode {
     >
       <main className="container margin-vert--lg">
         <h1>Game checken — docent</h1>
+        <p>
+          Upload de map van je leerling waarin project.godot staat, of een zip ervan. De map .godot,
+          addons en een export tellen niet mee.
+        </p>
         <Checker config={godotConfig} variant="docent" />
       </main>
     </Layout>

@@ -22,3 +22,5 @@ script = ExtResource("1")
 [node name="Schelp" type="Area2D" parent="."]
 
 [node name="Klok" type="Timer" parent="."]
+
+[connection signal="timeout" from="Klok" to="Speler" method="tel_op"]

@@ -176,7 +176,10 @@ describe('godotConfig — voorbeeldprojecten scoren', () => {
         'gd-json',
         'gd-loops',
         'gd-tweens',
+        // De timeout van de Klok hangt aan tel_op: een timer die iets doet, en
+        // een signal uit de editor.
         'gd-timers',
+        'gd-signal',
         'gd-globals',
         // Drie comments met een reden erin (omdat, want, zodat), en de scène
         // staat in een eigen scenes-map.
@@ -188,11 +191,10 @@ describe('godotConfig — voorbeeldprojecten scoren', () => {
         // nergens gebruikt. Eén voorkomen haalt de drempel niet, en dat is de
         // bedoeling: de tabel vraagt om nuttig gebruik, niet om aanwezigheid.
         'gd-lijsten',
-        // AudioStreamPlayer2D en PathFollow2D zijn twee soorten; meer
-        // ontdekken vraagt er drie.
+        // AudioStreamPlayer2D en PathFollow2D: de volger hoort bij een pad, dus
+        // dat is hooguit één soort, en meer ontdekken vraagt er drie.
         '2d-nieuwe-nodes-meer',
-        // Deze game heeft geen menu, geen tweede level en geen signals.
-        'gd-signal',
+        // Deze game heeft geen menu en geen tweede level.
         'gd-volgend-level',
         'gd-instantiate',
         '2d-label',
@@ -793,7 +795,9 @@ describe('godotConfig — wat niet van de leerling is, en wat er net naast ligt'
     ].join('\n');
     const report = analyze(files({ 'addons/dialoog/dialoog.gd': addon }), godotConfig);
     expect(report.concepts.filter((c) => c.used).map((c) => c.id)).toEqual([]);
-    expect(report.warnings.join(' ')).toContain('addons/dialoog/dialoog.gd');
+    // Het overzicht noemt hem apart, niet als GDScript.
+    expect(report.fileStats.byKind.addon).toBe(1);
+    expect(report.fileStats.byKind.gd).toBe(0);
   });
 
   it('telt niets in commentaar', () => {
@@ -900,7 +904,11 @@ describe('godotConfig — wat niet van de leerling is, en wat er net naast ligt'
     expect(json('func f():\n\tvar b = FileAccess.open("user://a.txt", FileAccess.READ)')).toBe(
       false,
     );
-    expect(json('func f():\n\tvar d = JSON.parse_string(tekst)')).toBe(true);
+    // Lezen én schrijven, zoals de rij zegt; één van de twee is niet genoeg.
+    expect(json('func f():\n\tvar d = JSON.parse_string(tekst)')).toBe(false);
+    expect(json('func f():\n\tvar d = JSON.parse_string(tekst)\n\tvar t = JSON.stringify(d)')).toBe(
+      true,
+    );
   });
 
   it('kent elke snelheid en sprongkracht die een les toekent', () => {
@@ -924,7 +932,9 @@ describe('godotConfig — wat niet van de leerling is, en wat er net naast ligt'
     // toont één lus (en call_group als afkorting), en nuttig gebruik vraagt er
     // twee. Die tweede schrijft de leerling zelf. Animatie veranderen hoort
     // er sinds issue 227 niet meer bij: dat is een animatie wisselen in code.
-    const ANDERS = ['gd-snelheid', 'gd-sprongkracht', 'gd-keybindings', 'gd-loops'];
+    // En een signal: de les koppelt hem in de editor, en die koppeling staat
+    // in de scène, niet in de code. De fixture compleet heeft de [connection].
+    const ANDERS = ['gd-snelheid', 'gd-sprongkracht', 'gd-keybindings', 'gd-loops', 'gd-signal'];
     const mis: string[] = [];
     for (const c of leerdoelen.concepten) {
       if (!c.id.startsWith('gd-') || ANDERS.includes(c.id)) continue;
@@ -939,5 +949,345 @@ describe('godotConfig — wat niet van de leerling is, en wat er net naast ligt'
       if (!gebruikt(project).get(c.id)) mis.push(`${c.id} (${c.les}, ${blokken.length} blokken)`);
     }
     expect(mis).toEqual([]);
+  });
+});
+
+// De review van de upload tool van Godot (november 2026): drie lezers draaiden
+// elk geval hieronder op de nakijker. Per test: wat een leerling schreef die
+// de les volgde of het net iets anders deed, en wat de nakijker moet zeggen.
+describe('godotConfig — review van de upload tool', () => {
+  const gebruikt = (entries: Record<string, string>) =>
+    new Map(alleMatches(analyze(files(entries), godotConfig)).map((c) => [c.id, c.used]));
+  const een = (id: string, entries: Record<string, string>) => gebruikt(entries).get(id);
+  const PROJECT_MET_GLOBAL = '[autoload]\n\nGlobal="*res://global.gd"\n';
+
+  it('een lijst in de global, gebruikt in een ander script (les 10.2)', () => {
+    const project = {
+      'project.godot': PROJECT_MET_GLOBAL,
+      'global.gd':
+        'extends Node\nvar level_volgorde = ["res://level1.tscn", "res://level2.tscn"]\n',
+      'vlag.gd': [
+        'extends Area2D',
+        'func _on_body_entered(body):',
+        '\tvar nu = Global.level_volgorde.find(get_tree().current_scene.scene_file_path)',
+        '\tif nu + 1 < Global.level_volgorde.size():',
+        '\t\tget_tree().change_scene_to_file(Global.level_volgorde[nu + 1])',
+      ].join('\n'),
+    };
+    expect(een('gd-lijsten', project)).toBe(true);
+    // Een dictionary in de global, gebruikt met Global.prijzen["goud"].
+    expect(
+      een('gd-dictionaries', {
+        'project.godot': PROJECT_MET_GLOBAL,
+        'global.gd': 'extends Node\nvar prijzen = {"goud": 10}\n',
+        'muntje.gd': 'extends Area2D\nfunc waarde():\n\treturn Global.prijzen["goud"]\n',
+      }),
+    ).toBe(true);
+    // Zonder gebruik telt een lijst in de global niet.
+    expect(
+      een('gd-lijsten', {
+        'project.godot': PROJECT_MET_GLOBAL,
+        'global.gd': 'extends Node\nvar levels = []\n',
+      }),
+    ).toBe(false);
+  });
+
+  it('een dictionary met punt-toegang, en een lijst uit de Inspector', () => {
+    expect(
+      een('gd-dictionaries', {
+        'a.gd': 'var speler = {"score": 0}\nfunc f():\n\tspeler.score += 1\n',
+      }),
+    ).toBe(true);
+    expect(
+      een('gd-lijsten', {
+        'a.gd':
+          '@export var vijanden: Array[PackedScene]\nfunc f():\n\tadd_child(vijanden.pick_random().instantiate())\n',
+      }),
+    ).toBe(true);
+  });
+
+  it('snelheid: een sprint en andere namen voor de snelheid', () => {
+    for (const code of [
+      'const SPRINT_SPEED = 500.0',
+      'const LOOPSNELHEID = 250.0',
+      'const MOVE_SPEED = 250.0',
+      'const SPEED = 300.0 * 1.5',
+    ])
+      expect(een('gd-snelheid', { 'speler.gd': code }), code).toBe(true);
+    // Het sjabloon van Godot en de waarde uit de les tellen niet; de snelheid
+    // van een animatie is geen loopsnelheid, en een sprong geen snelheid.
+    for (const code of [
+      'const SPEED = 300.0\nfunc f():\n\tvelocity.x = direction * SPEED',
+      'func f():\n\t$Anim.speed_scale = 2.0',
+      'const JUMP_SPEED = -600.0',
+      // Verdubbelen is de power-up uit les 7.6; de oplossing daar (600.0)
+      // telt ook niet.
+      'func geef_snelheidsboost():\n\tsnelheid = snelheid * 2',
+      'velocity.x = direction * SPEED * 2',
+      'func f():\n\t$Camera2D.position_smoothing_speed = 3.0',
+    ])
+      expect(een('gd-snelheid', { 'speler.gd': code }), code).toBe(false);
+    // Een instelling van de camera in de scène (les 5.4) is geen loopsnelheid.
+    expect(
+      een('gd-snelheid', {
+        'level.tscn': '[node name="Camera2D" type="Camera2D"]\nposition_smoothing_speed = 3.0',
+      }),
+    ).toBe(false);
+  });
+
+  it('sprongkracht: ook met een Nederlandse of andere naam', () => {
+    for (const code of [
+      'const SPRINGKRACHT = -600.0',
+      'var springkracht = -600.0',
+      'const JUMP_SPEED = -600.0',
+    ])
+      expect(een('gd-sprongkracht', { 'speler.gd': code }), code).toBe(true);
+    expect(een('gd-sprongkracht', { 'speler.gd': 'const JUMP_VELOCITY = -400.0' })).toBe(false);
+    // Een teller voor een dubbele sprong is geen sprongkracht.
+    for (const code of [
+      'var jump_count = 0',
+      'const MAX_JUMPS = 2',
+      'var coyote_jump_time = 0.1',
+      'var aantal_sprongen = 0',
+    ])
+      expect(een('gd-sprongkracht', { 'speler.gd': code }), code).toBe(false);
+  });
+
+  it('een snelheid die in de Inspector is aangepast (@export)', () => {
+    const scene = [
+      '[gd_scene load_steps=2 format=3]',
+      '[ext_resource type="Script" path="res://speler.gd" id="1"]',
+      '[node name="Speler" type="CharacterBody2D"]',
+      'script = ExtResource("1")',
+      'speed = 450.0',
+    ].join('\n');
+    expect(
+      een('gd-snelheid', { 'speler.gd': '@export var speed = 300.0', 'speler.tscn': scene }),
+    ).toBe(true);
+    // De snelheid van een animatie in de scène telt niet.
+    expect(
+      een('gd-snelheid', {
+        'speler.tscn': '[node name="Anim" type="AnimatedSprite2D"]\nspeed_scale = 2.0',
+      }),
+    ).toBe(false);
+  });
+
+  it('groups: de eerste node uit een groep ophalen', () => {
+    expect(
+      een('gd-groups', {
+        'a.gd': 'func f():\n\tvar s = get_tree().get_first_node_in_group("speler")',
+      }),
+    ).toBe(true);
+  });
+
+  it('naar het volgende level: ook uitgesteld, maar niet de startknop van het menu', () => {
+    for (const code of [
+      'func _on_body_entered(body):\n\tget_tree().call_deferred("change_scene_to_file", "res://level2.tscn")',
+      'func _on_body_entered(body):\n\tget_tree().change_scene_to_file.call_deferred("res://level2.tscn")',
+    ])
+      expect(een('gd-volgend-level', { 'vlag.gd': code }), code).toBe(true);
+    // Het menu uit les 8.2: de knop Start laadt level 1, dat is geen volgend level.
+    expect(
+      een('gd-volgend-level', {
+        'menu.gd':
+          'extends Control\n\nfunc _on_start_pressed() -> void:\n\tGlobal.reset()\n\tget_tree().change_scene_to_file("res://level1.tscn")\n',
+      }),
+    ).toBe(false);
+  });
+
+  it('een signal: gekoppeld in de editor, ook met een eigen naam, en niet zonder koppeling', () => {
+    const muntje =
+      '[node name="Muntje" type="Area2D"]\n[connection signal="body_entered" from="." to="." method="muntje_geraakt"]\n';
+    const project = {
+      'muntje.tscn': muntje,
+      'muntje.gd': 'extends Area2D\nfunc muntje_geraakt(body):\n\tqueue_free()\n',
+    };
+    expect(een('gd-signal', project)).toBe(true);
+    // Een handler die nergens aan hangt, is precies de fout uit les 7.1.
+    expect(
+      een('gd-signal', { 'muntje.gd': 'extends Area2D\nfunc _on_body_entered(body):\n\tpass\n' }),
+    ).toBe(false);
+    // Twee handlers met een eigen naam zijn geen modulaire eigen functies.
+    expect(
+      een('gd-modulaire-functies', {
+        'menu.tscn':
+          '[node name="Menu" type="Control"]\n[connection signal="pressed" from="Start" to="." method="start_knop"]\n[connection signal="pressed" from="Stop" to="." method="stop_knop"]\n',
+        'menu.gd': 'extends Control\nfunc start_knop():\n\tpass\nfunc stop_knop():\n\tpass\n',
+      }),
+    ).toBe(false);
+  });
+
+  it('een TileMap uit Godot 4.2 is de tilemap uit de les, geen zelf ontdekte node', () => {
+    const level = {
+      'level.tscn':
+        '[node name="Level" type="Node2D"]\n[node name="TileMap" type="TileMap" parent="."]\n',
+    };
+    expect(een('2d-tilemaplayer', level)).toBe(true);
+    expect(een('2d-nieuwe-nodes', level)).toBe(false);
+  });
+
+  it('een StaticBody2D of HBoxContainer is zelf ontdekt: geen les noemt ze', () => {
+    expect(een('2d-nieuwe-nodes', { 'a.tscn': '[node name="P" type="StaticBody2D"]' })).toBe(true);
+    expect(een('2d-nieuwe-nodes', { 'a.tscn': '[node name="R" type="HBoxContainer"]' })).toBe(true);
+  });
+
+  it('een pad met zijn volger, of een parallax met zijn laag, is één soort', () => {
+    const scene = ['Path2D', 'PathFollow2D', 'ParallaxBackground', 'ParallaxLayer']
+      .map((t) => `[node name="${t}" type="${t}"]`)
+      .join('\n');
+    expect(een('2d-nieuwe-nodes-meer', { 'a.tscn': scene })).toBe(false);
+    // Parallax2D (Godot 4.3) staat op zichzelf: dat is wel een eigen soort.
+    expect(
+      een('2d-nieuwe-nodes-meer', {
+        'a.tscn': ['Parallax2D', 'PointLight2D', 'AudioStreamPlayer2D']
+          .map((t) => `[node name="${t}" type="${t}"]`)
+          .join('\n'),
+      }),
+    ).toBe(true);
+    expect(
+      een('2d-nieuwe-nodes-meer', {
+        'a.tscn': `${scene}\n[node name="Licht" type="PointLight2D"]`,
+      }),
+    ).toBe(true);
+  });
+
+  it('tweens: een echte tween, niet het woord Tween', () => {
+    expect(een('gd-tweens', { 'a.gd': 'var t: Tween' })).toBe(false);
+    expect(een('gd-tweens', { 'a.gd': 'func f():\n\tprint("Tween komt later")' })).toBe(false);
+    expect(
+      een('gd-tweens', {
+        'a.gd':
+          'func f():\n\tvar t = create_tween()\n\tt.tween_property(self, "scale", Vector2(2, 2), 0.3)',
+      }),
+    ).toBe(true);
+  });
+
+  it('een variabele die animation heet, is geen animatie', () => {
+    expect(een('gd-animatie', { 'a.gd': 'var animation = 0' })).toBe(false);
+  });
+
+  it('een autoload uit een addon is geen eigen global', () => {
+    expect(
+      een('gd-globals', {
+        'project.godot':
+          '[autoload]\n\nDialogic="*res://addons/dialogic/Core/DialogicGameHandler.gd"\n',
+        'a.gd': 'func f():\n\tDialogic.start("intro")\n\tDialogic.paused = true\n',
+      }),
+    ).toBe(false);
+  });
+
+  it('een menu met TextureButtons is ook een startscherm', () => {
+    expect(
+      een('2d-startscherm', {
+        'menu.tscn':
+          '[node name="Menu" type="Control"]\n[node name="Start" type="TextureButton" parent="."]\n',
+      }),
+    ).toBe(true);
+  });
+
+  it('eigen toetsen: een actie met een toets eraan, niet een lege [input]', () => {
+    const toets =
+      '[input]\n\nui_accept={\n"deadzone": 0.5,\n"events": [Object(InputEventKey,"resource_local_to_scene":false,"keycode":87)\n]\n}\n';
+    expect(een('gd-keybindings', { 'project.godot': toets })).toBe(true);
+    // Eerst een actie zonder toets, dan een met: de tweede telt.
+    expect(
+      een('gd-keybindings', {
+        'project.godot': toets.replace(
+          '[input]\n\n',
+          '[input]\n\naanval={\n"deadzone": 0.5,\n"events": []\n}\n',
+        ),
+      }),
+    ).toBe(true);
+    expect(
+      een('gd-keybindings', {
+        'project.godot': '[input]\n\nspringen={\n"deadzone": 0.5,\n"events": []\n}\n',
+      }),
+    ).toBe(false);
+  });
+
+  it('JSON: lezen én schrijven', () => {
+    expect(een('gd-json', { 'a.gd': 'func f():\n\tprint(JSON.stringify({"a": 1}))' })).toBe(false);
+    expect(
+      een('gd-json', {
+        'a.gd': 'func f(t):\n\tvar s = JSON.stringify({"a": 1})\n\tvar d = JSON.parse_string(t)',
+      }),
+    ).toBe(true);
+    // Lezen zoals de documentatie van Godot het laat zien: een JSON-object.
+    expect(
+      een('gd-json', {
+        'a.gd':
+          'func f(t):\n\tvar s = JSON.stringify({"a": 1})\n\tvar json = JSON.new()\n\tjson.parse(t)',
+      }),
+    ).toBe(true);
+  });
+
+  it('een timer die niets doet, is geen nuttig gebruik', () => {
+    expect(een('gd-timers', { 'a.tscn': '[node name="Timer" type="Timer"]' })).toBe(false);
+    // De timer uit les 8.4: timeout gekoppeld in de editor.
+    expect(
+      een('gd-timers', {
+        'level.tscn':
+          '[node name="Timer" type="Timer" parent="."]\nautostart = true\n[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]\n',
+      }),
+    ).toBe(true);
+    expect(
+      een('gd-timers', { 'a.gd': 'func f():\n\tawait get_tree().create_timer(5.0).timeout' }),
+    ).toBe(true);
+    // Een Timer-node die je start en waarop je wacht.
+    expect(
+      een('gd-timers', { 'a.gd': 'func f():\n\t$Cooldown.start()\n\tawait $Cooldown.timeout' }),
+    ).toBe(true);
+  });
+
+  it('scènes in een addon zijn geen eigen mappen', () => {
+    expect(
+      gebruikt({ 'addons/dialogue/views/ballon.tscn': '[node name="B" type="Control"]' }).get(
+        'project-inrichting',
+      ),
+    ).toBe(false);
+  });
+
+  it('het overzicht telt addon, export en wat Godot zelf maakt apart', () => {
+    const kinds = Object.fromEntries(
+      [
+        'addons/dialogue/a.gd',
+        'addons/dialogue/b.tscn',
+        'export/spel.exe',
+        'export/spel.pck',
+        'web/index.wasm',
+        'icon.svg.import',
+        'speler.gd.uid',
+        'speler.gd',
+      ].map((p) => [p, godotConfig.classify(p)]),
+    );
+    expect(kinds).toEqual({
+      'addons/dialogue/a.gd': 'addon',
+      'addons/dialogue/b.tscn': 'addon',
+      'export/spel.exe': 'export',
+      'export/spel.pck': 'export',
+      'web/index.wasm': 'export',
+      'icon.svg.import': 'intern',
+      'speler.gd.uid': 'intern',
+      'speler.gd': 'gd',
+    });
+  });
+
+  it('waarschuwt bij een upload zonder scènes, zonder code, of alleen een export', () => {
+    const w = (entries: Record<string, string>) => analyze(files(entries), godotConfig).warnings;
+    expect(w({ 'speler.gd': 'extends CharacterBody2D' }).join(' ')).toMatch(
+      /geen scène \(\.tscn\).*project\.godot/,
+    );
+    expect(w({ 'project.godot': 'config_version=5' }).join(' ')).toMatch(
+      /geen script \(\.gd\) en geen scène/,
+    );
+    expect(w({ 'index.pck': 'x', 'index.html': '<html>' }).join(' ')).toMatch(
+      /export van je game \(index\.pck\)/,
+    );
+    // Eén melding, niet ook nog de algemene over geen leesbare code.
+    expect(w({ 'index.pck': 'x', 'index.html': '<html>' })).toHaveLength(1);
+    // Een gewoon project krijgt geen van deze meldingen.
+    expect(
+      w({ 'speler.gd': 'extends Node', 'level.tscn': '[node name="L" type="Node2D"]' }),
+    ).toEqual([]);
   });
 });

@@ -476,6 +476,28 @@ describe('readUploadedFiles — wat een docent en een leerling moeten weten', ()
     );
   });
 
+  it('waarschuwt ook bij twee Godot-projecten in één upload', async () => {
+    const { warnings } = await readUploadedFiles(
+      [
+        makeFile('cursus/h5/project.godot', 'x'),
+        makeFile('cursus/h5/speler.gd', 'x'),
+        makeFile('cursus/h8/project.godot', 'y'),
+        makeFile('cursus/h8/speler.gd', 'y'),
+      ],
+      pyAchtig,
+    );
+    expect(warnings.join(' ')).toMatch(/2 keer project\.godot: h5\/project\.godot en h8/);
+  });
+
+  it('zegt dat er alleen de map .godot in stond', async () => {
+    await expect(
+      readUploadedFiles(
+        [makeFile('spel/.godot/uid_cache.bin', 'x'), makeFile('spel/.godot/editor/a.cfg', 'y')],
+        pyAchtig,
+      ),
+    ).rejects.toThrow(/de map \.godot, die Godot zelf maakt/);
+  });
+
   it('waarschuwt bij twee projecten in één upload', async () => {
     const { warnings } = await readUploadedFiles(
       [makeFile('cursus/les3/main.py', 'x = 1'), makeFile('cursus/eindproject/main.py', 'y = 2')],

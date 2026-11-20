@@ -49,6 +49,22 @@ export interface AnalyzeOpties {
   losseBestanden?: boolean;
 }
 
+/**
+ * Bestanden van een bibliotheek, samengenomen per map onder addons/, lib/,
+ * vendor/ of node_modules/ (`addons/dialogue (45 bestanden)`). Een los
+ * bestand (`static/js/htmx.min.js`) blijft zoals het is.
+ */
+export function bibliotheekMappen(paden: string[]): string[] {
+  const perMap = new Map<string, string[]>();
+  for (const p of paden) {
+    const map = /^(.*?(?:^|\/)(?:addons|lib|vendor|node_modules)\/[^/]+)\//.exec(p)?.[1] ?? p;
+    perMap.set(map, [...(perMap.get(map) ?? []), p]);
+  }
+  return [...perMap]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([map, lijst]) => (lijst.length > 1 ? `${map} (${lijst.length} bestanden)` : lijst[0]));
+}
+
 export function analyze(
   files: ProjectFiles,
   config: CheckerConfig,
@@ -133,6 +149,9 @@ export function analyze(
     if (c.detect.type === 'path') {
       const re = withoutGlobal(c.detect.pattern);
       const inhoud = c.detect.inhoud ? withoutGlobal(c.detect.inhoud) : null;
+      // Een bibliotheek telt hier wel: een static/-map met alleen htmx.min.js
+      // is bij fullstack nog steeds een static/-map. Een cursus die een map
+      // niet wil zien (de addons van Godot), zet dat in zijn eigen patroon.
       const paden = allPaths.filter(
         (p) => re.test(p) && (!inhoud || inhoud.test(files[p]?.content ?? '')),
       );
@@ -210,19 +229,25 @@ export function analyze(
   const extra = metConcepten ? (config.extra ?? []).map(meet) : [];
 
   const warnings: string[] = [];
-  if (tekstbestanden === 0) {
+  // Wat de cursus zelf over de upload zegt, gaat voor de algemene melding:
+  // bij alleen een export van een Godot-game stonden er eerst twee.
+  const vanCursus = config.waarschuwingen?.(files) ?? [];
+  if (tekstbestanden === 0 && vanCursus.length === 0) {
     warnings.push(
       'Geen leesbare codebestanden gevonden — controleer of je de juiste map of zip hebt geüpload.',
     );
   }
   if (bibliotheken.length > 0) {
-    const lijst = bibliotheken.sort((a, b) => a.localeCompare(b));
+    // Per map, niet per bestand: een addon van Godot met 200 scripts was eerst
+    // een melding van meerdere schermen, en een derde van de PDF.
+    const lijst = bibliotheekMappen(bibliotheken);
     const namen =
       lijst.length === 1 ? lijst[0] : `${lijst.slice(0, -1).join(', ')} en ${lijst.at(-1)}`;
     warnings.push(
       `Niet meegeteld: ${namen}. ${lijst.length === 1 ? 'Dat is een bibliotheek' : 'Dat zijn bibliotheken'}, geen eigen code.`,
     );
   }
+  warnings.push(...vanCursus);
   return {
     fileStats: { total: values.length, byKind, skippedTooLarge },
     concepts,

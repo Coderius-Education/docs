@@ -7,14 +7,16 @@ import { godotConfig } from '@site/src/checker/config';
 
 # Game checken
 
-Heb je je Godot-game af, of ben je een eind op weg? Upload je projectbestanden (of een zip van je hele project) en zie meteen hoeveel bestanden je hebt.
+Heb je je Godot-game af, of ben je een eind op weg? Upload je projectmap (of een zip ervan) en zie meteen hoeveel scripts en scènes je hebt.
 
 **Let op:** je bestanden gaan nooit naar een server. Alles gebeurt in je eigen browser.
 
 ## Wat kun je uploaden?
 
-- Een **.zip-bestand** van je project
-- **Losse bestanden** (je `.gd`-scripts, `.tscn`-scenes, `project.godot`)
-- Een **hele map** met je project
+Kies de map waarin `project.godot` staat, of een zip van die map. Die map vind je in Godot: klik in het paneel FileSystem met de rechtermuisknop op `res://` en kies **Open in File Manager**.
+
+- De map `.godot` slaat de nakijker over: die maakt Godot zelf.
+- Een addon (de map `addons`) en een export van je game mogen erin staan, maar tellen niet mee.
+- Losse bestanden kan ook: kies dan je scripts (`.gd`), je scènes (`.tscn`) en `project.godot` samen.
 
 <Checker config={godotConfig} variant="leerling" />

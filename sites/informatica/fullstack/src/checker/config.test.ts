@@ -1248,3 +1248,19 @@ describe('fullstackConfig — review van de upload tool', () => {
     expect(py('fastapi-post', router)).toBe(true);
   });
 });
+
+describe('fullstackConfig — een padconcept en een bibliotheek', () => {
+  it('een static/-map met alleen htmx.min.js is nog steeds een static/-map', () => {
+    // De review van de Godot-nakijker liet een padconcept eerst elke
+    // bibliotheek overslaan; dan verdween static/ uit de vroege htmx-lessen.
+    const report = analyze(
+      files({
+        'main.py': 'from fastapi import FastAPI\napp = FastAPI()\n',
+        'templates/index.html': '<h1>Hoi</h1>',
+        'static/js/htmx.min.js': '!function(e,t){"function"==typeof define}',
+      }),
+      fullstackConfig,
+    );
+    expect(perId(report).get('struct-static')).toBe(true);
+  });
+});

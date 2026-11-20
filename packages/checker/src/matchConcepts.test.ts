@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { analyze } from './matchConcepts';
+import { analyze, bibliotheekMappen } from './matchConcepts';
 import { blanco, regelBegins, regelVan } from './plekken';
 import type { CheckerConfig, Concept, ProjectFile, ProjectFiles } from './types';
 
@@ -590,5 +590,17 @@ describe('analyze — detectieVoor', () => {
     expect(
       matchOf(analyze(projectFiles(file('a.html', 'html', 'Spel.x')), cfg), 'naam')?.used,
     ).toBe(false);
+  });
+});
+
+describe('bibliotheekMappen', () => {
+  it('noemt een addon één keer, met het aantal bestanden', () => {
+    const paden = Array.from({ length: 45 }, (_, i) => `addons/dialogue/onderdeel_${i}.gd`);
+    expect(bibliotheekMappen([...paden, 'static/js/htmx.min.js'])).toEqual([
+      'addons/dialogue (45 bestanden)',
+      'static/js/htmx.min.js',
+    ]);
+    // Eén bestand in zo'n map: dan het bestand zelf.
+    expect(bibliotheekMappen(['lib/leaphy/sensors/tof.py'])).toEqual(['lib/leaphy/sensors/tof.py']);
   });
 });
