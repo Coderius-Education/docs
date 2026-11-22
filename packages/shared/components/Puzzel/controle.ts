@@ -69,7 +69,8 @@ export function gebreken(puzzel: PuzzelInLes): string[] {
   const uit: string[] = [];
   if (puzzel.kop !== 'Puzzel') uit.push('staat niet onder een eigen kop `## Puzzel`');
   // Zonder die zin is de volgorde van twee alinea's of twee items een gok.
-  if (!/door elkaar/.test(puzzel.opdracht))
+  // `\s+`: in de bron breekt een alinea af waar de auteur dat wil.
+  if (!/door\s+elkaar/.test(puzzel.opdracht))
     uit.push('de opdracht zegt niet dat de regels door elkaar staan');
   if (puzzel.opdracht.length <= 60)
     uit.push('de opdracht zegt niet wat de code moet doen en wat boven wat hoort');

@@ -612,8 +612,18 @@ elke cursus gelijk is:
 - **Wat om kan, staat niet in een puzzel**: twee functies, twee
   `addEventListener`, `motor_a` en `motor_b` (de Lego-puzzels zeggen daarom
   met één `print` per tak wat de robot doet), twee losse variabelen. Kan het
-  niet anders (`geheim`, `laag` en `hoog` bij binair zoeken), dan zegt de
+  niet anders (`laag = 1` en `hoog = 100` bij binair zoeken), dan zegt de
   opdracht de volgorde.
+- **Python en algoritmes rekenen het na**: hun test draait met `python3` elke
+  volgorde van de regels die geldige Python is. Bij Python mag geen andere
+  volgorde hetzelfde printen; bij algoritmes mag dat alleen als de opdracht
+  hem met een zin uitsluit (`VASTGELEGD`). Een andere volgorde die iets
+  anders print en toch bij de opdracht past, ziet geen test: de opdracht zegt
+  daarom wat boven wat hoort, en wie die zin inkort, maakt de puzzel
+  dubbelzinnig.
+- **De puzzel gebruikt alleen wat de les al uitlegde.** De eerste puzzel van
+  lijst-methoden begon met een lege lijst, `[]`, die de les pas in een
+  oplossing gebruikt; hij is vervangen.
 - **In web, Python en fullstack is de puzzel een nieuw voorbeeld**, niet de
   code van de les. In algoritmes is het het algoritme van het hoofdstuk, op de
   pagina waar de leerling er daarna een variant van schrijft.

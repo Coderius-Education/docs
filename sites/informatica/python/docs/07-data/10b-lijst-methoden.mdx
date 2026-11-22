@@ -77,15 +77,15 @@ print(getallen)
 
 ## Puzzel
 
-Dit programma verzamelt de kwadraten van 1 tot en met 5 in een lijst, maar de regels staan door elkaar. Een kwadraat is een getal keer zichzelf. Het programma begint met een lege lijst, `[]`. Elke ronde komt er één kwadraat bij, en de lijst komt één keer op het scherm, na de loop.
+Bij de kassa staan Sam en Noor in de rij, maar de regels van het programma staan door elkaar. Ali sluit achteraan, bedenkt zich en gaat weer weg. Het programma print eerst `Ali gaat naar huis.` en daarna de rij die overblijft: `['Sam', 'Noor']`.
 
-<Puzzel taal="python" code={`kwadraten = []
-for getal in range(1, 6):
-    kwadraat = getal * getal
-    kwadraten.append(kwadraat)
-print(kwadraten)`}>
+<Puzzel taal="python" code={`rij = ["Sam", "Noor"]
+rij.append("Ali")
+weg = rij.pop()
+print(f"{weg} gaat naar huis.")
+print(rij)`}>
 
-De lege lijst staat vóór de loop: `append` kan alleen iets toevoegen aan een lijst die al bestaat. In de loop rekent Python eerst het kwadraat uit, en dan zet `append` het achteraan. `print(kwadraten)` springt niet in en staat onder de loop. Zo zie je de lijst één keer, met alle vijf de kwadraten erin.
+`append` zet Ali achteraan, en `pop()` haalt daarna de laatste uit de rij en geeft hem terug: dat is Ali. Wissel je die twee om, dan gaat Noor naar huis en blijft Ali staan. Beide methoden veranderen de lijst zelf, dus `print(rij)` staat onderaan: daar zie je de rij zoals hij na het veranderen is.
 
 </Puzzel>
 

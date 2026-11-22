@@ -93,6 +93,13 @@ describe('gebreken', () => {
     expect(gebreken(puzzelsIn(bron)[0]).join(' ')).toMatch(/door elkaar/);
   });
 
+  it('vindt "door elkaar" ook als de regel in de bron ertussen afbreekt', () => {
+    // De eerste puzzel van algoritmes viel hierop om: de alinea brak af
+    // tussen de twee woorden.
+    const bron = GOED.replace('door elkaar', 'door\nelkaar');
+    expect(gebreken(puzzelsIn(bron)[0])).toEqual([]);
+  });
+
   it('noemt een puzzel zonder uitleg', () => {
     const bron = GOED.replace(/De lijst opent[^\n]*/, 'Goed zo.');
     expect(gebreken(puzzelsIn(bron)[0]).join(' ')).toMatch(/geen uitleg/);
