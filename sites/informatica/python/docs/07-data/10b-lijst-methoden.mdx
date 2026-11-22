@@ -75,6 +75,20 @@ print(getallen)
   </Uitleg>
 </Voorspel>
 
+## Puzzel
+
+Dit programma verzamelt de kwadraten van 1 tot en met 5 in een lijst, maar de regels staan door elkaar. Een kwadraat is een getal keer zichzelf. Het programma begint met een lege lijst, `[]`. Elke ronde komt er één kwadraat bij, en de lijst komt één keer op het scherm, na de loop.
+
+<Puzzel taal="python" code={`kwadraten = []
+for getal in range(1, 6):
+    kwadraat = getal * getal
+    kwadraten.append(kwadraat)
+print(kwadraten)`}>
+
+De lege lijst staat vóór de loop: `append` kan alleen iets toevoegen aan een lijst die al bestaat. In de loop rekent Python eerst het kwadraat uit, en dan zet `append` het achteraan. `print(kwadraten)` springt niet in en staat onder de loop. Zo zie je de lijst één keer, met alle vijf de kwadraten erin.
+
+</Puzzel>
+
 ## Er gaat iets mis
 
 ### Iets weghalen dat er niet in zit

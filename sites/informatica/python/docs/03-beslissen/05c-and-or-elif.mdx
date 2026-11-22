@@ -74,6 +74,24 @@ elif score >= 80:
 Speel dit eerst na zonder computer, met getallenkaartjes en poortwachters: [De beslismachine](site:python/docs/projecten/unplugged/beslismachine). Je docent kan de hand-out printen.
 :::
 
+## Puzzel
+
+Dit programma geeft advies bij het percentage van je batterij, maar de regels staan door elkaar. Bij 80 of meer is hij vol genoeg voor de hele dag en bij 30 of meer genoeg voor de middag. Bij 10 of meer zet je de spaarstand aan, en daaronder zoek je een oplader.
+
+<Puzzel taal="python" code={`batterij = 45
+if batterij >= 80:
+    print("Vol genoeg voor de hele dag.")
+elif batterij >= 30:
+    print("Genoeg voor de middag.")
+elif batterij >= 10:
+    print("Zet de spaarstand aan.")
+else:
+    print("Zoek nu een oplader.")`}>
+
+Python loopt de voorwaarden van boven naar beneden af en stopt bij de eerste die `True` is. Daarom staat de strengste bovenaan: eerst `>= 80`, dan `>= 30`, dan `>= 10`. Stond `>= 10` boven `>= 30`, dan kreeg een batterij van 45 het advies over de spaarstand, want 45 is ook 10 of meer. De `else` staat onderaan en vangt wat overblijft.
+
+</Puzzel>
+
 ## Er gaat iets mis
 
 ### De variabele maar één keer genoemd

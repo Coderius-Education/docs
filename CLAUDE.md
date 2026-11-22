@@ -587,9 +587,39 @@ als de opdracht erbij staat: geen twee functies of twee `addEventListener`
 onder elkaar (die mogen in elke volgorde), en zeg in de opdracht wat boven wat
 hoort ("met ketchup boven sambal", "elk label boven zijn veld", "als de loop
 klaar is"): wat de opdracht niet vastlegt en toch maar op één manier goed
-wordt gerekend, keurt een goed antwoord af. Web heeft er zes
-(`src/docs-tests/puzzels.test.ts`); de andere cursussen nog geen: registreer
-`Puzzel` dan in `MDXComponents` van de site.
+wordt gerekend, keurt een goed antwoord af.
+
+Vijf cursussen hebben puzzels, elk een paar: web elf, Python acht, algoritmes
+vijf, de Lego-auto van robotica twee en fullstack één. Godot, play, linux, de
+editor-cursus, ctf en de Golfbot hebben er geen: daar schrijft de leerling
+geen regels code in de les, of is de volgorde niet waar het om gaat. Wat in
+elke cursus gelijk is:
+
+- **De puzzel staat onder `## Puzzel`**, na de uitleg en vóór de opdracht
+  waarin de leerling zulke code zelf schrijft. In web staat de code als
+  `export const puzzel` onder de H1; in de andere cursussen in de tag zelf,
+  `<Puzzel taal="python" code={`…`}>` (de pre-loader voor inspringing houdt de
+  vier spaties).
+- **Een puzzel vóór Er gaat iets mis houdt dat tabblad niet tegen**
+  (`ordenen` in `LEZEN` van `les-tabs.js`): in de python-cursus staan de
+  fouten in de bron vóór de opdrachten, en de build zet ze erna.
+- **De vorm heeft één test voor alle cursussen**: `puzzelsIn` en `gebreken` in
+  `components/Puzzel/controle.ts` (onder `## Puzzel`, de opdracht zegt "door
+  elkaar" en wat de code doet, uitleg bij de goede volgorde, een taal, vijf
+  tot twaalf regels van hooguit 62 tekens). Elke cursus heeft een
+  `puzzels.test.ts` die dat aanroept en er zijn eigen regels bij zet: de plek
+  in de les, hoeveel het er hoogstens zijn, en wat in die cursus om kan.
+- **Wat om kan, staat niet in een puzzel**: twee functies, twee
+  `addEventListener`, `motor_a` en `motor_b` (de Lego-puzzels zeggen daarom
+  met één `print` per tak wat de robot doet), twee losse variabelen. Kan het
+  niet anders (`geheim`, `laag` en `hoog` bij binair zoeken), dan zegt de
+  opdracht de volgorde.
+- **In web, Python en fullstack is de puzzel een nieuw voorbeeld**, niet de
+  code van de les. In algoritmes is het het algoritme van het hoofdstuk, op de
+  pagina waar de leerling er daarna een variant van schrijft.
+
+Een nieuwe cursus: registreer `Puzzel` in `MDXComponents` van de site, en geef
+hem een `puzzels.test.ts`.
 
 **De docentenhandleiding schrijft niet voor hoe iemand lesgeeft.** Dat is
 de standaard (schrijfgids §15); elke cursus met tabbladen heeft hem zo. Hij is een halve pagina: waar de lessen op steunen

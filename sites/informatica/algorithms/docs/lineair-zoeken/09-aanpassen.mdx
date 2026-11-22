@@ -18,6 +18,26 @@ voorkomt, in plaats van de index van de eerste te returnen.
 
 Voorbeeld: `tel([3, 1, 4, 1, 5], 1)` moet `2` returnen.
 
+## Puzzel
+
+Voordat je `zoek` aanpast, zet je hem zelf in elkaar: de regels staan
+door elkaar. Het programma zoekt eerst de 4 en dan de 9, en print `2` en
+`-1`.
+
+<Puzzel taal="python" code={`def zoek(lijst, doel):
+    for i, waarde in enumerate(lijst):
+        if waarde == doel:
+            return i
+    return -1
+print(zoek([3, 1, 4, 1, 5], 4))
+print(zoek([3, 1, 4, 1, 5], 9))`}>
+
+`return i` staat in de `if`: bij de eerste match is de functie klaar.
+`return -1` staat na de lus, op de hoogte van de `for`. Daar komt Python
+alleen als hij de hele lijst heeft bekeken zonder match.
+
+</Puzzel>
+
 ## Opdracht
 
 De startcode geeft nog altijd `0` terug.

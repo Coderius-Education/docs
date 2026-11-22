@@ -55,17 +55,27 @@ Calling International Conference on Computing Education Research.
 
 ## Hoe wij dit toepassen
 
-In de web-cursus hebben een paar lessen een tabblad Puzzel, tussen Probeer en
-onderzoek en de eerste opdracht. Zie
-[Intro tot HTML](site:web/docs/html-css/intro-html).
+In web, Python, algoritmes, de Lego-auto van robotica en fullstack hebben een
+paar lessen een tabblad Puzzel, na de uitleg en vóór de opdracht waarin de
+leerling zulke code zelf schrijft. Zie
+[Intro tot HTML](site:web/docs/html-css/intro-html),
+[While-loop](site:python/docs/herhalen/while-loop) of
+[Stoppen voor een obstakel](site:robotica/lego_auto/afstand/stoppen).
 
 - **Alleen waar de volgorde het nieuwe is.** De opbouw van een pagina, een
-  lijst met zijn items, een `if` met `else if` en `else`, een loop. Bij een
-  les over kleuren valt er niets te ordenen, en daar staat geen puzzel.
+  `if` met `elif` en `else`, een loop met een teller ervoor en een `print`
+  erna, de tak van een robot die voor alle andere gaat, een endpoint dat
+  eerst opslaat en dan doorstuurt. Bij een les over kleuren valt er niets te
+  ordenen, en daar staat geen puzzel.
 - **De regels komen uit de les.** De puzzel gebruikt alleen wat de leerling
-  in de uitleg en bij Predict al zag, en heeft één goede volgorde.
+  in de uitleg al zag, en heeft één goede volgorde. De opdracht erboven zegt
+  wat de code moet doen en wat boven wat hoort. In web en Python is het een
+  nieuw voorbeeld; in algoritmes is het het algoritme van het hoofdstuk, vlak
+  voordat de leerling er een variant van schrijft.
 - **De puzzel zegt per regel of hij goed staat.** De leerling verplaatst een
-  regel met slepen of met de knoppen, controleert, en probeert opnieuw.
+  regel met slepen of met de knoppen, controleert, en probeert opnieuw. In
+  Python staat een regel er met zijn inspringing: een `print` in de loop is
+  een andere regel dan dezelfde `print` erna.
 - **Daarna schrijft hij zelf.** De puzzel vervangt geen opdracht: hij staat
   ervoor, als stap tussen code lezen en code schrijven in
   [PRIMM](site:didactiek/bronnen/primm).
