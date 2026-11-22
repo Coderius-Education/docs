@@ -1483,8 +1483,12 @@ function reeksen(kinderen) {
  */
 const isVerzameltab = (tab) => eigenschap(tab, 'titel') === 'Opdrachten';
 
-/** Werkvormen waarin de leerling nog niets zelf doet. */
-const LEZEN = ['leerdoel', 'uitleg', 'voorspellen'];
+/**
+ * Werkvormen waarin de leerling nog geen code schrijft. Een puzzel (ordenen)
+ * hoort erbij: hij zet regels op hun plek, en de fouten van de les maakt hij
+ * pas als hij zelf typt.
+ */
+const LEZEN = ['leerdoel', 'uitleg', 'voorspellen', 'ordenen'];
 
 /**
  * Er gaat iets mis staat na de opdrachten, als de bron hem tussen de uitleg en

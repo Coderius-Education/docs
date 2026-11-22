@@ -75,6 +75,20 @@ print(getallen)
   </Uitleg>
 </Voorspel>
 
+## Puzzel
+
+Bij de kassa staan Sam en Noor in de rij, maar de regels van het programma staan door elkaar. Ali sluit achteraan, bedenkt zich en gaat weer weg. Het programma print eerst `Ali gaat naar huis.` en daarna de rij die overblijft: `['Sam', 'Noor']`.
+
+<Puzzel taal="python" code={`rij = ["Sam", "Noor"]
+rij.append("Ali")
+weg = rij.pop()
+print(f"{weg} gaat naar huis.")
+print(rij)`}>
+
+`append` zet Ali achteraan, en `pop()` haalt daarna de laatste uit de rij en geeft hem terug: dat is Ali. Wissel je die twee om, dan gaat Noor naar huis en blijft Ali staan. Beide methoden veranderen de lijst zelf, dus `print(rij)` staat onderaan: daar zie je de rij zoals hij na het veranderen is.
+
+</Puzzel>
+
 ## Er gaat iets mis
 
 ### Iets weghalen dat er niet in zit

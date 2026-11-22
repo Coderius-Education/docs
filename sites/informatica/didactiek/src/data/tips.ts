@@ -249,4 +249,30 @@ export const tips: Tip[] = [
     paper: { titel: 'Learning from errors', auteurs: 'Metcalfe', jaar: 2017 },
     detailPad: '/bronnen/leren-van-fouten',
   },
+  {
+    slug: 'parsons-puzzels',
+    term: 'Eerst ordenen, dan schrijven met Parsons-puzzels',
+    categorie: 'opdrachten',
+    termen: [
+      'Parsons',
+      'Parsons problems',
+      'Parsons-puzzel',
+      'puzzel',
+      'regels ordenen',
+      'volgorde',
+      'code lezen',
+    ],
+    samenvatting:
+      'Geef een leerling de regels van een werkend programma door elkaar en laat hem ze in de goede volgorde zetten, voordat hij zulke code zelf schrijft.',
+    controlevraag:
+      'Zet de leerling, waar de volgorde van de regels het nieuwe is, die regels eerst in een puzzel op hun plek voordat hij ze zelf schrijft?',
+    bron: 'onderzoek',
+    paper: {
+      titel:
+        "Parson's programming puzzles: a fun and effective learning tool for first programming courses",
+      auteurs: 'Parsons en Haden',
+      jaar: 2006,
+    },
+    detailPad: '/bronnen/parsons-puzzels',
+  },
 ];

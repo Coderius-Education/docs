@@ -38,8 +38,8 @@
 // klik opnieuw (`naUitvoeren`, `naStappen`), en op Tip en Oplossing boven het
 // uitvoervak, met de oplossing uitgevoerd (`naHulp`). In een scherm met een
 // voorspelvraag kiest het een antwoord na het andere tot het goede, en meet
-// het na elk antwoord (`naAntwoord`). Een scherm dat past tot je iets
-// aanklikt, past niet: Stap voor stap stond eerst onder het veld en maakte
+// het na elk antwoord (`naAntwoord`), en een puzzel lost het op
+// (`naPuzzel`). Een scherm dat past tot je iets aanklikt, past niet: Stap voor stap stond eerst onder het veld en maakte
 // het scherm tot 1634 pixels te lang. Een veld met `input()` slaat het over
 // (dat wacht op een antwoord), en een veld dat na een kwartminuut nog draait
 // meldt het op stderr. Dit kost per les het laden van Python erbij.
@@ -591,6 +591,39 @@ async function meetNaAntwoord(pagina, paneel, id) {
   return naAntwoord === null ? {} : { naAntwoord };
 }
 
+/**
+ * Lost de puzzel in het scherm dat open staat op zoals een leerling (een
+ * Parsons-puzzel, `<Puzzel>`): eerst Controleer met de regels door elkaar,
+ * dan elke regel met de knop omhoog naar zijn plek, en weer Controleer. Meet
+ * na elke controle: dan komen de tekens per regel, de melding en als alles
+ * klopt de uitleg erbij.
+ */
+async function meetNaPuzzel(pagina, paneel, id) {
+  const puzzel = paneel.locator('[data-puzzel]:visible').first();
+  if ((await puzzel.count()) === 0) return {};
+  const controleer = puzzel.getByRole('button', { name: 'Controleer' });
+  const meet = async () => {
+    await pagina.waitForTimeout(250);
+    await pagina.evaluate(() => window.scrollTo(0, 0));
+    return over(pagina, id);
+  };
+  await controleer.click();
+  let naPuzzel = await meet();
+  // Het id van een regel is zijn plek in de oplossing.
+  const ids = () =>
+    puzzel.locator('[data-regel]').evaluateAll((r) => r.map((x) => Number(x.dataset.regel)));
+  for (let plek = 0; plek < (await ids()).length; plek++) {
+    for (let i = (await ids()).indexOf(plek); i > plek; i--) {
+      await puzzel.locator('[data-regel]').nth(i).getByRole('button').first().click();
+    }
+  }
+  await controleer.click();
+  naPuzzel = Math.max(naPuzzel, await meet());
+  if ((await puzzel.getAttribute('data-klaar')) === null)
+    throw new Error(`${id}: de puzzel is na het ordenen niet opgelost`);
+  return { naPuzzel };
+}
+
 /** Wacht tot een uitklapblok (een ElementHandle) helemaal open of dicht is. Het <details> van
  *  Docusaurus klapt met een animatie: open is het pas als de hoogte van de
  *  inhoud weer `auto` is, dicht pas als het attribuut `open` weg is. */
@@ -1038,6 +1071,7 @@ async function meetLes(les) {
               ...(await meetNaKlik(pagina, paneel, id)),
               ...(await meetNaHulp(pagina, paneel, id)),
               ...(await meetNaAntwoord(pagina, paneel, id)),
+              ...(await meetNaPuzzel(pagina, paneel, id)),
             };
           } catch (fout) {
             // Een programma dat blijft draaien, houdt de hele pagina vast:
@@ -1181,6 +1215,7 @@ if (ALS_JSON) {
       ['naStappen', 'Stap voor stap'],
       ['naHulp', 'Tip en Oplossing in het veld'],
       ['naAntwoord', 'een antwoord op de vraag'],
+      ['naPuzzel', 'Controleer in de puzzel'],
     ]) {
       const gemeten = rijen.filter((r) => r[veld] !== undefined);
       const telang = gemeten.filter((r) => r.over <= 0 && r[veld] > 0);

@@ -7,6 +7,30 @@ sidebar_position: 11
 **Leerdoel:** je meet zelf hoeveel de early-exit-optimalisatie scheelt op
 verschillende soorten input.
 
+## Puzzel
+
+Zet bubble sort in elkaar: de regels staan door elkaar. Het programma
+sorteert de lijst en print `[1, 2, 4, 7]`. Elke ronde begint met `geswapt`
+op `False`, en na een swap gaat de vlag op `True`.
+
+<Puzzel taal="python" code={`lijst = [4, 2, 7, 1]
+n = len(lijst)
+for ronde in range(n - 1):
+    geswapt = False
+    for i in range(n - 1 - ronde):
+        if lijst[i] > lijst[i + 1]:
+            lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+            geswapt = True
+    if not geswapt:
+        break
+print(lijst)`}>
+
+De vlag gaat in de buitenste lus op `False`, vóór de binnenste lus: zo begint
+elke ronde vers. De `if not geswapt` staat na de binnenste lus, niet erin.
+Pas na een hele ronde zonder swap weet je dat de lijst gesorteerd is.
+
+</Puzzel>
+
 ## Opdracht
 
 ### De opdracht

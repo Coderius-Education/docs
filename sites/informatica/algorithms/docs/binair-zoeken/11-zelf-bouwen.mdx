@@ -7,6 +7,32 @@ sidebar_position: 11
 **Leerdoel:** je zet beide algoritmes naast elkaar op dezelfde data en
 telt het werk. De theorie wordt nu meetbaar.
 
+## Puzzel
+
+Zet het raadspel uit het begin van dit hoofdstuk in elkaar: de computer raadt
+het getal 37 en kiest steeds het midden. De regels staan door elkaar;
+`laag = 1` hoort boven `hoog = 100`. Het programma print elke gok: `50`, `25`
+en `37`.
+
+<Puzzel taal="python" code={`laag = 1
+hoog = 100
+while laag <= hoog:
+    gok = (laag + hoog) // 2
+    print(gok)
+    if gok == 37:
+        break
+    elif gok < 37:
+        laag = gok + 1
+    else:
+        hoog = gok - 1`}>
+
+Elke ronde kiest eerst het midden als gok, en vergelijkt daarna. Is de gok te
+laag, dan vallen de gok en alles eronder af: `laag` schuift op. Is hij te
+hoog, dan schuift `hoog`. Dezelfde volgorde schrijf je straks voor een lijst:
+het midden, vergelijken, een helft weggooien.
+
+</Puzzel>
+
 ## Opdracht
 
 ### De opdracht

@@ -62,6 +62,21 @@ print("Klaar")
   </Uitleg>
 </Voorspel>
 
+## Puzzel
+
+Dit programma zegt of je een paraplu nodig hebt, maar de regels staan door elkaar. Is de kans op regen 50 procent of meer, dan neem je een paraplu mee. Anders laat je hem thuis. `Fijne dag.` komt altijd op het scherm, als laatste.
+
+<Puzzel taal="python" code={`regenkans = 70
+if regenkans >= 50:
+    print("Neem een paraplu mee.")
+else:
+    print("Laat de paraplu thuis.")
+print("Fijne dag.")`}>
+
+De `if` kan pas vergelijken als `regenkans` een waarde heeft, dus `regenkans = 70` staat bovenaan. Onder `if` springt de regel in voor als de voorwaarde `True` is, onder `else` die voor alle andere gevallen. `print("Fijne dag.")` springt niet in: hij hoort bij geen van de twee blokken, dus Python voert hem altijd uit, na de `if` en de `else`.
+
+</Puzzel>
+
 ## Er gaat iets mis
 
 ### De dubbele punt vergeten

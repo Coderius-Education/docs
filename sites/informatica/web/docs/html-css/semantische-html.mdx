@@ -69,6 +69,16 @@ export const onderzoek = [
   },
 ];
 
+export const puzzel = `<header>
+  <h1>De Fietsclub</h1>
+</header>
+<main>
+  <p>Elke zaterdag rijden we een rondje.</p>
+</main>
+<footer>
+  <p>Gemaakt door Sam</p>
+</footer>`;
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -148,6 +158,16 @@ De lichtblauwe achtergrond en de ruimte eromheen verdwijnen. Aan de tag ligt dat
   height="540px"
   onderzoek={onderzoek}
 />
+
+## Puzzel
+
+Dit is de pagina van een fietsclub, maar de regels staan door elkaar. Bovenaan hoort de naam van de club, in het midden wat de club doet, en onderaan wie de pagina maakte.
+
+<Puzzel code={puzzel} taal="html">
+
+De naam van de site staat in de `<header>`, de inhoud waar de pagina om draait in `<main>`, en wie hem maakte in de `<footer>`. In die volgorde staan ze ook op de pagina.
+
+</Puzzel>
 
 ## Modify
 

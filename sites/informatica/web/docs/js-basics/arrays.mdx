@@ -53,6 +53,13 @@ export const onderzoek = [
   },
 ];
 
+export const puzzel = `const dieren = ['kat', 'hond'];
+dieren.push('vis');
+for (let i = 0; i < dieren.length; i++) {
+  console.log(dieren[i]);
+}
+console.log('Aantal: ' + dieren.length);`;
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -153,6 +160,16 @@ function toonNamen() {
   stacked
   onderzoek={onderzoek}
 />
+
+## Puzzel
+
+Dit script zet eerst alle drie de dieren in de console, elk op een eigen regel, en daaronder `Aantal: 3`. De regels staan door elkaar.
+
+<Puzzel code={puzzel} taal="js">
+
+De array moet bestaan voordat je er iets aan toevoegt, en `push` komt vóór de loop: anders loopt de loop langs twee dieren en mist hij de vis. De regel met het aantal staat na de loop, dus onder de accolade die de loop sluit.
+
+</Puzzel>
 
 ## Opdracht 1: Jouw lijst
 

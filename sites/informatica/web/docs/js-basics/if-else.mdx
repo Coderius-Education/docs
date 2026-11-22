@@ -66,6 +66,17 @@ export const onderzoek = [
   },
 ];
 
+export const puzzel = `function toonPrijs() {
+  const leeftijd = Number(prompt('Hoe oud ben je?'));
+  if (leeftijd < 12) {
+    alert('Gratis');
+  } else if (leeftijd < 18) {
+    alert('5 euro');
+  } else {
+    alert('10 euro');
+  }
+}`;
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -164,6 +175,16 @@ document.getElementById('uitvoer').textContent = 'Score: ' + score + ' → ' + c
   stacked
   onderzoek={onderzoek}
 />
+
+## Puzzel
+
+Deze functie zegt wat een kaartje voor het zwembad kost, maar de regels staan door elkaar. Onder de 12 jaar is het gratis, onder de 18 kost het 5 euro, en anders 10 euro.
+
+<Puzzel code={puzzel} taal="js">
+
+JavaScript loopt de voorwaarden van boven naar beneden af en stopt bij de eerste die waar is. Daarom staat `leeftijd < 12` boven `leeftijd < 18`: andersom zou een kind van 8 bij de eerste voorwaarde al 5 euro krijgen. De `else` staat onderaan en vangt wat overblijft.
+
+</Puzzel>
 
 ## Opdracht 1: Extra grens
 

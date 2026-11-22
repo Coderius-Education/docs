@@ -7,6 +7,26 @@ sidebar_position: 9
 **Leerdoel:** je past het patroon aan om niet alleen de **waarde**, maar
 ook de positie terug te geven.
 
+## Puzzel
+
+Straks schrijf je een variant van `vind_maximum`. Zet eerst het origineel in
+elkaar: de regels staan door elkaar. Het programma print het grootste getal
+van de lijst, `9`.
+
+<Puzzel taal="python" code={`def vind_maximum(lijst):
+    maximum = lijst[0]
+    for waarde in lijst:
+        if waarde > maximum:
+            maximum = waarde
+    return maximum
+print(vind_maximum([3, 7, 2, 9, 4]))`}>
+
+De startwaarde `maximum = lijst[0]` staat vóór de lus: de eerste vergelijking
+heeft al een kampioen nodig. `return maximum` staat na de lus, op de hoogte
+van de `for`. Pas als elk getal bekeken is, weet je welk het grootste is.
+
+</Puzzel>
+
 ## Opdracht
 
 ### De opdracht

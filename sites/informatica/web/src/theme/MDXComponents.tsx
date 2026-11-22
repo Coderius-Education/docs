@@ -9,6 +9,7 @@ import LesTabs, {
   LesVeld,
   LesVoorbeeld,
 } from '@coderius/shared/components/LesTabs';
+import Puzzel from '@coderius/shared/components/Puzzel';
 import SiteLink from '@coderius/shared/components/SiteLink';
 import Voorkennis from '@coderius/shared/components/Voorkennis';
 import { LesWerkvormen, Werkvormen } from '@coderius/shared/components/Werkvorm';
@@ -21,6 +22,9 @@ export default {
   SiteLink,
   Voorkennis,
   JsLessen,
+  // Een Parsons-puzzel: de regels van werkende code in de goede volgorde
+  // zetten, in het tabblad Puzzel van een les.
+  Puzzel,
   // Les-tabbladen: de remark-stap zet elke ##-sectie in een <LesTab>,
   // en in een sectie met meer ###-koppen elke ### in een <LesStap>.
   LesTabs,

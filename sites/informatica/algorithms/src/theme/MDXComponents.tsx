@@ -12,6 +12,7 @@ import LesTabs, {
   LesVeld,
   LesVoorbeeld,
 } from '@coderius/shared/components/LesTabs';
+import Puzzel from '@coderius/shared/components/Puzzel';
 import Schrijflijnen from '@coderius/shared/components/Schrijflijnen';
 import SiteLink from '@coderius/shared/components/SiteLink';
 import Voorkennis from '@coderius/shared/components/Voorkennis';
@@ -28,6 +29,8 @@ export default {
   Regel,
   SiteLink,
   Voorkennis,
+  // Een Parsons-puzzel: regels in de goede volgorde zetten (## Puzzel).
+  Puzzel,
   AlgorithmModel,
   Antwoordblad,
   GameTree,

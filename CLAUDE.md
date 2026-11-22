@@ -516,7 +516,7 @@ dit in `src/docs-tests/schermen.test.ts`.
 wat de leerling daar doet (leerdoel, uitleg, stap voor stap, bouwen en
 aansluiten, voorspellen, onderzoeken, aanpassen, zelf maken, controleren,
 fouten herkennen; bouwen en controleren kwamen met robotica, voor Materiaal,
-Aansluiten en de Controlevraag). De lijst staat in
+Aansluiten en de Controlevraag; ordenen met de puzzels van web). De lijst staat in
 `packages/shared/werkvormen/werkvormen.json`: per werkvorm de koppen waaraan
 je hem herkent, een icoon (paden van een lijntekening, geen emoji) en
 minstens één tip van vakdidactiek. Een kop die bij geen werkvorm hoort, is
@@ -535,7 +535,7 @@ voorkomen staan erin (python heeft alleen in zijn introductie een leerdoel),
 en een `<Voorspel>` in de uitleg telt als voorspellen: de python-cursus heeft
 geen tabblad Predict. `<LesWerkvormen les="html-css/koppen-lijsten" />` toont de iconen van
 één les (`components/Werkvorm`); de web-handleiding gebruikt hem niet meer,
-want elke les heeft daar dezelfde rij. De
+want de lessen hebben daar dezelfde rij, op de puzzel in zes lessen na. De
 gegevens per les komen uit `plugins/werkvormen.js`, die `createConfig` aanzet
 bij `lesTabs`: hij leest elke les met de MDX-parser van Docusaurus zelf en
 dezelfde stap die de tabbladen maakt, dus de handleiding toont wat de
@@ -546,6 +546,90 @@ onderdeel (`doet`) gaat over code. Een cursus waar dat niet klopt (een
 terminal, de git-simulator, een challenge op een ander platform), zegt het
 zelf: `<Werkvormen doet={{ aanpassen: '…' }} />`; de literatuur blijft
 gelijk (linux, editor en ctf, `Werkvorm.test.tsx`).
+
+**Een Parsons-puzzel is een eigen werkvorm** (november 2026, op verzoek van
+de opdrachtgever; tip Parsons-puzzels bij vakdidactiek, Parsons en Haden
+2006). `<Puzzel code={puzzel} taal="html">` (`packages/shared/components/Puzzel`)
+toont de regels van werkende code door elkaar; de leerling zet ze in de goede
+volgorde met slepen of met de knoppen omhoog en omlaag (die werken ook met het
+toetsenbord en op een telefoon), en Controleer zegt per regel of hij goed
+staat, met een teken en een woord. De uitleg (de kinderen) komt als alles
+klopt. De les zet hem onder `## Puzzel`: werkvorm `ordenen`, met een eigen
+icoon. Wat vastligt, elk met een test (`Puzzel/logica.test.ts`,
+`Puzzel.test.tsx`):
+
+- **Het husselen hangt alleen van de code af** (`zaadVan`, `hussel`): de
+  server en de browser tekenen dezelfde lijst, en nooit de oplossing zelf.
+- **Twee regels met dezelfde tekst zijn te verwisselen**, ook als ze alleen in
+  inspringing verschillen (de `}` van een `else` en die van de functie). Is de
+  puzzel opgelost, dan staat de code van de les er, zodat de inspringing klopt.
+  Niet in Python (`taal="python"`, `isStrikt`): daar is de inspringing de
+  opbouw, en een `print` in de loop is een andere regel dan dezelfde erna.
+- **De lijst vangt de aanwijzer bij het slepen, niet de regel**: een regel die
+  React in de lijst verplaatst, raakt hem kwijt. Met een vinger sleep je aan
+  de greep; de rest van de regel scrolt de pagina. Een regel wisselt pas als
+  de aanwijzer het midden van zijn buur voorbij is (`plekBij`): over een
+  hogere regel, die op een telefoon afbreekt, wisselde hij eerst bij elke
+  pixel heen en weer.
+- **Na het oplossen gaat de focus naar de uitkomst.** Controleer en Opnieuw
+  staan op dezelfde plek, en een tweede Enter gooide de opgeloste puzzel
+  anders meteen weer weg.
+- **De uitleg staat altijd in de HTML**, dicht (`hidden`) tot alles klopt:
+  `cross-links` en de linkcontrole van Docusaurus zoeken een link erin.
+- **Een teken geldt voor de plek van toen**: een regel die na Controleer
+  verschuift, verliest het.
+- **Opgelost is de lijst lager dan ervoor** (de regels sluiten aan als in een
+  codeblok), zodat de uitleg erbij past. Het meetscript lost met `--klik` elke
+  puzzel op en meet na elke controle (`naPuzzel`).
+
+Een puzzel keurt één volgorde goed. Kies dus code waarvan de volgorde vastligt
+als de opdracht erbij staat: geen twee functies of twee `addEventListener`
+onder elkaar (die mogen in elke volgorde), en zeg in de opdracht wat boven wat
+hoort ("met ketchup boven sambal", "elk label boven zijn veld", "als de loop
+klaar is"): wat de opdracht niet vastlegt en toch maar op één manier goed
+wordt gerekend, keurt een goed antwoord af.
+
+Vijf cursussen hebben puzzels, elk een paar: web elf, Python acht, algoritmes
+vijf, de Lego-auto van robotica twee en fullstack één. Godot, play, linux, de
+editor-cursus, ctf en de Golfbot hebben er geen: daar schrijft de leerling
+geen regels code in de les, of is de volgorde niet waar het om gaat. Wat in
+elke cursus gelijk is:
+
+- **De puzzel staat onder `## Puzzel`**, na de uitleg en vóór de opdracht
+  waarin de leerling zulke code zelf schrijft. In web staat de code als
+  `export const puzzel` onder de H1; in de andere cursussen in de tag zelf,
+  `<Puzzel taal="python" code={`…`}>` (de pre-loader voor inspringing houdt de
+  vier spaties).
+- **Een puzzel vóór Er gaat iets mis houdt dat tabblad niet tegen**
+  (`ordenen` in `LEZEN` van `les-tabs.js`): in de python-cursus staan de
+  fouten in de bron vóór de opdrachten, en de build zet ze erna.
+- **De vorm heeft één test voor alle cursussen**: `puzzelsIn` en `gebreken` in
+  `components/Puzzel/controle.ts` (onder `## Puzzel`, de opdracht zegt "door
+  elkaar" en wat de code doet, uitleg bij de goede volgorde, een taal, vijf
+  tot twaalf regels van hooguit 62 tekens). Elke cursus heeft een
+  `puzzels.test.ts` die dat aanroept en er zijn eigen regels bij zet: de plek
+  in de les, hoeveel het er hoogstens zijn, en wat in die cursus om kan.
+- **Wat om kan, staat niet in een puzzel**: twee functies, twee
+  `addEventListener`, `motor_a` en `motor_b` (de Lego-puzzels zeggen daarom
+  met één `print` per tak wat de robot doet), twee losse variabelen. Kan het
+  niet anders (`laag = 1` en `hoog = 100` bij binair zoeken), dan zegt de
+  opdracht de volgorde.
+- **Python en algoritmes rekenen het na**: hun test draait met `python3` elke
+  volgorde van de regels die geldige Python is. Bij Python mag geen andere
+  volgorde hetzelfde printen; bij algoritmes mag dat alleen als de opdracht
+  hem met een zin uitsluit (`VASTGELEGD`). Een andere volgorde die iets
+  anders print en toch bij de opdracht past, ziet geen test: de opdracht zegt
+  daarom wat boven wat hoort, en wie die zin inkort, maakt de puzzel
+  dubbelzinnig.
+- **De puzzel gebruikt alleen wat de les al uitlegde.** De eerste puzzel van
+  lijst-methoden begon met een lege lijst, `[]`, die de les pas in een
+  oplossing gebruikt; hij is vervangen.
+- **In web, Python en fullstack is de puzzel een nieuw voorbeeld**, niet de
+  code van de les. In algoritmes is het het algoritme van het hoofdstuk, op de
+  pagina waar de leerling er daarna een variant van schrijft.
+
+Een nieuwe cursus: registreer `Puzzel` in `MDXComponents` van de site, en geef
+hem een `puzzels.test.ts`.
 
 **De docentenhandleiding schrijft niet voor hoe iemand lesgeeft.** Dat is
 de standaard (schrijfgids §15); elke cursus met tabbladen heeft hem zo. Hij is een halve pagina: waar de lessen op steunen

@@ -84,6 +84,7 @@
     "./components/HomepageFeatures": "./components/HomepageFeatures/index.tsx",
     "./components/HomepageFeatures/styles.module.css": "./components/HomepageFeatures/styles.module.css",
     "./components/Voorkennis": "./components/Voorkennis/index.tsx",
+    "./components/Puzzel": "./components/Puzzel/index.tsx",
     "./components/Begrip": "./components/Begrip/index.tsx",
     "./components/Woordenlijst": "./components/Woordenlijst/index.tsx",
     "./components/Keuzelijst": "./components/Keuzelijst/index.tsx",

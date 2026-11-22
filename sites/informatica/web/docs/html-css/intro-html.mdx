@@ -33,6 +33,17 @@ export const onderzoek = [
   },
 ];
 
+export const puzzel = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <title>De kantine</title>
+</head>
+<body>
+  <h1>De schoolkantine</h1>
+  <p>Op vrijdag is er soep.</p>
+</body>
+</html>`;
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -127,6 +138,16 @@ In het oefenveld staat een complete HTML-pagina: de code, en het voorbeeld dat d
   height="460px"
   onderzoek={onderzoek}
 />
+
+## Puzzel
+
+Dit is een hele pagina over de schoolkantine, maar de regels staan door elkaar. Zet ze in de volgorde van het skelet van een pagina: de titel hoort in de `<head>`, en in de `<body>` staat de kop boven de alinea.
+
+<Puzzel code={puzzel} taal="html">
+
+De pagina begint met `<!DOCTYPE html>`, en daarna staat alles tussen `<html>` en `</html>`. Daarbinnen komt eerst de `<head>` en dan de `<body>`. De titel is informatie over de pagina en staat in de `<head>`. De kop en de alinea zie je op de pagina, dus die staan in de `<body>`.
+
+</Puzzel>
 
 ## Modify
 

@@ -71,6 +71,23 @@ print(f"Volgend jaar ben je {leeftijd + 1}.")
   </Uitleg>
 </Voorspel>
 
+## Puzzel
+
+Dit programma vraagt hoeveel pizza's je wilt, en blijft dat vragen tot je een getal typt. De regels staan door elkaar. Typ je iets anders, dan print het `Typ een getal, zoals 3.` en vraagt het opnieuw. Pas als het omzetten gelukt is, print het wat je bestelt.
+
+<Puzzel taal="python" code={`while True:
+    tekst = input("Hoeveel pizza's wil je? ")
+    try:
+        aantal = int(tekst)
+        break
+    except ValueError:
+        print("Typ een getal, zoals 3.")
+print(f"Je bestelt {aantal} pizza's.")`}>
+
+De vraag staat bovenaan in de loop, zodat elke ronde met een nieuw antwoord begint. `break` staat direct onder `int(tekst)`: daar komt Python alleen als het omzetten gelukt is, en dan stopt de loop. Gaat het mis, dan springt hij naar `except`, slaat `break` over en begint de loop opnieuw. De laatste `print` staat buiten de loop, want daar heeft `aantal` zeker een waarde.
+
+</Puzzel>
+
 ## Er gaat iets mis
 
 ### break vergeten

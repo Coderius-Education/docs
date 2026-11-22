@@ -30,6 +30,30 @@ elkaar tot één lijst zetten. Daar heb je twee verschillende dingen voor
 nodig: `zetten += andere_lijst` plakt alle zetten uit een lijst achter
 `zetten`, en `zetten.append(zet)` hangt er één losse zet aan.
 
+## Puzzel
+
+Deze functie geeft de zetten terug om `n` schijven van `bron` naar `doel` te
+verplaatsen, maar de regels staan door elkaar. Hij begint met het basisgeval.
+Voor twee schijven van A naar C print het programma
+`[('A', 'B'), ('A', 'C'), ('B', 'C')]`.
+
+<Puzzel taal="python" code={`def hanoi(n, bron, doel, hulp):
+    if n == 0:
+        return []
+    zetten = []
+    zetten += hanoi(n - 1, bron, hulp, doel)
+    zetten.append((bron, doel))
+    zetten += hanoi(n - 1, hulp, doel, bron)
+    return zetten
+print(hanoi(2, "A", "C", "B"))`}>
+
+Het basisgeval staat bovenaan: zonder die afslag roept de functie zichzelf
+eindeloos aan. Daarna volgt het recept. Eerst gaan de `n - 1` kleinere
+schijven naar de hulp-paal, dan kan de grootste naar het doel, en als laatste
+komen de kleinere er weer bovenop.
+
+</Puzzel>
+
 ## Bouw en test
 
 {/* niet-draaien: startcode; de leerling plakt de drie stukken aan elkaar en de eerste test faalt tot dan */}

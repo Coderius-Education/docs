@@ -61,6 +61,21 @@ Een functie zónder `return` levert `None` op. Maak je een functie om een **waar
 Speel dit eerst na zonder computer, als rollenspel met briefjes: [De functiemachine](site:python/docs/projecten/unplugged/functiemachine). Je docent kan de hand-out printen.
 :::
 
+## Puzzel
+
+De functie `groepsprijs` rekent uit wat een groep betaalt in de bioscoop, maar de regels staan door elkaar. Een kaartje kost 12 euro en de groep krijgt samen 10 euro korting. Het programma bewaart de uitkomst in `bedrag` en print een zin met dat bedrag.
+
+<Puzzel taal="python" code={`def groepsprijs(aantal):
+    totaal = aantal * 12
+    met_korting = totaal - 10
+    return met_korting
+bedrag = groepsprijs(4)
+print(f"Jullie betalen {bedrag} euro.")`}>
+
+In de functie staat `return` onderaan. Daar stopt de functie, dus alles wat hij moet uitrekenen staat erboven: eerst `totaal`, dan `met_korting`, dat `totaal` nodig heeft. Onder de functie vangt `bedrag = groepsprijs(4)` de waarde op die terugkomt. Pas daarna kan de `print` hem gebruiken.
+
+</Puzzel>
+
 ## Er gaat iets mis
 
 ### Rekenen met een functie zonder return

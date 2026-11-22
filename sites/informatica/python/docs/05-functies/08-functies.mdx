@@ -76,6 +76,21 @@ Uitvoer:
 
 Eén kleine functie (`lijn`) gebruik je twee keer binnen een grotere functie (`welkom`). Je schrijft de lijn één keer en gebruikt hem zo vaak als je wilt.
 
+## Puzzel
+
+Na een voorstelling klapt het publiek, maar de regels van het programma staan door elkaar. De functie `applaus` print drie keer `Klap` en daarna één keer `Bravo`. Het programma roept de functie één keer aan, en pas daarna valt het doek.
+
+<Puzzel taal="python" code={`def applaus():
+    for i in range(3):
+        print("Klap")
+    print("Bravo")
+applaus()
+print("Het doek valt.")`}>
+
+De `def` staat bovenaan, want Python leest van boven naar beneden en moet de functie kennen voordat je hem aanroept. `print("Klap")` springt twee keer in en hoort dus bij de `for`. `print("Bravo")` staat onder de loop en komt één keer. `applaus()` springt niet in: pas op die regel voert Python de functie uit, en daarna gaat hij verder met het doek.
+
+</Puzzel>
+
 ## Er gaat iets mis
 
 ### De haakjes vergeten
