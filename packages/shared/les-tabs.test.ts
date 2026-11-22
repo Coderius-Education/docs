@@ -1431,6 +1431,33 @@ describe('groepeer', () => {
       ]);
     });
 
+    it('een puzzel vóór de fouten houdt ze niet tegen', () => {
+      // Een Parsons-puzzel is nog geen code schrijven: de fouten van de les
+      // maakt de leerling pas in de opdrachten. Zonder ordenen bij de
+      // werkvormen van het lezen bleef Er gaat iets mis voor de opdrachten
+      // staan zodra een les een puzzel kreeg.
+      const uit = groepeer([
+        titel,
+        kop(2, 'De for-loop'),
+        alinea('Uitleg.'),
+        kop(2, 'Puzzel'),
+        alinea('De regels staan door elkaar.'),
+        kop(2, 'Er gaat iets mis'),
+        alinea('Een fout.'),
+        kop(2, 'Opdracht 1: Tel'),
+        alinea('Tel.'),
+        kop(2, 'Opdracht 2: Meer'),
+        alinea('Meer.'),
+      ]);
+      expect(vormen(uit)).toEqual([
+        ['De for-loop', 'uitleg'],
+        ['Puzzel', 'ordenen'],
+        ['Opdracht 1', 'aanpassen'],
+        ['Opdracht 2', 'maken'],
+        ['Er gaat iets mis', 'fouten'],
+      ]);
+    });
+
     it('een afsluiter na de opdrachten blijft het laatste tabblad', () => {
       // Maak het je eigen en Verder bouwen zijn zelf maken. Eerst schoof Er
       // gaat iets mis ook daar voorbij: in 13 projectstappen van de

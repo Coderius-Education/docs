@@ -55,6 +55,12 @@ export const onderzoek = [
   },
 ];
 
+export const puzzel = `let glazen = 0;
+function drink() {
+  glazen = glazen + 1;
+  document.getElementById('uitvoer').textContent = glazen;
+}`;
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -144,6 +150,16 @@ function telOp() {
   stacked
   onderzoek={onderzoek}
 />
+
+## Puzzel
+
+Dit script telt hoeveel glazen water je vandaag dronk, maar de regels staan door elkaar. De variabele staat boven de functie, en na elke klik staat het nieuwe aantal op de pagina.
+
+<Puzzel code={puzzel} taal="js">
+
+De variabele `glazen` staat buiten de functie, zodat hij zijn waarde tussen twee klikken onthoudt. In de functie komt er eerst één bij, en daarna pas gaat het aantal naar de pagina. Andersom zou je na de eerste klik nog 0 zien.
+
+</Puzzel>
 
 ## Opdracht 1: Andere start, grotere stappen
 

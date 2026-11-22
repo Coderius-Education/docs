@@ -57,6 +57,16 @@ export const onderzoek = [
   },
 ];
 
+export const puzzel = `<body>
+  <p id="bel">Het is stil.</p>
+  <button onclick="belAan()">Bel aan</button>
+  <script>
+    function belAan() {
+      document.getElementById('bel').textContent = 'Tring.';
+    }
+  </script>
+</body>`;
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -169,6 +179,16 @@ De JavaScript staat hier in een `<script>`-tag **in** de HTML: kijk in **index.h
   stacked
   onderzoek={onderzoek}
 />
+
+## Puzzel
+
+Dit is de body van een pagina met een deurbel, maar de regels staan door elkaar. De tekst staat boven de knop, en het script staat onderaan de body, zoals in de les.
+
+<Puzzel code={puzzel} taal="html">
+
+Eerst komen de elementen die je op de pagina ziet, daarna het script. Zo bestaat de alinea met `id="bel"` al als de code laadt. De functie staat tussen `<script>` en `</script>`, en de regel die de tekst verandert staat tussen de accolades van de functie.
+
+</Puzzel>
 
 ## Opdracht 1: Derde regel
 

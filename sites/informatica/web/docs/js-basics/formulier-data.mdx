@@ -73,6 +73,14 @@ export const onderzoek = [
   },
 ];
 
+export const puzzel = `function berekenPrijs() {
+  const veld = document.getElementById('aantal');
+  const aantal = Number(veld.value);
+  const prijs = aantal * 3;
+  const tekst = prijs + ' euro';
+  document.getElementById('uitvoer').textContent = tekst;
+}`;
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -159,6 +167,16 @@ function begroet() {
 />
 
 De knop heeft `type="button"`. Een knop binnen een `<form>` verstuurt anders het formulier en herlaadt de pagina; zo doet hij alleen wat de listener zegt.
+
+## Puzzel
+
+Deze functie rekent uit wat een aantal kaartjes van 3 euro kost en zet de prijs op de pagina, maar de regels staan door elkaar.
+
+<Puzzel code={puzzel} taal="js">
+
+Elke regel gebruikt wat de regel erboven heeft gemaakt. Eerst haal je het veld op, dan lees je de waarde en maak je er met `Number()` een getal van. Pas daarna kun je rekenen, en als laatste gaat de uitkomst naar de pagina.
+
+</Puzzel>
 
 ## Opdracht 1: Extra veld
 

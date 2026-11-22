@@ -9,6 +9,7 @@ import LesTabs, {
   LesVeld,
   LesVoorbeeld,
 } from '@coderius/shared/components/LesTabs';
+import Puzzel from '@coderius/shared/components/Puzzel';
 import Voorkennis from '@coderius/shared/components/Voorkennis';
 import Voorspel, { Keuze, Uitleg } from '@coderius/shared/components/Voorspel';
 import { Werkvormen } from '@coderius/shared/components/Werkvorm';
@@ -23,6 +24,8 @@ import MDXComponents from '@theme-original/MDXComponents';
 export default {
   ...MDXComponents,
   Voorkennis,
+  // Een Parsons-puzzel: regels in de goede volgorde zetten (## Puzzel).
+  Puzzel,
   CodeUitleg,
   Regel,
   Probleem,

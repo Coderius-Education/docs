@@ -102,6 +102,22 @@ Je hoeft een lege meting hier niet apart af te vangen: alles vanaf 100 betekent 
   </Uitleg>
 </Voorspel>
 
+## Puzzel
+
+In deze puzzel zegt de robot alleen wat hij gaat doen, met `print`. De regels staan door elkaar. De robot meet eerst de afstand. Staat er iets binnen 10 cm, dan stopt hij, wat de lijnsensoren ook zien. Een scherpe bocht gaat voor rechtdoor.
+
+<Puzzel taal="python" code={`afstand = tof.get_distance()
+if afstand < 100:
+    print("Stop")
+elif kleur_buiten_links == "black":
+    print("Scherp naar links")
+elif kleur_links == "white" and kleur_rechts == "white":
+    print("Rechtdoor")`}>
+
+De meting staat boven het `if`-blok: zonder getal valt er niets te vergelijken. Daarna neemt Python de eerste tak die klopt. Stoppen staat dus bovenaan, want een obstakel gaat voor elke bocht. De TOF meet in millimeters, dus 10 cm is `100`.
+
+</Puzzel>
+
 ## Stap 2: Stoppen gaat voor
 
 Zet een nieuwe `if` bovenaan je `if`-blok, en maak van de `if` die er stond een `elif`:

@@ -120,6 +120,21 @@ Een nieuwe sensor doet niets zolang geen regel in je `if`-blok hem gebruikt. De 
   </Uitleg>
 </Voorspel>
 
+## Puzzel
+
+In deze puzzel zegt de robot alleen wat hij gaat doen, met `print`. De regels staan door elkaar. De linker buitensensor komt eerst, dan de rechter, en rechtdoor rijdt de robot alleen als geen buitensensor de lijn ziet.
+
+<Puzzel taal="python" code={`if kleur_buiten_links == "black":
+    print("Scherp naar links")
+elif kleur_buiten_rechts == "black":
+    print("Scherp naar rechts")
+elif kleur_links == "white" and kleur_rechts == "white":
+    print("Rechtdoor")`}>
+
+Python neemt de eerste tak die klopt en slaat de rest over. Ligt de lijn onder een buitensensor, dan zien de twee binnenste sensoren wit. Stond de tak voor rechtdoor bovenaan, dan won die, en reed de robot de bocht uit.
+
+</Puzzel>
+
 ## Stap 3: Scherp bijsturen
 
 Zet twee takken bovenaan je `if`-blok, en maak van de `if` die er stond een `elif`:

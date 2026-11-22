@@ -213,6 +213,22 @@ async def berichten():
   </Uitleg>
 </Voorspel>
 
+## Puzzel
+
+Dit endpoint hoort bij een verlanglijst. Het bewaart een wens en stuurt de bezoeker daarna door naar de lijst. De regels staan door elkaar. Zet ze in de goede volgorde: eerst opslaan, dan pas doorsturen.
+
+<Puzzel taal="python" code={`@app.post("/wensen")
+async def wens_opslaan(wens: str = Form(...)):
+    with SqliteDict("wensen.db") as db:
+        sleutel = f"wens_{time.time_ns()}"
+        db[sleutel] = wens
+        db.commit()
+    return RedirectResponse(url="/wensen", status_code=303)`}>
+
+Na `return` doet een endpoint niets meer. Alles wat bewaard moet worden, staat er dus vóór, en de `return` staat buiten het `with`-blok: de database is dan al dicht. `db.commit()` komt na de regel die de wens in `db` zet, want een commit schrijft weg wat er op dat moment in staat. Wissel je die twee om, dan stuurt het endpoint netjes door en is de wens toch weg.
+
+</Puzzel>
+
 ## Opdrachten
 
 :::tip[Controleer je server]

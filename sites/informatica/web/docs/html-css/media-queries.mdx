@@ -58,6 +58,15 @@ export const onderzoek = [
   },
 ];
 
+export const puzzel = `.kop {
+  font-size: 1.5rem;
+}
+@media (min-width: 800px) {
+  .kop {
+    font-size: 3rem;
+  }
+}`;
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -156,6 +165,16 @@ Boven het voorbeeld staan de knoppen **Telefoon** (320px), **Tablet** (768px) en
   height="540px"
   onderzoek={onderzoek}
 />
+
+## Puzzel
+
+Deze CSS maakt een kop op een telefoon 1.5rem groot en op een scherm van 800 pixels of breder 3rem, maar de regels staan door elkaar.
+
+<Puzzel code={puzzel} taal="css">
+
+De gewone regel staat bovenaan en geldt voor elk scherm. De media query staat eronder, met de regel voor brede schermen tussen zijn accolades. Staat de media query bovenaan, dan wint de gewone regel eronder en blijft de kop op elk scherm klein.
+
+</Puzzel>
 
 ## Modify
 

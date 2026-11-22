@@ -2,6 +2,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { gebreken, puzzelsIn } from '../../../../../packages/shared/components/Puzzel/controle';
 import { regelsVan } from '../../../../../packages/shared/components/Puzzel/logica';
 
 // Een paar lessen hebben een tabblad Puzzel: de regels van werkende code
@@ -61,32 +62,20 @@ describe('puzzels in de web-cursus', () => {
     }
   });
 
-  it('zeggen wat de code moet doen, en leggen de volgorde uit als hij klopt', () => {
-    for (const { naam, inhoud } of lessen) {
-      const deel = sectie(inhoud, 'Puzzel');
-      const voor = deel.slice(deel.indexOf('\n', 1), deel.indexOf('<Puzzel')).trim();
-      // De opdracht: zonder die zin is de volgorde van twee alinea's of twee
-      // items een gok.
-      expect(voor, naam).toMatch(/door elkaar/);
-      expect(voor.length, naam).toBeGreaterThan(60);
-      const uitleg = /<Puzzel[^>]*>([\s\S]*?)<\/Puzzel>/.exec(deel)?.[1].trim() ?? '';
-      expect(uitleg.length, naam).toBeGreaterThan(60);
-    }
+  it('zeggen wat de code moet doen, leggen de volgorde uit, en hebben korte regels', () => {
+    // De vorm is in elke cursus dezelfde (`gebreken` in het gedeelde
+    // onderdeel): de opdracht zegt dat de regels door elkaar staan en wat
+    // boven wat hoort, er is uitleg als alles klopt, vijf tot twaalf regels,
+    // en geen regel die afbreekt.
+    for (const { naam, inhoud } of lessen)
+      for (const puzzel of puzzelsIn(inhoud)) expect(gebreken(puzzel), naam).toEqual([]);
   });
 
-  it('hebben vijf tot twaalf korte regels, en zijn geen kopie van het oefenveld', () => {
+  it('zijn geen kopie van het oefenveld', () => {
     for (const { naam, inhoud } of lessen) {
       const code = exportVan(inhoud, 'puzzel');
       expect(code, naam).toBeDefined();
       const regels = regelsVan(code ?? '').map((r) => r.tekst);
-      expect(regels.length, naam).toBeGreaterThanOrEqual(5);
-      // Met twaalf regels past het tabblad nog op 1280×720.
-      expect(regels.length, naam).toBeLessThanOrEqual(12);
-      // Een regel breekt in de puzzel niet af.
-      expect(
-        regels.filter((r) => r.length > 62),
-        naam,
-      ).toEqual([]);
       // De puzzel is nieuwe code met wat de les aanleert, niet de startcode
       // die de leerling net draaide. Per regel, want een kopie met een regel
       // minder of een andere inspringing is nog steeds een kopie. Het skelet

@@ -438,6 +438,7 @@ tokenveld
 tokenvelden
 tracetabel
 tracetabellen
+tring
 tscn
 Tussenwaarden
 tutorialpagina
