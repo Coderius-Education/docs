@@ -45,17 +45,17 @@ export const onderzoek = [
   },
 ];
 
-export const puzzel = `<h1>Boodschappen</h1>
-<h2>Fruit</h2>
-<ul>
-  <li>Appels</li>
-  <li>Peren</li>
-</ul>
-<h2>Top 2 broodbeleg</h2>
+export const puzzel = `<h1>Tosti maken</h1>
+<h2>Zo doe je het</h2>
 <ol>
-  <li>Kaas</li>
-  <li>Pindakaas</li>
-</ol>`;
+  <li>Leg kaas tussen twee sneetjes brood</li>
+  <li>Bak de tosti goudbruin</li>
+</ol>
+<h2>Lekker erbij</h2>
+<ul>
+  <li>Ketchup</li>
+  <li>Sambal</li>
+</ul>`;
 
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
@@ -140,11 +140,11 @@ Nummer **4**. De nummers staan niet in je code: de browser telt de items van een
 
 ## Puzzel
 
-Dit is een boodschappenlijst, maar de regels staan door elkaar. Onder de kop Fruit hoort een lijst met bolletjes, met appels boven peren. Onder Top 2 broodbeleg hoort een genummerde lijst, met kaas op nummer 1.
+Dit is een recept voor een tosti, maar de regels staan door elkaar. Eerst komen de stappen, als genummerde lijst onder de kop Zo doe je het: beleggen, dan bakken. Daaronder staat onder Lekker erbij een lijst met bolletjes, met ketchup boven sambal.
 
 <Puzzel code={puzzel} taal="html">
 
-Elke lijst begint met zijn eigen tag en eindigt met de sluitingstag ervan: `<ul>` voor bolletjes, `<ol>` voor nummers. De items staan er als `<li>` tussenin, en de `<h2>` staat boven de lijst waar hij bij hoort.
+Elke lijst begint met zijn eigen tag en eindigt met de sluitingstag ervan: `<ol>` voor nummers, `<ul>` voor bolletjes. De items staan er als `<li>` tussenin, en de `<h2>` staat boven de lijst waar hij bij hoort. Bij de stappen doet de volgorde ertoe, en daarom is dat de genummerde lijst.
 
 </Puzzel>
 

@@ -14,6 +14,7 @@ const CODE = `<ul>
 const teksten = () =>
   Array.from(document.querySelectorAll('[data-regel] code')).map((c) => c.textContent ?? '');
 const pijl = (naam: RegExp) => screen.getByRole('button', { name: naam });
+const uitleg = () => document.querySelector<HTMLElement>('[data-puzzel-uitleg]');
 
 /** Zet de regels met de knop omhoog in de goede volgorde, zoals een leerling. */
 function losOp() {
@@ -51,8 +52,9 @@ describe('Puzzel', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Controleer' }));
     expect(screen.getByRole('status').textContent).toMatch(/op (zijn|hun) plek/);
     expect(screen.getAllByText('niet hier').length).toBeGreaterThan(0);
-    // De uitleg komt pas als alles klopt.
-    expect(screen.queryByText('De uitleg.')).toBeNull();
+    // De uitleg staat in de HTML (voor de linkcontrole), maar dicht tot
+    // alles klopt.
+    expect(uitleg()?.hidden).toBe(true);
   });
 
   it('haalt het teken weg bij een regel die daarna verschoven is', () => {
@@ -70,11 +72,57 @@ describe('Puzzel', () => {
     losOp();
     fireEvent.click(screen.getByRole('button', { name: 'Controleer' }));
     expect(screen.getByRole('status').textContent).toBe('Goed: alle 4 regels staan op hun plek.');
-    expect(screen.queryByText('De uitleg.')).not.toBeNull();
+    expect(uitleg()?.hidden).toBe(false);
     expect(screen.queryByRole('button', { name: /omhoog/ })).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Opnieuw' }));
     expect(teksten()).toEqual(begin);
-    expect(screen.queryByText('De uitleg.')).toBeNull();
+    expect(uitleg()?.hidden).toBe(true);
+  });
+
+  it('zet na het oplossen de focus op de uitkomst, niet op Opnieuw', () => {
+    // Controleer en Opnieuw staan op dezelfde plek. Bleef de focus op die
+    // knop, dan gooide een tweede Enter de opgeloste puzzel meteen weg.
+    render(<Puzzel code={CODE}>De uitleg.</Puzzel>);
+    losOp();
+    const controleer = screen.getByRole('button', { name: 'Controleer' });
+    controleer.focus();
+    fireEvent.click(controleer);
+    expect(document.activeElement).toBe(screen.getByRole('status'));
+    expect(document.activeElement).not.toBe(screen.getByRole('button', { name: 'Opnieuw' }));
+  });
+
+  it('wisselt bij het slepen over een hogere regel niet heen en weer', () => {
+    render(<Puzzel code={CODE} />);
+    // De tweede regel is hoog (een regel die afbreekt): 30, 80, 30, 30 pixels,
+    // in de volgorde waarin de regels op dat moment staan.
+    const hoog = Number(document.querySelectorAll<HTMLElement>('[data-regel]')[1].dataset.regel);
+    const meet = () => {
+      let top = 0;
+      for (const rij of Array.from(document.querySelectorAll<HTMLElement>('[data-regel]'))) {
+        const h = Number(rij.dataset.regel) === hoog ? 80 : 30;
+        const vak = { top, bottom: top + h, left: 0, right: 300 } as DOMRect;
+        rij.getBoundingClientRect = () => vak;
+        top += h;
+      }
+    };
+    const event = (naam: string, clientY: number) =>
+      new MouseEvent(naam, { bubbles: true, button: 0, clientY });
+    const lijst = document.querySelector('[data-regel]')?.parentElement as HTMLElement;
+    const voor = teksten();
+    meet();
+    fireEvent(document.querySelectorAll('[data-regel]')[0], event('pointerdown', 10));
+    // Net in het vak van de hoge regel: nog geen wissel.
+    fireEvent(lijst, event('pointermove', 35));
+    expect(teksten()).toEqual(voor);
+    // Voorbij zijn midden (70): wissel, en bij de volgende beweging op
+    // dezelfde hoogte niet terug.
+    fireEvent(lijst, event('pointermove', 75));
+    const na = [voor[1], voor[0], voor[2], voor[3]];
+    expect(teksten()).toEqual(na);
+    meet();
+    fireEvent(lijst, event('pointermove', 76));
+    expect(teksten()).toEqual(na);
+    fireEvent(lijst, event('pointerup', 76));
   });
 
   it('sleept een regel naar de plek onder de aanwijzer', () => {
@@ -92,8 +140,9 @@ describe('Puzzel', () => {
     const event = (naam: string, clientY: number) =>
       new MouseEvent(naam, { bubbles: true, button: 0, clientY });
     fireEvent(rijen[0], event('pointerdown', 10));
-    fireEvent(lijst, event('pointermove', 75));
-    fireEvent(lijst, event('pointerup', 75));
+    // Voorbij het midden van de derde regel (75).
+    fireEvent(lijst, event('pointermove', 80));
+    fireEvent(lijst, event('pointerup', 80));
     expect(teksten()).toEqual([voor[1], voor[2], voor[0], voor[3]]);
   });
 });

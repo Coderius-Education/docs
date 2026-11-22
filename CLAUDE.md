@@ -535,7 +535,7 @@ voorkomen staan erin (python heeft alleen in zijn introductie een leerdoel),
 en een `<Voorspel>` in de uitleg telt als voorspellen: de python-cursus heeft
 geen tabblad Predict. `<LesWerkvormen les="html-css/koppen-lijsten" />` toont de iconen van
 één les (`components/Werkvorm`); de web-handleiding gebruikt hem niet meer,
-want elke les heeft daar dezelfde rij. De
+want de lessen hebben daar dezelfde rij, op de puzzel in zes lessen na. De
 gegevens per les komen uit `plugins/werkvormen.js`, die `createConfig` aanzet
 bij `lesTabs`: hij leest elke les met de MDX-parser van Docusaurus zelf en
 dezelfde stap die de tabbladen maakt, dus de handleiding toont wat de
@@ -563,9 +563,19 @@ icoon. Wat vastligt, elk met een test (`Puzzel/logica.test.ts`,
 - **Twee regels met dezelfde tekst zijn te verwisselen**, ook als ze alleen in
   inspringing verschillen (de `}` van een `else` en die van de functie). Is de
   puzzel opgelost, dan staat de code van de les er, zodat de inspringing klopt.
+  Niet in Python (`taal="python"`, `isStrikt`): daar is de inspringing de
+  opbouw, en een `print` in de loop is een andere regel dan dezelfde erna.
 - **De lijst vangt de aanwijzer bij het slepen, niet de regel**: een regel die
   React in de lijst verplaatst, raakt hem kwijt. Met een vinger sleep je aan
-  de greep; de rest van de regel scrolt de pagina.
+  de greep; de rest van de regel scrolt de pagina. Een regel wisselt pas als
+  de aanwijzer het midden van zijn buur voorbij is (`plekBij`): over een
+  hogere regel, die op een telefoon afbreekt, wisselde hij eerst bij elke
+  pixel heen en weer.
+- **Na het oplossen gaat de focus naar de uitkomst.** Controleer en Opnieuw
+  staan op dezelfde plek, en een tweede Enter gooide de opgeloste puzzel
+  anders meteen weer weg.
+- **De uitleg staat altijd in de HTML**, dicht (`hidden`) tot alles klopt:
+  `cross-links` en de linkcontrole van Docusaurus zoeken een link erin.
 - **Een teken geldt voor de plek van toen**: een regel die na Controleer
   verschuift, verliest het.
 - **Opgelost is de lijst lager dan ervoor** (de regels sluiten aan als in een
@@ -575,7 +585,9 @@ icoon. Wat vastligt, elk met een test (`Puzzel/logica.test.ts`,
 Een puzzel keurt één volgorde goed. Kies dus code waarvan de volgorde vastligt
 als de opdracht erbij staat: geen twee functies of twee `addEventListener`
 onder elkaar (die mogen in elke volgorde), en zeg in de opdracht wat boven wat
-hoort ("met appels boven peren"). Web heeft er zes
+hoort ("met ketchup boven sambal", "elk label boven zijn veld", "als de loop
+klaar is"): wat de opdracht niet vastlegt en toch maar op één manier goed
+wordt gerekend, keurt een goed antwoord af. Web heeft er zes
 (`src/docs-tests/puzzels.test.ts`); de andere cursussen nog geen: registreer
 `Puzzel` dan in `MDXComponents` van de site.
 

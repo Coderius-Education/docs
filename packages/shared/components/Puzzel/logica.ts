@@ -24,9 +24,18 @@ export function regelsVan(code: string): Regel[] {
 // te verwisselen: de leerling kan niet weten welke de eerste was. Ook als
 // ze alleen in hun inspringing verschillen: de `}` van een `else` en die van
 // de functie zijn voor hem dezelfde regel.
-const zelfde = (a: Regel | undefined, b: Regel | undefined) =>
-  a !== undefined && b !== undefined && a.tekst.trim() === b.tekst.trim();
-const zelfdeVolgorde = (a: Regel[], b: Regel[]) => a.every((r, i) => zelfde(r, b[i]));
+//
+// Behalve in Python (`strikt`): daar is de inspringing de opbouw. Een
+// `print(totaal)` in de loop en een erna zijn twee verschillende regels.
+const zelfde = (a: Regel | undefined, b: Regel | undefined, strikt: boolean) =>
+  a !== undefined &&
+  b !== undefined &&
+  (strikt ? a.tekst === b.tekst : a.tekst.trim() === b.tekst.trim());
+const zelfdeVolgorde = (a: Regel[], b: Regel[], strikt: boolean) =>
+  a.every((r, i) => zelfde(r, b[i], strikt));
+
+/** Of de inspringing in deze taal meetelt bij het vergelijken van regels. */
+export const isStrikt = (taal: string) => taal === 'python' || taal === 'py';
 
 /** Een getal uit de code: dezelfde puzzel staat voor iedereen hetzelfde door elkaar. */
 export function zaadVan(code: string): number {
@@ -43,7 +52,7 @@ export function zaadVan(code: string): number {
  * en de browser dezelfde lijst tekenen. Nooit de oplossing zelf: komt die
  * eruit, dan schuift alles één plek op.
  */
-export function hussel(regels: Regel[], zaad: number): Regel[] {
+export function hussel(regels: Regel[], zaad: number, strikt = false): Regel[] {
   const uit = [...regels];
   let s = zaad >>> 0;
   const willekeurig = () => {
@@ -58,7 +67,7 @@ export function hussel(regels: Regel[], zaad: number): Regel[] {
     const j = Math.floor(willekeurig() * (i + 1));
     [uit[i], uit[j]] = [uit[j], uit[i]];
   }
-  for (let poging = 0; poging < uit.length && zelfdeVolgorde(uit, regels); poging++) {
+  for (let poging = 0; poging < uit.length && zelfdeVolgorde(uit, regels, strikt); poging++) {
     uit.push(uit.shift() as Regel);
   }
   return uit;
@@ -75,8 +84,20 @@ export function verplaats(volgorde: Regel[], van: number, naar: number): Regel[]
 }
 
 /** Per plek: staat hier de regel die er hoort? */
-export function goedOp(volgorde: Regel[], oplossing: Regel[]): boolean[] {
-  return volgorde.map((r, i) => zelfde(r, oplossing[i]));
+export function goedOp(volgorde: Regel[], oplossing: Regel[], strikt = false): boolean[] {
+  return volgorde.map((r, i) => zelfde(r, oplossing[i], strikt));
+}
+
+/**
+ * De plek waar een gesleepte regel hoort, bij een aanwijzer op hoogte `y`:
+ * het aantal andere regels waarvan het midden boven de aanwijzer ligt. Een
+ * regel wisselt dus pas als de aanwijzer het midden van zijn buur voorbij is.
+ * Eerst wisselde hij zodra de aanwijzer in het vak van de buur kwam: over een
+ * hogere regel (een lange regel die op een telefoon afbreekt) wisselde hij
+ * dan bij elke pixel heen en weer.
+ */
+export function plekBij(y: number, middens: number[], van: number): number {
+  return middens.filter((m, i) => i !== van && m < y).length;
 }
 
 /** De zin na Controleer. */

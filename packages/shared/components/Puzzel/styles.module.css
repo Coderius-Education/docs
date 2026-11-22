@@ -213,6 +213,16 @@
   font-size: 0.9rem;
 }
 
+/* De uitkomst krijgt de focus als de puzzel klaar is; een rand eromheen zou
+   lezen als een knop. */
+.melding:focus {
+  outline: none;
+}
+
+.uitleg[hidden] {
+  display: none;
+}
+
 .uitleg {
   margin-top: 0.5rem;
   font-size: 0.95rem;

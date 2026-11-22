@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { goedOp, hussel, oordeel, regelsVan, verplaats, zaadVan } from './logica';
+import { goedOp, hussel, oordeel, plekBij, regelsVan, verplaats, zaadVan } from './logica';
 
 const CODE = `<ul>
   <li>Appels</li>
@@ -68,6 +68,34 @@ describe('verplaats en goedOp', () => {
     const r = regelsVan('function f() {\n  if (x) {\n    a();\n  }\n}');
     const gewisseld = [r[0], r[1], r[2], r[4], r[3]];
     expect(goedOp(gewisseld, r).every(Boolean)).toBe(true);
+  });
+});
+
+describe('inspringing in Python', () => {
+  it('houdt in Python twee regels uit elkaar die alleen in inspringing verschillen', () => {
+    // `print(totaal)` in de loop en erna: verwisseld is het een ander
+    // programma (of een IndentationError), en dat keurde de puzzel goed.
+    const r = regelsVan(
+      'for i in range(3):\n    totaal = totaal + i\n    print(totaal)\nprint(totaal)',
+    );
+    const gewisseld = [r[0], r[1], r[3], r[2]];
+    expect(goedOp(gewisseld, r).every(Boolean)).toBe(true);
+    expect(goedOp(gewisseld, r, true)).toEqual([true, true, false, false]);
+  });
+});
+
+describe('plekBij', () => {
+  it('wisselt pas als de aanwijzer het midden van de buur voorbij is', () => {
+    // Een korte regel (0-30) boven een hoge (30-110, midden 70).
+    const middens = [15, 70, 125];
+    expect(plekBij(35, middens, 0)).toBe(0);
+    expect(plekBij(69, middens, 0)).toBe(0);
+    expect(plekBij(75, middens, 0)).toBe(1);
+    // Na de wissel ligt de hoge regel bovenaan (0-80, midden 40): de
+    // aanwijzer op 75 blijft eronder, dus de regel springt niet terug.
+    expect(plekBij(75, [40, 95, 125], 1)).toBe(1);
+    expect(plekBij(200, middens, 0)).toBe(2);
+    expect(plekBij(-5, middens, 2)).toBe(0);
   });
 });
 

@@ -34,6 +34,10 @@ const sectie = (inhoud: string, kop: string) => {
   return inhoud.slice(start, eind === -1 ? undefined : eind);
 };
 
+// Regels die elke pagina of elk blok heeft: een kale tag zonder tekst, een
+// accolade.
+const SKELET = /^(<!DOCTYPE html>|<\/?[a-z0-9]+( lang="nl")?>|\}|\} else \{)$/;
+
 describe('puzzels in de web-cursus', () => {
   it('staan in een paar lessen, niet in elke', () => {
     // "Alleen waar de volgorde het nieuwe is" (vakdidactiek). Een puzzel in
@@ -84,9 +88,17 @@ describe('puzzels in de web-cursus', () => {
         naam,
       ).toEqual([]);
       // De puzzel is nieuwe code met wat de les aanleert, niet de startcode
-      // die de leerling net draaide.
+      // die de leerling net draaide. Per regel, want een kopie met een regel
+      // minder of een andere inspringing is nog steeds een kopie. Het skelet
+      // (`<body>`, `</ul>`, `}`) telt niet: dat heeft elke pagina.
+      const inhoud2 = regels.map((r) => r.trim()).filter((r) => !SKELET.test(r));
+      expect(inhoud2.length, naam).toBeGreaterThanOrEqual(3);
       for (const m of inhoud.matchAll(/^export const (start\w+|make\w+) = `([\s\S]*?)`;/gm)) {
-        expect(m[2].includes(code ?? '\0'), `${naam}: ${m[1]}`).toBe(false);
+        const daar = new Set(m[2].split('\n').map((r) => r.trim()));
+        const gedeeld = inhoud2.filter((r) => daar.has(r));
+        expect(gedeeld.length * 2, `${naam}: ${m[1]} deelt ${gedeeld.join(' | ')}`).toBeLessThan(
+          inhoud2.length,
+        );
       }
     }
   });

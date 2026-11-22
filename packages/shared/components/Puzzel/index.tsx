@@ -10,7 +10,17 @@ import {
   useRef,
   useState,
 } from 'react';
-import { type Regel, goedOp, hussel, oordeel, regelsVan, verplaats, zaadVan } from './logica';
+import {
+  type Regel,
+  goedOp,
+  hussel,
+  isStrikt,
+  oordeel,
+  plekBij,
+  regelsVan,
+  verplaats,
+  zaadVan,
+} from './logica';
 import styles from './styles.module.css';
 
 // Een Parsons-puzzel: de regels van een werkend programma staan door elkaar,
@@ -69,7 +79,9 @@ interface Controle {
 
 export default function Puzzel({ code, taal = 'html', children }: PuzzelProps): ReactNode {
   const oplossing = useMemo(() => regelsVan(code), [code]);
-  const begin = useMemo(() => hussel(oplossing, zaadVan(code)), [oplossing, code]);
+  // In Python telt de inspringing mee: daar is hij de opbouw.
+  const strikt = isStrikt(taal);
+  const begin = useMemo(() => hussel(oplossing, zaadVan(code), strikt), [oplossing, code, strikt]);
   const [volgorde, setVolgorde] = useState(begin);
   // Wat de laatste controle van een regel zei. Een regel die daarna is
   // verschoven, verliest zijn teken: het ging over de plek van toen.
@@ -78,6 +90,7 @@ export default function Puzzel({ code, taal = 'html', children }: PuzzelProps): 
   const [klaar, setKlaar] = useState(false);
   const [slepend, setSlepend] = useState<number | null>(null);
   const lijst = useRef<HTMLOListElement>(null);
+  const uitkomst = useRef<HTMLOutputElement>(null);
   const focusNa = useRef<{ id: number; knop: 'op' | 'neer' } | null>(null);
   const thema = useDonker() ? donker : licht;
   const meldingId = useId();
@@ -118,7 +131,7 @@ export default function Puzzel({ code, taal = 'html', children }: PuzzelProps): 
   };
 
   const controleer = () => {
-    const goed = goedOp(volgorde, oplossing);
+    const goed = goedOp(volgorde, oplossing, strikt);
     const alles = goed.every(Boolean);
     // Klaar: de regels van de oplossing zelf, zodat twee regels die alleen in
     // inspringing verschillen (en verwisseld mochten staan) goed inspringen.
@@ -126,6 +139,9 @@ export default function Puzzel({ code, taal = 'html', children }: PuzzelProps): 
     setControle(new Map(lijst.map((r, i) => [r.id, { plek: i, goed: goed[i] }])));
     setMelding(oordeel(goed));
     setKlaar(alles);
+    // De focus naar de uitkomst: op de plek van Controleer staat nu Opnieuw,
+    // en een tweede Enter gooide de opgeloste puzzel anders meteen weer weg.
+    if (alles) uitkomst.current?.focus();
   };
 
   const opnieuw = () => {
@@ -152,16 +168,11 @@ export default function Puzzel({ code, taal = 'html', children }: PuzzelProps): 
     if (slepend === null || !lijst.current) return;
     const rijen = Array.from(lijst.current.querySelectorAll<HTMLElement>('[data-regel]'));
     const van = volgorde.findIndex((r) => r.id === slepend);
-    let naar = van;
-    rijen.forEach((rij, i) => {
+    const middens = rijen.map((rij) => {
       const vak = rij.getBoundingClientRect();
-      if (e.clientY >= vak.top && e.clientY < vak.bottom) naar = i;
+      return (vak.top + vak.bottom) / 2;
     });
-    if (rijen.length > 0) {
-      if (e.clientY < rijen[0].getBoundingClientRect().top) naar = 0;
-      if (e.clientY >= rijen[rijen.length - 1].getBoundingClientRect().bottom)
-        naar = rijen.length - 1;
-    }
+    const naar = plekBij(e.clientY, middens, van);
     zet(verplaats(volgorde, van, naar));
   };
   const laatLos = (e: ReactPointerEvent<HTMLOListElement>) => {
@@ -260,11 +271,12 @@ export default function Puzzel({ code, taal = 'html', children }: PuzzelProps): 
       </ol>
       <div className={styles.onder}>
         {klaar ? (
-          <button type="button" className={styles.knop} onClick={opnieuw}>
+          <button key="opnieuw" type="button" className={styles.knop} onClick={opnieuw}>
             Opnieuw
           </button>
         ) : (
           <button
+            key="controleer"
             type="button"
             className={clsx(styles.knop, styles.hoofd)}
             onClick={controleer}
@@ -273,11 +285,23 @@ export default function Puzzel({ code, taal = 'html', children }: PuzzelProps): 
             Controleer
           </button>
         )}
-        <output id={meldingId} className={styles.melding} aria-live="polite">
+        <output
+          ref={uitkomst}
+          id={meldingId}
+          className={styles.melding}
+          aria-live="polite"
+          tabIndex={-1}
+        >
           {melding}
         </output>
       </div>
-      {klaar && children && <div className={styles.uitleg}>{children}</div>}
+      {/* Altijd in de HTML, dicht tot alles klopt: `cross-links` en de
+          linkcontrole van Docusaurus zoeken een link in de uitleg daar. */}
+      {children && (
+        <div className={styles.uitleg} hidden={!klaar} data-puzzel-uitleg>
+          {children}
+        </div>
+      )}
     </div>
   );
 }
