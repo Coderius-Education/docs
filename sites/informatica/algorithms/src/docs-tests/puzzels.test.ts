@@ -20,9 +20,12 @@ import { regelsVan } from '../../../../../packages/shared/components/Puzzel/logi
 // de pagina al open staat, en dat hij draait.
 //
 // De puzzel keurt alleen de volgorde van de les goed, dus die moet de enige
-// zijn. Dat ziet deze test niet: loop bij een nieuwe puzzel elke volgorde na
-// die ook werkt (twee toekenningen onder elkaar, twee regels in dezelfde
-// `if`), en leg in de opdracht vast wat de code niet vastlegt.
+// zijn. In de web-cursus ging het daar eerst mis: twee regels die in beide
+// volgordes werken, en een goed antwoord werd afgekeurd. Python is te
+// draaien, dus hier loopt de test elke volgorde na die geldige Python is, en
+// telt hij welke hetzelfde printen als de les. Elke zo'n volgorde moet de
+// opdracht met een zin uitsluiten (`VASTGELEGD`). Wat de test niet ziet: of
+// die zin ze ook echt allemaal uitsluit. Lees dat na.
 
 const DOCS = fileURLToPath(new URL('../../docs', import.meta.url));
 
@@ -77,6 +80,110 @@ function draai(code: string): { status: number | null; uit: string; fout: string
   const r = spawnSync('python3', ['-'], { input: code, encoding: 'utf8', timeout: 30_000 });
   return { status: r.status, uit: r.stdout, fout: r.stderr };
 }
+
+/**
+ * Elke volgorde van de regels die geldige Python is, gedraaid met een grens
+ * op het aantal stappen (een `while` in de verkeerde volgorde stopt niet). De
+ * uitkomst per puzzel: hoeveel volgordes geldig zijn, en hoeveel er naast de
+ * oplossing hetzelfde printen. Een regel na een dubbele punt springt precies
+ * een niveau in en anders nooit dieper: zo blijven het er honderden, geen
+ * miljoenen.
+ */
+const VOLGORDES = String.raw`
+import contextlib, io, json, sys
+
+GRENS = 20000
+
+class TeLang(Exception):
+    pass
+
+def draai(code):
+    stappen = [0]
+    def volg(frame, gebeurtenis, arg):
+        stappen[0] += 1
+        if stappen[0] > GRENS:
+            raise TeLang()
+        return volg
+    uit = io.StringIO()
+    try:
+        with contextlib.redirect_stdout(uit):
+            sys.settrace(volg)
+            try:
+                exec(compile(code, "<puzzel>", "exec"), {"__name__": "__main__"})
+            finally:
+                sys.settrace(None)
+    except BaseException as fout:
+        return type(fout).__name__, uit.getvalue()
+    return "ok", uit.getvalue()
+
+def volgordes(regels):
+    diep = [len(r) - len(r.lstrip()) for r in regels]
+    kop = [r.endswith(":") for r in regels]
+    rij = []
+    def stap():
+        if len(rij) == len(regels):
+            if not kop[rij[-1]]:
+                yield list(rij)
+            return
+        gezien = set()
+        for i, regel in enumerate(regels):
+            if i in rij or regel in gezien:
+                continue
+            if not rij:
+                past = diep[i] == 0
+            elif kop[rij[-1]]:
+                past = diep[i] == diep[rij[-1]] + 4
+            else:
+                past = diep[i] <= diep[rij[-1]]
+            if past:
+                gezien.add(regel)
+                rij.append(i)
+                yield from stap()
+                rij.pop()
+    yield from stap()
+
+sys.setrecursionlimit(300)
+uitkomst = []
+for code in json.load(sys.stdin):
+    regels = [r.rstrip() for r in code.split("\n") if r.strip()]
+    goed = draai("\n".join(regels))
+    geldig = 0
+    zelfde = []
+    for rij in volgordes(regels):
+        bron = "\n".join(regels[i] for i in rij)
+        try:
+            compile(bron, "<puzzel>", "exec")
+        except SyntaxError:
+            continue
+        geldig += 1
+        if rij != list(range(len(regels))) and draai(bron) == goed:
+            zelfde.append(bron)
+    uitkomst.append({"oplossing": goed[0], "geldig": geldig, "zelfde": zelfde})
+json.dump(uitkomst, sys.stdout)
+`;
+
+/**
+ * De puzzels waar naast de volgorde van de les nog een volgorde hetzelfde
+ * print: hoeveel, en de zin waarmee de opdracht ze uitsluit. Een puzzel die
+ * hier niet staat, heeft er geen.
+ */
+const VASTGELEGD: Record<string, { aantal: number; zin: RegExp; welke: string }> = {
+  'binair-zoeken/11-zelf-bouwen.mdx': {
+    aantal: 1,
+    zin: /`laag = 1` hoort boven `hoog = 100`/,
+    welke: 'de twee startwaarden andersom',
+  },
+  'bubble-sort/11-zelf-bouwen.mdx': {
+    aantal: 3,
+    zin: /Elke ronde begint met `geswapt` op `False`, en na een swap gaat de vlag op `True`/,
+    welke: 'de vlag aan het eind van de ronde op False, de vlag vóór de swap op True, en allebei',
+  },
+  'hanoi/bouwen/06-recursie-stap.mdx': {
+    aantal: 1,
+    zin: /Hij begint met het basisgeval/,
+    welke: '`zetten = []` boven het basisgeval',
+  },
+};
 
 describe('puzzels in de cursus algoritmes', () => {
   it('staan in een paar lessen, niet in elke', () => {
@@ -166,4 +273,28 @@ describe('puzzels in de cursus algoritmes', () => {
       for (const regel of geprint) expect(tekst, naam).toContain(`\`${regel}\``);
     }
   });
+
+  it('hebben één goede volgorde, of de opdracht legt de andere vast', () => {
+    const r = spawnSync('python3', ['-c', VOLGORDES], {
+      input: JSON.stringify(lessen.map((les) => les.puzzels[0].code ?? '')),
+      encoding: 'utf8',
+      timeout: 110_000,
+    });
+    expect(r.status, r.stderr).toBe(0);
+    const uitkomst: { oplossing: string; geldig: number; zelfde: string[] }[] = JSON.parse(
+      r.stdout,
+    );
+    lessen.forEach(({ naam, puzzels }, i) => {
+      const { oplossing, geldig, zelfde } = uitkomst[i];
+      expect(oplossing, naam).toBe('ok');
+      // Zonder andere geldige volgordes heeft de loper niets nagelopen.
+      expect(geldig, naam).toBeGreaterThan(1);
+      const vast = VASTGELEGD[naam];
+      expect(zelfde, `${naam}: deze volgordes printen hetzelfde`).toHaveLength(vast?.aantal ?? 0);
+      if (vast) expect(puzzels[0].opdracht.replace(/\s+/g, ' '), naam).toMatch(vast.zin);
+    });
+    // Een puzzel die weg is of anders heet, hoort hier ook weg.
+    const namen = lessen.map((les) => les.naam);
+    expect(Object.keys(VASTGELEGD).filter((naam) => !namen.includes(naam))).toEqual([]);
+  }, 120_000);
 });
