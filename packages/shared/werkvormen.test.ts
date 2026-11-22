@@ -387,9 +387,13 @@ describe('de werkvormen van een les (plugins/werkvormen.js)', () => {
       'uitleg',
       'voorspellen',
       'onderzoeken',
+      // Het tabblad Puzzel (een Parsons-puzzel) staat tussen onderzoeken en
+      // de eerste opdracht.
+      'ordenen',
       'aanpassen',
       'maken',
       'fouten',
     ]);
+    expect(werkvormVan('Puzzel')).toBe('ordenen');
   });
 });

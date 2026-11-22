@@ -1,0 +1,250 @@
+/* De kleuren komen uit Infima en de huisstijl, zodat licht en donker vanzelf
+   kloppen. Goed en fout zijn een rand en een teken met een woord; de code
+   houdt zijn eigen kleuren. */
+
+.puzzel {
+  margin: 0 0 1rem;
+  padding: 0.6rem 0.75rem 0.7rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-left: 4px solid var(--ifm-color-primary);
+  border-radius: var(--ifm-global-radius);
+  background: var(--ifm-background-surface-color);
+}
+
+.kop {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.6rem;
+  margin-bottom: 0.45rem;
+}
+
+.label {
+  padding: 0.05rem 0.55rem;
+  border-radius: 999px;
+  background: var(--ifm-color-primary);
+  color: var(--coderius-on-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.hint {
+  color: var(--ifm-color-emphasis-800);
+  font-size: 0.9rem;
+}
+
+/* Een <ol> zonder de cijfers en de ruimte van de pagina: de lijst telt zelf
+   (counter), zodat het nummer bij de plek hoort en niet met de regel
+   meeschuift. De dubbele klasse wint van `.markdown ol`. */
+.regels.regels {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: regel;
+}
+
+.regel.regel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  min-height: 28px;
+  margin: 0;
+  padding: 0 0.25rem 0 0.4rem;
+  border: 1px solid var(--ifm-color-emphasis-400);
+  border-radius: 0.35rem;
+  background: var(--ifm-background-color);
+  counter-increment: regel;
+  cursor: grab;
+}
+
+.regel::before {
+  content: counter(regel);
+  flex: none;
+  width: 1.2rem;
+  color: var(--ifm-color-emphasis-600);
+  font-size: 0.75rem;
+  text-align: right;
+}
+
+/* Opgelost: de regels sluiten aan zoals in een codeblok. Dat scheelt een
+   derde van de hoogte, en daar past de uitleg in. */
+.puzzel[data-klaar] .regels {
+  gap: 0;
+  padding: 0.3rem 0;
+  border: 1px solid var(--ifm-color-success);
+  border-radius: 0.35rem;
+  background: var(--ifm-background-color);
+}
+
+.puzzel[data-klaar] .regel {
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  cursor: default;
+}
+
+.puzzel[data-klaar] .teken {
+  display: none;
+}
+
+.bezig,
+.bezig .regel {
+  cursor: grabbing;
+  user-select: none;
+}
+
+.vast.vast {
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 18%);
+}
+
+/* De greep is waar een vinger de regel pakt; daar scrolt de pagina niet. */
+.greep {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 1.2rem;
+  height: 26px;
+  color: var(--ifm-color-emphasis-600);
+  touch-action: none;
+}
+
+.code.code {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.teken {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.goed.goed {
+  border-color: var(--ifm-color-success);
+  box-shadow: inset 0 0 0 1px var(--ifm-color-success);
+  background: color-mix(in srgb, var(--ifm-color-success) 9%, var(--ifm-background-color));
+}
+
+.fout.fout {
+  border-color: var(--ifm-color-danger);
+  box-shadow: inset 0 0 0 1px var(--ifm-color-danger);
+  background: color-mix(in srgb, var(--ifm-color-danger) 9%, var(--ifm-background-color));
+}
+
+.knoppen {
+  flex: none;
+  display: inline-flex;
+  gap: 0.2rem;
+}
+
+.pijl {
+  width: 1.6rem;
+  height: 22px;
+  padding: 0;
+  border: 1px solid var(--ifm-color-emphasis-400);
+  border-radius: 0.35rem;
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  font: inherit;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.pijl:hover:not(:disabled) {
+  border-color: var(--ifm-color-primary);
+}
+
+.pijl:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.pijl:focus-visible,
+.knop:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+}
+
+.onder {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.knop {
+  padding: 0.2rem 0.9rem;
+  border: 1px solid var(--ifm-color-emphasis-400);
+  border-radius: 0.4rem;
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.hoofd {
+  border-color: var(--ifm-color-primary);
+  background: var(--ifm-color-primary);
+  color: var(--coderius-on-primary);
+}
+
+.melding {
+  flex: 1;
+  min-width: 12rem;
+  font-size: 0.9rem;
+}
+
+.uitleg {
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+}
+
+/* Met een vinger: grotere knoppen en een grotere greep. Een telefoon scrolt
+   toch. */
+@media (pointer: coarse) {
+  .regel.regel {
+    min-height: 40px;
+  }
+
+  .greep {
+    width: 1.8rem;
+    height: 38px;
+  }
+
+  .pijl {
+    width: 2.2rem;
+    height: 34px;
+  }
+}
+
+.uitleg > :last-child {
+  margin-bottom: 0;
+}
+
+/* Op papier: de regels zonder knoppen, met ruimte om nummers te schrijven. */
+@media print {
+  .greep,
+  .knoppen,
+  .onder {
+    display: none;
+  }
+}

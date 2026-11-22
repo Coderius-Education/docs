@@ -79,6 +79,7 @@ In een cursus met tabbladen is een tabblad of een stap alles wat de leerling op 
 - **Wat de leerling na een opdracht moet opruimen** (een endpoint weghalen, de server weer starten), staat in de opdracht, niet in het antwoord: wie het antwoord niet openklapt, leest het niet.
 - **Het hele bestand na de les** schrijf je als `<details><summary>Zo ziet je `main.py` er nu uit</summary>`: de build maakt er het laatste tabblad van, met de naam van het bestand. Verwijs ernaar als "het tabblad `main.py`".
 - **Een pagina die net zo heet als een tabblad, noem je een pagina**: "op de pagina [Er gaat iets mis](…)". Zonder link is "bij Er gaat iets mis" het tabblad van de les.
+- **Een puzzel staat alleen waar de volgorde het nieuwe is** (web: `## Puzzel` met `<Puzzel code={puzzel} taal="html">`, tussen Probeer en onderzoek en de eerste opdracht). De leerling zet de regels van werkende code in de goede volgorde. Zeg in één alinea wat de code moet doen en wat boven wat hoort; kies code met één goede volgorde, van vijf tot twaalf regels; en zet als kinderen de uitleg die verschijnt als alles klopt. Zie vakdidactiek, Eerst ordenen, dan schrijven met Parsons-puzzels.
 - **Een fout onder Er gaat iets mis toont alleen wat verandert**: de melding (een lange rij uitvoer ingekort met `...`), de oorzaak, de oplossing en hooguit de paar regels code die anders moeten. Wijs daar niet naar "hierboven": de uitleg staat op een ander tabblad.
 
 Voor MDX-pagina's met runnable code, importeer bovenaan:

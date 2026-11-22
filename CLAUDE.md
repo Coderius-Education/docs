@@ -516,7 +516,7 @@ dit in `src/docs-tests/schermen.test.ts`.
 wat de leerling daar doet (leerdoel, uitleg, stap voor stap, bouwen en
 aansluiten, voorspellen, onderzoeken, aanpassen, zelf maken, controleren,
 fouten herkennen; bouwen en controleren kwamen met robotica, voor Materiaal,
-Aansluiten en de Controlevraag). De lijst staat in
+Aansluiten en de Controlevraag; ordenen met de puzzels van web). De lijst staat in
 `packages/shared/werkvormen/werkvormen.json`: per werkvorm de koppen waaraan
 je hem herkent, een icoon (paden van een lijntekening, geen emoji) en
 minstens één tip van vakdidactiek. Een kop die bij geen werkvorm hoort, is
@@ -546,6 +546,38 @@ onderdeel (`doet`) gaat over code. Een cursus waar dat niet klopt (een
 terminal, de git-simulator, een challenge op een ander platform), zegt het
 zelf: `<Werkvormen doet={{ aanpassen: '…' }} />`; de literatuur blijft
 gelijk (linux, editor en ctf, `Werkvorm.test.tsx`).
+
+**Een Parsons-puzzel is een eigen werkvorm** (november 2026, op verzoek van
+de opdrachtgever; tip Parsons-puzzels bij vakdidactiek, Parsons en Haden
+2006). `<Puzzel code={puzzel} taal="html">` (`packages/shared/components/Puzzel`)
+toont de regels van werkende code door elkaar; de leerling zet ze in de goede
+volgorde met slepen of met de knoppen omhoog en omlaag (die werken ook met het
+toetsenbord en op een telefoon), en Controleer zegt per regel of hij goed
+staat, met een teken en een woord. De uitleg (de kinderen) komt als alles
+klopt. De les zet hem onder `## Puzzel`: werkvorm `ordenen`, met een eigen
+icoon. Wat vastligt, elk met een test (`Puzzel/logica.test.ts`,
+`Puzzel.test.tsx`):
+
+- **Het husselen hangt alleen van de code af** (`zaadVan`, `hussel`): de
+  server en de browser tekenen dezelfde lijst, en nooit de oplossing zelf.
+- **Twee regels met dezelfde tekst zijn te verwisselen**, ook als ze alleen in
+  inspringing verschillen (de `}` van een `else` en die van de functie). Is de
+  puzzel opgelost, dan staat de code van de les er, zodat de inspringing klopt.
+- **De lijst vangt de aanwijzer bij het slepen, niet de regel**: een regel die
+  React in de lijst verplaatst, raakt hem kwijt. Met een vinger sleep je aan
+  de greep; de rest van de regel scrolt de pagina.
+- **Een teken geldt voor de plek van toen**: een regel die na Controleer
+  verschuift, verliest het.
+- **Opgelost is de lijst lager dan ervoor** (de regels sluiten aan als in een
+  codeblok), zodat de uitleg erbij past. Het meetscript lost met `--klik` elke
+  puzzel op en meet na elke controle (`naPuzzel`).
+
+Een puzzel keurt één volgorde goed. Kies dus code waarvan de volgorde vastligt
+als de opdracht erbij staat: geen twee functies of twee `addEventListener`
+onder elkaar (die mogen in elke volgorde), en zeg in de opdracht wat boven wat
+hoort ("met appels boven peren"). Web heeft er zes
+(`src/docs-tests/puzzels.test.ts`); de andere cursussen nog geen: registreer
+`Puzzel` dan in `MDXComponents` van de site.
 
 **De docentenhandleiding schrijft niet voor hoe iemand lesgeeft.** Dat is
 de standaard (schrijfgids §15); elke cursus met tabbladen heeft hem zo. Hij is een halve pagina: waar de lessen op steunen

@@ -80,6 +80,17 @@ export const onderzoek = [
   },
 ];
 
+export const puzzel = `<form>
+  <label for="naam">Naam:</label>
+  <input type="text" id="naam">
+  <label for="klas">Klas:</label>
+  <select id="klas">
+    <option value="3a">3A</option>
+    <option value="3b">3B</option>
+  </select>
+  <button>Verstuur</button>
+</form>`;
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -175,6 +186,16 @@ De cursor springt naar het naam-veld en je kunt direct beginnen typen. Dat komt 
   height="640px"
   onderzoek={onderzoek}
 />
+
+## Puzzel
+
+Dit is een formulier, maar de regels staan door elkaar. Het vraagt eerst om je naam en dan om je klas, met 3A bovenaan in de keuzelijst. De knop staat onderaan.
+
+<Puzzel code={puzzel} taal="html">
+
+Alles staat tussen `<form>` en `</form>`. Elk `<label>` staat direct boven het veld waar het bij hoort: de `for` van het label is de `id` van het veld. De keuzes van de lijst staan als `<option>` tussen `<select>` en `</select>`.
+
+</Puzzel>
 
 ## Modify
 

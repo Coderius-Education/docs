@@ -49,6 +49,14 @@ export const onderzoek = [
   },
 ];
 
+export const puzzel = `function telOp() {
+  let som = 0;
+  for (let i = 1; i <= 5; i++) {
+    som = som + i;
+  }
+  document.getElementById('uitvoer').textContent = som;
+}`;
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -150,6 +158,16 @@ Tien regels. De eerste is `5 × 1 = 5`, de laatste `5 × 10 = 50`. De loop begin
   stacked
   onderzoek={onderzoek}
 />
+
+## Puzzel
+
+Deze functie telt de getallen 1 tot en met 5 bij elkaar op en laat de uitkomst zien, maar de regels staan door elkaar.
+
+<Puzzel code={puzzel} taal="js">
+
+De variabele `som` begint vóór de loop op 0. In de loop komt er elke ronde een getal bij. Pas na de loop, als alle rondes klaar zijn, komt de uitkomst op de pagina: 15.
+
+</Puzzel>
 
 ## Opdracht 1: Andere tafel
 

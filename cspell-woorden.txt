@@ -134,6 +134,7 @@ Grotallegorie
 gróter
 góéd
 hackchallenges
+Haden
 halfafgemaakte
 hardgecodeerd
 harvard
@@ -185,6 +186,7 @@ Kloonleger
 klínken
 knoppenrij
 knopstand
+Koli
 Kortingschecker
 kortingschecker
 Krathwohl
@@ -219,6 +221,7 @@ losgeknipte
 mapnaam
 mapnamen
 mapstructuur
+Margulieux
 meekrimpen
 meerregelig
 meeschaalt
@@ -310,6 +313,7 @@ PRIMM
 printend
 probleemgestuurde
 programmeertaalconstructies
+programmeervak
 projectpad
 précies
 Pydle
