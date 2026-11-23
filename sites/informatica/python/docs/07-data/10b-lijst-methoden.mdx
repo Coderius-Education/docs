@@ -9,37 +9,112 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 Je kunt nu een lijst maken, opvragen en doorlopen. Met methoden **verander** je een lijst: elementen toevoegen, verwijderen of invoegen.
 
-## De belangrijkste methoden
+## Lootjes trekken
 
-Net als bij strings hebben lijsten methoden die je met een punt aanroept:
+### Pak de laatste
 
-| Methode | Wat doet hij? |
-|---------|---------------|
-| `lijst.append(x)` | Voeg `x` toe aan het einde |
-| `lijst.insert(i, x)` | Voeg `x` toe op positie `i` |
-| `lijst.remove(x)` | Verwijder de eerste `x` uit de lijst |
-| `lijst.pop()` | Verwijder het laatste element en geef het terug |
-| `lijst.pop(i)` | Verwijder het element op positie `i` en geef het terug |
-
-### De methoden gebruiken
+Drie vrienden trekken lootjes voor een surprise. De lootjes zitten in een hoed: een lijst, met het bovenste lootje achteraan. Emma pakt het bovenste. Net als een tekst heeft een lijst methoden, die je met een punt aanroept:
 
 ```python
-dieren = ["kat", "hond", "vis"]
+hoed = ["Daan", "Yara", "Emma"]
 
-dieren.append("vogel")
-print(dieren)            # ['kat', 'hond', 'vis', 'vogel']
-
-dieren.remove("hond")
-print(dieren)            # ['kat', 'vis', 'vogel']
-
-laatste = dieren.pop()
-print(laatste)           # vogel
-print(dieren)            # ['kat', 'vis']
+lot = hoed.pop()
+print(f"Emma trekt {lot}")
+print(hoed)
 ```
 
-`.remove("hond")` geeft niets terug; `.pop()` geeft het verwijderde element wél terug, zodat je het kunt opvangen.
+Uitvoer:
 
-Anders dan bij een tekst veranderen deze methoden de lijst zelf. `"hallo".upper()` liet de tekst zoals hij was, `dieren.append("vogel")` verandert `dieren`.
+```
+Emma trekt Emma
+['Daan', 'Yara']
+```
+
+**`pop()`** haalt het laatste element uit de lijst en geeft het terug: het komt in `lot`. De lijst is daarna een element korter. Met een plek tussen de haakjes pakt `pop` een ander element: `hoed.pop(0)` is het eerste. Alleen trekt Emma zo haar eigen naam.
+
+### Haal er één uit
+
+Om niet haar eigen naam te trekken, haalt Emma eerst haar eigen lootje uit de hoed. De gemarkeerde regel is nieuw: **`remove`** zoekt `"Emma"` op in de lijst en haalt dat element weg.
+
+```python {3}
+hoed = ["Daan", "Yara", "Emma"]
+
+hoed.remove("Emma")
+lot = hoed.pop()
+print(f"Emma trekt {lot}")
+print(hoed)
+```
+
+Uitvoer:
+
+```
+Emma trekt Yara
+['Daan']
+```
+
+`remove` geeft niets terug, dus er staat geen variabele voor. Emma trekt nu Yara. Haar eigen lootje ligt alleen nog naast de hoed: zo trekt niemand Emma.
+
+### Voeg toe
+
+Na het trekken gaat het lootje van Emma terug in de hoed. De gemarkeerde regel is nieuw: **`append`** voegt `"Emma"` toe aan het eind van de lijst.
+
+```python {6}
+hoed = ["Daan", "Yara", "Emma"]
+
+hoed.remove("Emma")
+lot = hoed.pop()
+print(f"Emma trekt {lot}")
+hoed.append("Emma")
+print(hoed)
+```
+
+Uitvoer:
+
+```
+Emma trekt Yara
+['Daan', 'Emma']
+```
+
+Moet een element ergens anders komen, dan gebruik je `insert`: `hoed.insert(0, "Emma")` voegt Emma toe op plek 0. Anders dan bij een tekst veranderen deze methoden de lijst zelf. `"hallo".upper()` liet de tekst zoals hij was, `hoed.append("Emma")` verandert `hoed`.
+
+## Maak het af
+
+Bij zaalvoetbal staan Finn, Lotte en Mila in het veld. Lotte wordt gewisseld voor Jip. Het programma meldt de wissel al, maar de lijst is nog niet veranderd. Twee stappen zijn nog open: Lotte uit de lijst halen en Jip toevoegen. Doe die zelf, en laat de eerste regel staan: verander de lijst met methoden.
+
+Verwachte uitvoer:
+
+```
+Lotte gaat eruit, Jip komt erin
+['Finn', 'Mila', 'Jip']
+```
+
+<CodeExercise>{`veld = ["Finn", "Lotte", "Mila"]
+
+print("Lotte gaat eruit, Jip komt erin")
+print(veld)`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Lotte staat niet achteraan in de lijst. Welke methode haalt een element weg dat je bij naam noemt? Kijk ook waar je de nieuwe regels zet: `print(veld)` laat de lijst zien zoals hij op dat moment is.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+veld = ["Finn", "Lotte", "Mila"]
+
+print("Lotte gaat eruit, Jip komt erin")
+veld.remove("Lotte")
+veld.append("Jip")
+print(veld)
+```
+
+`veld.pop()` had Mila uit het veld gehaald: `pop()` pakt altijd de laatste.
+
+</details>
 
 ## Handige ingebouwde functies
 
@@ -117,6 +192,22 @@ print(dieren)   # None
 ```
 
 Geen foutmelding, maar je lijst is weg. `append` verandert de lijst zelf en geeft niets terug, dus `dieren` wordt `None`. Schrijf alleen `dieren.append("hond")`, zonder `dieren =` ervoor.
+
+### De lijst veranderen na de print
+
+```python
+dieren = ["kat", "hond", "vis"]
+print(dieren)
+dieren.remove("hond")
+```
+
+Uitvoer:
+
+```
+['kat', 'hond', 'vis']
+```
+
+Geen foutmelding, maar de hond staat er nog. Python voert de regels van boven naar beneden uit: bij de `print` was de lijst nog niet veranderd. Zet `print(dieren)` onder de regel met `remove`.
 
 ---
 

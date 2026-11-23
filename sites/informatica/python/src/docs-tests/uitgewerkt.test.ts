@@ -1,8 +1,18 @@
 import { spawnSync } from 'node:child_process';
 import { readFileSync, readdirSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+
+// Wat er sinds het blok ervoor bij kwam, en de metastring die het markeert:
+// gedeeld met de cursussen die een bestand per les laten groeien.
+const { nieuwSinds, uitMeta } = createRequire(import.meta.url)(
+  '../../../../../packages/shared/nieuw-sinds.js',
+) as {
+  nieuwSinds: (vorige: string[], nu: string[]) => number[];
+  uitMeta: (meta: string) => number[];
+};
 
 // Een proef in het hoofdstuk Herhalen (november 2026): de uitleg laat het
 // programma in stappen groeien in plaats van het in één keer te tonen (een
@@ -24,7 +34,17 @@ import { describe, expect, it } from 'vitest';
 // zegt de opdracht ("laat de `range` staan"), en dat lees je na.
 
 const DOCS = fileURLToPath(new URL('../../docs', import.meta.url));
-const PROEF = '04-herhalen';
+// De lessen met een voorbeeld in stappen. Begonnen als proef in Herhalen;
+// daarna de hoofdstukken waar een programma op dezelfde manier groeit. Een
+// les die er niet in staat, toont zijn voorbeeld nog in één keer.
+const IN_STAPPEN = [
+  /^03-beslissen\//,
+  /^04-herhalen\//,
+  // 9c (scope) niet: daar staat hetzelfde programma in drie versies, er
+  // groeit niets.
+  /^05-functies\/(08|09a|09b)-/,
+  /^07-data\/(10a|10b|11a|11b|11c)-/,
+];
 
 function bestanden(map: string): string[] {
   return readdirSync(map, { withFileTypes: true }).flatMap((f) =>
@@ -40,7 +60,7 @@ const lessen = bestanden(DOCS).map((pad) => ({
   naam: relative(DOCS, pad),
   bron: readFileSync(pad, 'utf8'),
 }));
-const proef = lessen.filter((les) => les.naam.startsWith(PROEF));
+const proef = lessen.filter((les) => IN_STAPPEN.some((patroon) => patroon.test(les.naam)));
 
 const regelVan = (bron: string, plek: number) => bron.slice(0, plek).split('\n').length;
 
@@ -53,58 +73,13 @@ interface Blok {
   eind: number;
 }
 
-/** `{2-3,6}` als regelnummers. Een andere metastring (`showLineNumbers`) is geen markering. */
-function gemarkeerd(meta: string): number[] {
-  const tussen = /\{([\d,\s-]+)\}/.exec(meta)?.[1];
-  if (!tussen) return [];
-  return tussen.split(',').flatMap((deel) => {
-    const [van, tot = van] = deel.trim().split('-').map(Number);
-    return Array.from({ length: tot - van + 1 }, (_, i) => van + i);
-  });
-}
-
 const pythonBlokken = (bron: string): Blok[] =>
   [...bron.matchAll(/^```python([^\n]*)\n([\s\S]*?)^```$/gm)].map((m) => ({
-    gemarkeerd: gemarkeerd(m[1]),
+    gemarkeerd: uitMeta(m[1]),
     regels: m[2].replace(/\n$/, '').split('\n'),
     regel: regelVan(bron, m.index ?? 0),
     eind: (m.index ?? 0) + m[0].length,
   }));
-
-/**
- * De regels van `nu` die nieuw of veranderd zijn sinds `vorige`: wat niet in de
- * langste gemeenschappelijke reeks van de twee zit. Lege regels tellen niet.
- * Een reeks en geen losse vergelijking per regel: komt er een regel bij die
- * gelijk is aan een regel verderop, dan is de nieuwe de bovenste.
- */
-function nieuwSinds(vorige: string[], nu: string[]): number[] {
-  // lengte[i][j]: de langste gemeenschappelijke reeks van vorige vanaf i en nu vanaf j.
-  const lengte = Array.from({ length: vorige.length + 1 }, () =>
-    new Array<number>(nu.length + 1).fill(0),
-  );
-  for (let i = vorige.length - 1; i >= 0; i--)
-    for (let j = nu.length - 1; j >= 0; j--)
-      lengte[i][j] =
-        vorige[i] === nu[j]
-          ? 1 + lengte[i + 1][j + 1]
-          : Math.max(lengte[i + 1][j], lengte[i][j + 1]);
-  const uit: number[] = [];
-  let i = 0;
-  let j = 0;
-  while (j < nu.length) {
-    // Kan de reeks zonder deze regel van `nu` even lang blijven, dan is hij
-    // nieuw: zo is van twee gelijke regels de bovenste de nieuwe.
-    const nieuw = i >= vorige.length || lengte[i][j + 1] === lengte[i][j];
-    if (nieuw) {
-      if (nu[j].trim()) uit.push(j + 1);
-      j++;
-    } else if (vorige[i] === nu[j]) {
-      i++;
-      j++;
-    } else i++;
-  }
-  return uit;
-}
 
 /**
  * Het voorbeeld van een les: de blokken tot de voorspelvraag of Maak het af,
@@ -188,31 +163,6 @@ const inhoud = (code: string | undefined) =>
     .map((r) => r.trim())
     .filter((r) => r && !r.startsWith('#'));
 
-describe('nieuwSinds: welke regels er sinds de vorige stap bij kwamen', () => {
-  it('een regel erbij, een regel veranderd, en regels die inspringen', () => {
-    expect(nieuwSinds(['a', 'b'], ['a', 'b', 'c'])).toEqual([3]);
-    expect(nieuwSinds(['a', 'b'], ['a', 'B'])).toEqual([2]);
-    expect(
-      nieuwSinds(['x = 5', '', 'print(x)'], ['x = 5', '', 'while x:', '    print(x)']),
-    ).toEqual([3, 4]);
-  });
-
-  it('een lege regel erbij telt niet', () => {
-    expect(nieuwSinds(['a'], ['a', '', 'b'])).toEqual([3]);
-  });
-
-  it('een nieuwe regel die gelijk is aan een regel eronder, is de bovenste', () => {
-    // Per regel vergeleken koppelde de test de bovenste streep aan de oude en
-    // wees hij de onderste aan.
-    expect(
-      nieuwSinds(
-        ['print("Rondes")', 'print("---")'],
-        ['print("---")', 'print("Rondes")', 'print("---")'],
-      ),
-    ).toEqual([1]);
-  });
-});
-
 describe('uitgewerkt voorbeeld: het programma groeit in stappen', () => {
   // Een blok dat op het vorige doorbouwt: het neemt minstens de helft van de
   // regels ervan over.
@@ -234,7 +184,7 @@ describe('uitgewerkt voorbeeld: het programma groeit in stappen', () => {
   });
 
   it('heeft in elke les van de proef een voorbeeld dat doorbouwt op de stap ervoor', () => {
-    expect(proef.length).toBe(5);
+    expect(proef.length).toBe(16);
     for (const les of proef)
       expect(
         bouwtDoor.filter((s) => s.les === les.naam).length,

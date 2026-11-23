@@ -7,59 +7,173 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 # 9b Return
 
-Je functies met parameters tonen iets op het scherm. Wil je met het resultaat **verder rekenen**, dan laat je de functie het teruggeven met `return`. Die waarde kun je opslaan of in een berekening gebruiken.
+Je functies met parameters tonen iets op het scherm. Wil je met de uitkomst **verder rekenen**, dan laat je de functie hem teruggeven met `return`. Die waarde kun je bewaren of in een berekening gebruiken.
 
-## Een waarde teruggeven
+## Van printen naar teruggeven
+
+### Schrijf de functie
+
+Een quiz heeft twee rondes, en elk goed antwoord is tien punten waard. Je wilt per ronde de punten zien, en daarna het totaal. Eerst een functie die de punten van één ronde uitrekent en print:
+
+```python
+def punten(goed):
+    print(goed * 10)
+
+punten(4)
+punten(3)
+```
+
+Uitvoer:
+
+```
+40
+30
+```
+
+De punten van elke ronde staan op het scherm, maar welk getal bij welke ronde hoort, zie je niet. Het totaal ontbreekt ook nog.
+
+### Bewaar de uitkomst
+
+Een uitkomst die je later nodig hebt, bewaar je in een variabele. De gemarkeerde regels zijn nieuw of veranderd: `ronde1` en `ronde2` vangen op wat de functie oplevert, en twee `print`-regels zetten ze in een zin.
+
+```python {4-7}
+def punten(goed):
+    print(goed * 10)
+
+ronde1 = punten(4)
+ronde2 = punten(3)
+print(f"Ronde 1: {ronde1} punten")
+print(f"Ronde 2: {ronde2} punten")
+```
+
+Uitvoer:
+
+```
+40
+30
+Ronde 1: None punten
+Ronde 2: None punten
+```
+
+In `ronde1` en `ronde2` zit `None`: letterlijk "geen waarde". De functie zet de 40 en de 30 op het scherm, maar geeft ze niet door aan de regel die hem aanroept.
+
+### Geef hem terug
+
+**`return`** geeft een waarde terug aan de plek van de aanroep. De gemarkeerde regel is veranderd: in de functie staat `return` waar `print` stond.
+
+```python {2}
+def punten(goed):
+    return goed * 10
+
+ronde1 = punten(4)
+ronde2 = punten(3)
+print(f"Ronde 1: {ronde1} punten")
+print(f"Ronde 2: {ronde2} punten")
+```
+
+Uitvoer:
+
+```
+Ronde 1: 40 punten
+Ronde 2: 30 punten
+```
+
+`ronde1 = punten(4)` vangt de 40 op. De losse `40` en `30` zijn weg: de functie zet zelf niets meer op het scherm. Het totaal ontbreekt nog.
+
+### Reken ermee verder
+
+Met een waarde die terugkomt, kun je rekenen, net als met elk ander getal. De gemarkeerde regel is nieuw: een `print` die de twee rondes optelt.
+
+```python {8}
+def punten(goed):
+    return goed * 10
+
+ronde1 = punten(4)
+ronde2 = punten(3)
+print(f"Ronde 1: {ronde1} punten")
+print(f"Ronde 2: {ronde2} punten")
+print(f"Totaal: {ronde1 + ronde2} punten")
+```
+
+Uitvoer:
+
+```
+Ronde 1: 40 punten
+Ronde 2: 30 punten
+Totaal: 70 punten
+```
+
+Met de `print` in de functie kon dit niet: `None` plus `None` geeft een foutmelding. Maak je een functie om een waarde te berekenen, dan hoort er een `return` in. Toont de functie alleen iets, dan is `print` genoeg.
+
+### Voorspel
 
 ```python
 def verdubbel(getal):
     return getal * 2
 
-resultaat = verdubbel(5)
-print(resultaat)             # 10
-print(verdubbel(7) + 1)      # 15
-```
-
-- `return getal * 2` geeft de uitkomst **terug** uit de functie.
-- `resultaat = verdubbel(5)` vangt die waarde op.
-- Je kunt het resultaat ook direct in een berekening of f-string gebruiken.
-
-## print versus return
-
-```python
-def verdubbel(getal):
-    print(getal * 2)
-
-x = verdubbel(5)
-print(x)
+print(verdubbel(verdubbel(3)))
 ```
 
 <Voorspel vraag="Wat zet dit programma op het scherm?">
-  <Keuze uitleg="De functie print 10, maar geeft niets terug. Dus x krijgt geen 10.">`10` en `10`</Keuze>
-  <Keuze uitleg="print(x) staat er ook, en die zet ook iets op het scherm.">`10`</Keuze>
-  <Keuze goed uitleg="De functie print 10, en geeft daarna niets terug. x wordt None.">`10` en `None`</Keuze>
+  <Keuze uitleg="Dat geeft de binnenste aanroep terug. De buitenste doet er nog iets mee.">`6`</Keuze>
+  <Keuze goed uitleg="Eerst de binnenste aanroep, daarna de buitenste met die uitkomst.">`12`</Keuze>
+  <Keuze uitleg="Een aanroep levert een waarde op, en een waarde mag je meegeven.">Een foutmelding</Keuze>
   <Uitleg>
 
-  Eerst print de functie `10`. Hij heeft geen `return`, dus `x` krijgt `None`: letterlijk "geen waarde". Met `return getal * 2` in plaats van `print` zou `x` wel `10` zijn.
+  Je ziet `12`. Python rekent eerst de binnenste aanroep uit: `verdubbel(3)` geeft 6 terug. Die 6 is het argument van de buitenste aanroep, en `verdubbel(6)` geeft 12. Een aanroep van een functie met `return` mag dus overal staan waar een waarde past: in een berekening, in een f-string of tussen de haakjes van een andere aanroep.
 
   </Uitleg>
 </Voorspel>
 
-### Het verschil op een rij
-
-Het verschil tussen `print` en `return` op een rij:
-
-| | `print()` | `return` |
-|--|----------|----------|
-| Wat doet het? | Toont iets op het scherm | Geeft een waarde terug uit de functie |
-| Kun je het opslaan? | Nee | Ja: `x = mijn_functie(...)` |
-| Geschikt voor | Output tonen | Berekeningen, beslissingen |
-
-Een functie zónder `return` levert `None` op. Maak je een functie om een **waarde te berekenen**, dan hoort er een `return` in. Toont de functie alleen iets, dan is `print()` genoeg.
-
 :::tip[Eerst op papier]
 Speel dit eerst na zonder computer, als rollenspel met briefjes: [De functiemachine](site:python/docs/projecten/unplugged/functiemachine). Je docent kan de hand-out printen.
 :::
+
+## Maak het af
+
+Je fietst 4 minuten over een kilometer. De functie `fietstijd` rekent uit hoe lang een rit duurt, maar geeft die uitkomst niet terug: op het scherm staat twee keer `None`. Twee stappen zijn nog open: de uitkomst teruggeven, en onderaan een regel die de twee ritten optelt. Doe die zelf, en laat de regels onder de functie staan.
+
+Verwachte uitvoer:
+
+```
+Naar school: 12 minuten
+Naar de club: 20 minuten
+Samen: 32 minuten
+```
+
+<CodeExercise>{`def fietstijd(km):
+    minuten = km * 4
+
+school = fietstijd(3)
+club = fietstijd(5)
+print(f"Naar school: {school} minuten")
+print(f"Naar de club: {club} minuten")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+De functie rekent `minuten` uit en doet er daarna niets mee. Welke regel geeft een waarde terug, en hoort die regel in de functie of eronder? Voor het totaal tel je twee variabelen op die je al hebt.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+def fietstijd(km):
+    minuten = km * 4
+    return minuten
+
+school = fietstijd(3)
+club = fietstijd(5)
+print(f"Naar school: {school} minuten")
+print(f"Naar de club: {club} minuten")
+print(f"Samen: {school + club} minuten")
+```
+
+Met `print(minuten)` in de functie staan de getallen wel op het scherm, maar blijven `school` en `club` `None`, en dan loopt de laatste regel vast.
+
+</details>
 
 ## Puzzel
 
@@ -109,6 +223,26 @@ print(verdubbel(5))   # 10
 ```
 
 `Klaar met verdubbelen` komt nooit op het scherm. Bij `return` stopt de functie meteen, dus wat eronder staat draait niet. Zet zo'n regel boven de `return`.
+
+### return buiten de functie
+
+{/* niet-compileren: bewuste syntaxfout, return staat buiten de functie */}
+
+```python
+def verdubbel(getal):
+    uitkomst = getal * 2
+return uitkomst
+```
+
+Uitvoer:
+
+{/* foutmelding-van: def verdubbel(getal):\n    uitkomst = getal * 2\nreturn uitkomst */}
+
+```
+SyntaxError: 'return' outside function
+```
+
+`return` hoort bij de functie en springt dus in, net als de regel erboven. Zonder die vier spaties staat hij buiten de functie, en daar valt niets terug te geven.
 
 ---
 

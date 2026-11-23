@@ -9,23 +9,67 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 Je kunt nu variabelen maken, rekenen en tekst opmaken. Er bestaat nog een soort waarde: de **boolean**, `True` of `False`. Elke vergelijking levert er een op, en in de [volgende les](site:python/docs/beslissen/05b-if-else) beslist je programma ermee met `if` en `else`.
 
-## Booleans
+## Mag je in de achtbaan?
 
-Een boolean heeft maar twee mogelijkheden: `True` (waar) of `False` (niet waar).
+### Bewaar ja of nee
+
+Bij een achtbaan hangt een bordje: je moet minstens 140 cm lang zijn. Of je erin mag, is een feit met twee mogelijkheden: ja of nee. Een boolean bewaart zo'n feit, als `True` (waar) of `False` (niet waar):
 
 ```python
-is_student = True
-heeft_kaartje = False
+mag_erin = True
 
-print(is_student)     # True
-print(heeft_kaartje)  # False
+print(mag_erin)
 ```
 
-Booleans gebruik je om "ja of nee"-feiten op te slaan.
+Uitvoer:
 
-## Vergelijkingsoperatoren
+```
+True
+```
 
-Met vergelijkingsoperatoren krijg je altijd een boolean terug:
+`True` heeft een hoofdletter en geen aanhalingstekens: het is geen tekst. Het antwoord is hier met de hand ingevuld. Voor iemand van 120 cm zegt dit programma ook `True`, want het weet niet hoe lang je bent.
+
+### Vergelijk getallen
+
+Of je in de achtbaan mag, kan Python zelf uitrekenen met een **vergelijking**. `lengte > 140` vraagt: is `lengte` groter dan 140? Het antwoord is een boolean. De gemarkeerde regels zijn nieuw of veranderd: je lengte, 140 cm, en de vergelijking die `mag_erin` zijn waarde geeft.
+
+```python {1-2}
+lengte = 140
+mag_erin = lengte > 140
+
+print(mag_erin)
+```
+
+Uitvoer:
+
+```
+False
+```
+
+Python rekent eerst de vergelijking uit en bewaart de uitkomst in `mag_erin`. Die uitkomst is `False`, want 140 is niet groter dan 140. Maar op het bordje staat minstens 140 cm: met precies 140 cm mag je erin.
+
+### Kies het teken
+
+`>` betekent echt groter dan: gelijk telt niet mee. Voor "minstens 140" is er `>=`, groter of gelijk. In de gemarkeerde regel is `>` nu `>=`:
+
+```python {2}
+lengte = 140
+mag_erin = lengte >= 140
+
+print(mag_erin)
+```
+
+Uitvoer:
+
+```
+True
+```
+
+Met 140 cm mag je erin. Met `lengte = 139` zegt hetzelfde programma `False`: Python rekent het antwoord elke keer opnieuw uit.
+
+### De zes tekens
+
+`>` en `>=` zijn twee van de zes **vergelijkingsoperatoren**. Elk geeft een boolean terug:
 
 | Operator | Betekenis | Voorbeeld | Resultaat |
 |:--------:|-----------|-----------|-----------|
@@ -36,45 +80,66 @@ Met vergelijkingsoperatoren krijg je altijd een boolean terug:
 | `<=` | kleiner of gelijk | `5 <= 5` | `True` |
 | `>=` | groter of gelijk | `3 >= 10` | `False` |
 
-### Met een variabele
-
-```python
-leeftijd = 16
-
-print(leeftijd >= 18)  # False
-print(leeftijd < 18)   # True
-```
-
-**Let op:** `=` slaat een waarde op, `==` vergelijkt twee waardes. Dat verschil is een van de meest gemaakte fouten in Python.
-
-## Een vergelijking opslaan
-
-Een vergelijking levert een boolean op, en die kun je in een variabele bewaren:
-
-```python
-leeftijd = 20
-
-mag_stemmen = leeftijd >= 18
-print(mag_stemmen)   # True
-```
+**Let op:** `=` slaat een waarde op, `==` vergelijkt twee waardes.
 
 ### Voorspel
 
 ```python
-leeftijd = 18
-print(leeftijd > 18)
+leeftijd = 20
+mag_stemmen = leeftijd >= 18
+leeftijd = 10
+
+print(mag_stemmen)
 ```
 
 <Voorspel vraag="Wat zet dit programma op het scherm?">
-  <Keuze uitleg="18 is niet groter dan 18. Het is gelijk, en > telt gelijk niet mee.">`True`</Keuze>
-  <Keuze goed uitleg="> betekent echt groter dan. Bij gelijk is het antwoord False.">`False`</Keuze>
-  <Keuze uitleg="Een vergelijking geeft een boolean, nooit een getal.">`18`</Keuze>
+  <Keuze goed uitleg="Python rekende de vergelijking uit toen leeftijd nog 20 was.">`True`</Keuze>
+  <Keuze uitleg="Dan zou mag_stemmen meeveranderen met leeftijd. Wat bewaart een variabele?">`False`</Keuze>
+  <Keuze uitleg="print zet mag_stemmen op het scherm, en daar zit geen getal in.">`10`</Keuze>
   <Uitleg>
 
-  Je ziet `False`. Wil je weten of iemand 18 **of ouder** is, dan gebruik je `>=`: `leeftijd >= 18` is wel `True`.
+  Je ziet `True`. Op regel 2 rekent Python de vergelijking één keer uit en bewaart de uitkomst in `mag_stemmen`. Krijgt `leeftijd` daarna een andere waarde, dan verandert die uitkomst niet meer mee.
 
   </Uitleg>
 </Voorspel>
+
+## Maak het af
+
+Bij het inchecken op het vliegveld mag een koffer hoogstens 23 kilo wegen, en die van jou weegt precies 23 kilo. Het programma print al of hij mee mag, maar het antwoord is met de hand ingevuld en klopt niet. Eén stap is nog open: de vergelijking die `mag_mee` zijn waarde geeft. Doe die zelf, en typ niet zelf `True`: met een koffer van 30 kilo moet hetzelfde programma `False` zeggen.
+
+Verwachte uitvoer:
+
+```
+Koffer van 23 kilo mag mee: True
+```
+
+<CodeExercise>{`koffer = 23
+maximum = 23
+
+mag_mee = False
+print(f"Koffer van {koffer} kilo mag mee: {mag_mee}")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Welke twee variabelen vergelijk je met elkaar? "Hoogstens 23 kilo" betekent dat precies 23 kilo ook goed is. Zoek bij De zes tekens het teken dat daarbij past. Probeer je programma daarna ook met `koffer = 30` en met `koffer = 15`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+koffer = 23
+maximum = 23
+
+mag_mee = koffer <= maximum
+print(f"Koffer van {koffer} kilo mag mee: {mag_mee}")
+```
+
+Met `<` zou een koffer van precies 23 kilo niet mee mogen.
+
+</details>
 
 ## Er gaat iets mis
 
@@ -83,7 +148,7 @@ print(leeftijd > 18)
 {/* foutmelding-van: blok-erboven */}
 
 ```python
-is_student = true
+mag_erin = true
 ```
 
 Uitvoer:
@@ -112,6 +177,21 @@ SyntaxError: invalid syntax
 ```
 
 Het `=`-teken komt altijd als laatste: `<=` en `>=`. Je zegt het ook zo: kleiner of gelijk.
+
+### Gelijk telt niet mee
+
+```python
+leeftijd = 18
+print(leeftijd > 18)
+```
+
+Uitvoer:
+
+```
+False
+```
+
+Geen foutmelding, maar iemand van precies 18 krijgt `False`. `>` en `<` tellen gelijk niet mee. Bedoel je 18 of ouder, schrijf dan `>=`.
 
 ### Tekst vergelijken met een getal
 

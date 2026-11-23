@@ -9,8 +9,13 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 Een dictionary koppelt een sleutel aan een waarde. Tot nu toe was die
 waarde een getal of een tekst. Maar een waarde mag alles zijn: ook een
-lijst, of weer een dictionary. Zo bewaar je per leerling meerdere
-gegevens in één variabele:
+lijst, of weer een dictionary.
+
+## Een klas in één variabele
+
+### Maak de dictionary
+
+Van elke leerling in een klas bewaar je de leeftijd en de cijfers. De sleutel is de naam. De waarde is zelf een dictionary, met daarin een lijst:
 
 ```python
 klas = {
@@ -27,105 +32,86 @@ Uitvoer:
 {'leeftijd': 15, 'cijfers': [7, 8, 6]}
 ```
 
-`klas["Sara"]` is zelf een dictionary. Zo'n dictionary in een dictionary
-heet **genest**.
+`klas["Sara"]` is zelf een dictionary. Zo'n dictionary in een dictionary heet **genest**. Je krijgt alle gegevens van Sara tegelijk: haar cijfers staan er niet los bij.
 
-## Opzoeken met twee sleutels
+### Zoek dieper
 
-Wil je alleen de leeftijd van Sara, dan zet je de tweede sleutel er
-direct achter:
+Een tweede sleutel staat direct achter de eerste: `klas["Sara"]["cijfers"]` haalt uit de dictionary van Sara de lijst met cijfers. De gemarkeerde regels zijn nieuw of veranderd: ze bewaren die lijst in `cijfers`, rekenen het gemiddelde uit en printen het.
 
-{/* draaien-met: blok-erboven */}
-
-```python
-print(klas["Sara"]["leeftijd"])   # 15
-print(klas["Alex"]["cijfers"])    # [9, 5, 8]
-print(klas["Alex"]["cijfers"][0]) # 9
-```
-
-Lees het van links naar rechts: eerst zoek je `"Alex"` op in `klas`, in wat
-daaruit komt zoek je `"cijfers"` op, en van die lijst neem je plek `0`.
-
-### Voorspel
-
-```python
+```python {6-8}
 klas = {
     "Sara": {"leeftijd": 15, "cijfers": [7, 8, 6]},
     "Alex": {"leeftijd": 14, "cijfers": [9, 5, 8]},
 }
 
-print(klas["Sara"]["cijfers"][2])
-```
-
-<Voorspel vraag="Wat zet dit programma op het scherm?">
-  <Keuze uitleg="Dat is een cijfer van Alex. Kijk welke naam er als eerste sleutel staat.">`8`</Keuze>
-  <Keuze uitleg="Plek 2 is niet de tweede plek: een lijst begint bij 0.">`8` en `6`</Keuze>
-  <Keuze goed uitleg="Eerst Sara, dan haar cijfers [7, 8, 6], en daarvan plek 2: het derde cijfer.">`6`</Keuze>
-  <Uitleg>
-
-  Je ziet `6`. `klas["Sara"]` is Sara's dictionary, `["cijfers"]` haalt daar de lijst `[7, 8, 6]` uit, en `[2]` is de derde plek in die lijst.
-
-  </Uitleg>
-</Voorspel>
-
-## Aanpassen en toevoegen
-
-Aanpassen gaat op dezelfde manier. Aan de lijst met cijfers voeg je met
-`.append()` een cijfer toe, en een nieuwe leerling is een nieuwe sleutel
-met een eigen dictionary:
-
-```python
-klas = {
-    "Sara": {"leeftijd": 15, "cijfers": [7, 8, 6]},
-    "Alex": {"leeftijd": 14, "cijfers": [9, 5, 8]},
-}
-
-klas["Sara"]["leeftijd"] = 16
-klas["Sara"]["cijfers"].append(9)
-klas["Noor"] = {"leeftijd": 15, "cijfers": []}
-
-print(klas["Sara"])
-print(len(klas))
+cijfers = klas["Sara"]["cijfers"]
+gemiddelde = sum(cijfers) / len(cijfers)
+print(f"Sara: gemiddeld {gemiddelde:.1f}")
 ```
 
 Uitvoer:
 
 ```
-{'leeftijd': 16, 'cijfers': [7, 8, 6, 9]}
-3
+Sara: gemiddeld 7.0
 ```
 
-## Door geneste gegevens loopen
+Lees `klas["Sara"]["cijfers"]` van links naar rechts: eerst `"Sara"` in `klas`, dan `"cijfers"` in wat daaruit komt. Met een plek erachter, `klas["Sara"]["cijfers"][0]`, krijg je `7`. `:.1f` in de f-string rondt af op één decimaal. Voor Alex zijn dezelfde drie regels nog een keer nodig.
 
-Met `.items()` krijg je per ronde de naam én de dictionary met gegevens.
-Daaruit haal je met een tweede sleutel wat je nodig hebt:
+### Loop door de klas
 
-```python
+Met `.items()` krijgt de loop elke ronde een naam en de dictionary die erbij hoort. De gemarkeerde regels zijn veranderd: de drie regels over Sara staan in de loop, met `naam` in plaats van `"Sara"` en `gegevens` in plaats van `klas["Sara"]`.
+
+```python {6-9}
 klas = {
     "Sara": {"leeftijd": 15, "cijfers": [7, 8, 6]},
     "Alex": {"leeftijd": 14, "cijfers": [9, 5, 8]},
 }
 
 for naam, gegevens in klas.items():
-    gemiddelde = sum(gegevens["cijfers"]) / len(gegevens["cijfers"])
-    print(f"{naam} ({gegevens['leeftijd']}): gemiddeld {gemiddelde:.1f}")
+    cijfers = gegevens["cijfers"]
+    gemiddelde = sum(cijfers) / len(cijfers)
+    print(f"{naam}: gemiddeld {gemiddelde:.1f}")
 ```
 
 Uitvoer:
 
 ```
-Sara (15): gemiddeld 7.0
-Alex (14): gemiddeld 7.3
+Sara: gemiddeld 7.0
+Alex: gemiddeld 7.3
 ```
 
-Binnen de f-string staat `'leeftijd'` tussen enkele aanhalingstekens,
-omdat de f-string zelf al tussen dubbele staat. `:.1f` rondt af op één
-decimaal.
+In de loop is één sleutel genoeg: `gegevens` is al de dictionary van één leerling. De klas verandert nog: Sara haalt een 9 voor een toets en Noor komt erbij. Dat staat niet in `klas`.
 
-## Een lijst van dictionaries
+### Pas de klas aan
 
-Andersom kan ook: een lijst waarin elk element een dictionary is. Dat zie
-je veel, bijvoorbeeld bij een lijst met scores:
+Sara heeft een 9 gehaald en Noor is nieuw in de klas. Aanpassen gaat met dezelfde sleutels als opzoeken. De gemarkeerde regels zijn nieuw: `.append(9)` voegt een cijfer toe aan de lijst van Sara, en `"Noor"` is een nieuwe sleutel met een eigen dictionary als waarde.
+
+```python {6-7}
+klas = {
+    "Sara": {"leeftijd": 15, "cijfers": [7, 8, 6]},
+    "Alex": {"leeftijd": 14, "cijfers": [9, 5, 8]},
+}
+
+klas["Sara"]["cijfers"].append(9)
+klas["Noor"] = {"leeftijd": 15, "cijfers": [8, 8]}
+
+for naam, gegevens in klas.items():
+    cijfers = gegevens["cijfers"]
+    gemiddelde = sum(cijfers) / len(cijfers)
+    print(f"{naam}: gemiddeld {gemiddelde:.1f}")
+```
+
+Uitvoer:
+
+```
+Sara: gemiddeld 7.5
+Alex: gemiddeld 7.3
+Noor: gemiddeld 8.0
+```
+
+De loop is niet veranderd en print toch drie regels: hij loopt af wat er in `klas` staat. Een waarde wijzigen gaat net zo: `klas["Sara"]["leeftijd"] = 16`.
+
+### Voorspel
 
 ```python
 scores = [
@@ -133,20 +119,63 @@ scores = [
     {"naam": "Alex", "punten": 95},
 ]
 
-for score in scores:
-    print(f"{score['naam']}: {score['punten']}")
+print(scores[1]["punten"])
 ```
 
-Uitvoer:
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze uitleg="Dat zijn de punten op plek 0. Een lijst telt zijn plekken vanaf 0.">`120`</Keuze>
+  <Keuze goed uitleg="scores[1] is de tweede dictionary, en daarin hoort 95 bij punten.">`95`</Keuze>
+  <Keuze uitleg="Een plek en dan een sleutel mag: wat scores[1] geeft, heeft sleutels.">Een foutmelding</Keuze>
+  <Uitleg>
+
+  Je ziet `95`. Nesten kan ook andersom: `scores` is een lijst waarin elk element een dictionary is. Een dictionary gebruik je als je iets opzoekt met een naam, een lijst als de volgorde telt of je alles langsloopt.
+
+  </Uitleg>
+</Voorspel>
+
+## Maak het af
+
+Op de sportdag heeft elk team een coach en een lijst met spelers. De loop loopt de teams al af en print hun kleur, maar niet hoe groot ze zijn. Eén stap is nog open: het aantal spelers van elk team in de zin. Doe die zelf.
+
+Verwachte uitvoer:
 
 ```
-Sara: 120
-Alex: 95
+Team Rood: 3 spelers
+Team Blauw: 2 spelers
 ```
 
-Een dictionary gebruik je als je iets opzoekt met een naam, een lijst als
-de volgorde telt of je alles langsloopt. Geneste gegevens mengen die twee
-zo dat het bij je gegevens past.
+<CodeExercise>{`teams = {
+    "Rood": {"coach": "Kim", "spelers": ["Sem", "Jip", "Bo"]},
+    "Blauw": {"coach": "Omar", "spelers": ["Mila", "Finn"]},
+}
+
+for kleur, team in teams.items():
+    print(f"Team {kleur}")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+`team` is elke ronde de dictionary van één team. Welke sleutel geeft de lijst met spelers? En welke functie telt de elementen van een lijst?
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+teams = {
+    "Rood": {"coach": "Kim", "spelers": ["Sem", "Jip", "Bo"]},
+    "Blauw": {"coach": "Omar", "spelers": ["Mila", "Finn"]},
+}
+
+for kleur, team in teams.items():
+    spelers = team["spelers"]
+    print(f"Team {kleur}: {len(spelers)} spelers")
+```
+
+In één regel kan het ook, met `{len(team['spelers'])}` in de f-string. De sleutel staat dan tussen enkele aanhalingstekens, omdat de f-string zelf al tussen dubbele staat.
+
+</details>
 
 ---
 
@@ -185,6 +214,25 @@ TypeError: list indices must be integers or slices, not str
 `scores` is een lijst, en een lijst heeft plekken (0, 1, 2), geen
 sleutels. Neem eerst een element met `scores[0]` en zoek daarin
 `["naam"]` op.
+
+### De naam in plaats van de gegevens
+
+```python
+klas = {"Sara": {"leeftijd": 15}}
+
+for naam, gegevens in klas.items():
+    print(naam["leeftijd"])
+```
+
+Uitvoer:
+
+```
+TypeError: string indices must be integers, not 'str'
+```
+
+`naam` is de sleutel, de tekst `"Sara"`, en in een tekst zoek je niets op
+met een sleutel. De dictionary met de leeftijd zit in de tweede naam van
+de loop: `gegevens["leeftijd"]`.
 
 ---
 

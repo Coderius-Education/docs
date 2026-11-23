@@ -9,58 +9,78 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 Je kunt nu dictionaries maken en waardes opzoeken met een sleutel. Je kunt ook **door** een dictionary lopen, en vooraf controleren of een sleutel bestaat.
 
-## Loopen over de sleutels
+## De uitslag van een verkiezing
 
-Een simpele `for`-loop op een dictionary geeft je de **sleutels**:
+### Schrijf de loop
+
+De klas kiest een voorzitter. In een dictionary staat bij elke kandidaat het aantal stemmen. Eerst een `for`-loop over de dictionary, zoals over een lijst:
 
 ```python
-leerling = {"naam": "Sara", "leeftijd": 15, "klas": "3B"}
+stemmen = {"Noor": 12, "Daan": 8, "Yara": 15}
 
-for sleutel in leerling:
-    print(sleutel)
+for naam in stemmen:
+    print(naam)
 ```
 
 Uitvoer:
 
 ```
-naam
-leeftijd
-klas
+Noor
+Daan
+Yara
 ```
 
-## Loopen over sleutels én waardes met .items()
+Een loop over een dictionary geeft elke ronde een sleutel. Je ziet wie er meedeed, maar niet hoeveel stemmen iemand kreeg.
 
-Wil je beide tegelijk? Gebruik `.items()`:
+### Neem de waarde mee
 
-{/* niet-draaien: fragment; leerling komt uit het blok erboven */}
-```python
-for sleutel, waarde in leerling.items():
-    print(f"{sleutel}: {waarde}")
+**`.items()`** levert elke ronde een paar: eerst de sleutel, dan de waarde. De gemarkeerde regels zijn veranderd: de loop heeft twee namen, `naam` en `aantal`, en de `print` gebruikt ze allebei.
+
+```python {3-4}
+stemmen = {"Noor": 12, "Daan": 8, "Yara": 15}
+
+for naam, aantal in stemmen.items():
+    print(f"{naam}: {aantal} stemmen")
 ```
 
 Uitvoer:
 
 ```
-naam: Sara
-leeftijd: 15
-klas: 3B
+Noor: 12 stemmen
+Daan: 8 stemmen
+Yara: 15 stemmen
 ```
 
-`.items()` levert elke ronde een **paar**: eerst de sleutel, dan de waarde.
+De volgorde van de twee namen ligt vast: de eerste krijgt de sleutel, de tweede de waarde. Ook Sem wil zijn aantal weten, maar zijn naam staat niet in de uitslag.
 
-## Bestaat de sleutel? — de in-operator
+### Controleer eerst
 
-{/* foutmelding-van: {"naam": "Sam"}["leeftijd"] */}
+{/* foutmelding-van: {"Noor": 12}["Sem"] */}
 
-Met `in` check je of een sleutel in de dictionary zit. Daarmee voorkom je een `KeyError`:
+Sem vraagt hoeveel stemmen hij kreeg, maar hij was geen kandidaat: `stemmen["Sem"]` geeft een `KeyError`. Met **`in`** kijk je eerst of een sleutel in de dictionary zit. De gemarkeerde regels zijn nieuw: de `if` met `in`, en wat het programma in elk van de twee gevallen print.
 
-{/* niet-draaien: fragment; leerling komt uit het blok erboven */}
-```python
-if "naam" in leerling:
-    print(leerling["naam"])
+```python {6-9}
+stemmen = {"Noor": 12, "Daan": 8, "Yara": 15}
+
+for naam, aantal in stemmen.items():
+    print(f"{naam}: {aantal} stemmen")
+
+if "Sem" in stemmen:
+    print(stemmen["Sem"])
 else:
-    print("Geen naam bekend.")
+    print("Sem deed niet mee.")
 ```
+
+Uitvoer:
+
+```
+Noor: 12 stemmen
+Daan: 8 stemmen
+Yara: 15 stemmen
+Sem deed niet mee.
+```
+
+`"Sem" in stemmen` is `False`, dus Python komt niet bij de regel met `stemmen["Sem"]`. Met `"Daan"` in plaats van `"Sem"` was de `if` waar geweest en stond er `8`.
 
 ### Voorspel
 
@@ -80,6 +100,46 @@ print("Sara" in leerling)
 
   </Uitleg>
 </Voorspel>
+
+## Maak het af
+
+Je fietst naar school, naar de sporthal en naar het station. De afstanden staan in een dictionary, maar het programma print hem in één keer, met accolades en al. Eén stap is nog open: een loop die van elk paar een eigen regel maakt. Doe die zelf, en typ de plaatsen niet over: de loop haalt ze uit de dictionary.
+
+Verwachte uitvoer:
+
+```
+Hoe ver is het fietsen?
+school: 3 km
+sporthal: 5 km
+station: 2 km
+```
+
+<CodeExercise>{`afstanden = {"school": 3, "sporthal": 5, "station": 2}
+
+print("Hoe ver is het fietsen?")
+print(afstanden)`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Een loop over alleen `afstanden` geeft de sleutels. Welke methode levert elke ronde een paar? De loop heeft dan twee namen nodig, met een komma ertussen.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+afstanden = {"school": 3, "sporthal": 5, "station": 2}
+
+print("Hoe ver is het fietsen?")
+for plaats, km in afstanden.items():
+    print(f"{plaats}: {km} km")
+```
+
+Zonder `.items()` kan het ook: een loop met `for plaats in afstanden:` en `afstanden[plaats]` in de `print`.
+
+</details>
 
 ## Er gaat iets mis
 

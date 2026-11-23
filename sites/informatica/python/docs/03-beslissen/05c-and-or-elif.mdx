@@ -9,15 +9,9 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 Met `if`/`else` kies je tussen twee paden. Met `and` en `or` combineer je voorwaarden, en met `elif` maak je meer dan twee takken.
 
-## Twee voorwaarden combineren: and en or
+## And en or: twee voorwaarden combineren
 
-| Operator | Wanneer `True`? |
-|:--------:|-----------------|
-| `and`    | Als **beide** voorwaarden `True` zijn |
-| `or`     | Als **minstens één** voorwaarde `True` is |
-| `not`    | Als de voorwaarde **niet** `True` is: `not True` is `False` |
-
-### In een if
+Soms hangt een beslissing van twee dingen af. Bij dit feest kom je alleen binnen als je 14 of ouder bent én een kaartje hebt:
 
 ```python
 leeftijd = 16
@@ -29,24 +23,85 @@ else:
     print("Sorry, je mag er niet in.")
 ```
 
+`and` is een van de drie woorden waarmee je voorwaarden combineert:
+
+| Operator | Wanneer `True`? |
+|:--------:|-----------------|
+| `and`    | Als **beide** voorwaarden `True` zijn |
+| `or`     | Als **minstens één** voorwaarde `True` is |
+| `not`    | Als de voorwaarde **niet** `True` is: `not True` is `False` |
+
 Twijfel je tussen `and` en `or`? Vraag je dan af: moet het allebei, of is één genoeg?
 
 ## Meer dan twee takken: elif
 
-`if`/`else` geeft je twee opties. Met `elif` (een afkorting van *else if*) voeg je extra takken toe:
+### Schrijf if en else
+
+Een programma begroet je bij het uur van de dag. Eerst een `if` met `else`, voor de ochtend en de avond:
 
 ```python
-score = 65
+uur = 9
 
-if score >= 80:
-    print("Uitstekend!")
-elif score >= 55:
-    print("Voldoende.")
+if uur < 12:
+    print("Goedemorgen")
 else:
-    print("Helaas, onvoldoende.")
+    print("Goedenavond")
 ```
 
-Python kijkt de voorwaarden **van boven naar beneden** na en stopt zodra er één `True` is. De andere takken worden dan niet meer gecheckt. Je kunt zoveel `elif`-takken plaatsen als je wilt.
+Uitvoer:
+
+```
+Goedemorgen
+```
+
+Om 9 uur klopt dat. Maar om 14 uur zegt dit programma `Goedenavond`: de middag ontbreekt, want `if` en `else` geven samen twee takken.
+
+### Voeg een tak toe
+
+Een derde begroeting, voor de middag tot 18 uur, krijgt een eigen `if`. De gemarkeerde regels zijn nieuw: de tweede `if` met de voorwaarde `uur < 18`, en de `print` die erbij hoort.
+
+```python {5-6}
+uur = 9
+
+if uur < 12:
+    print("Goedemorgen")
+if uur < 18:
+    print("Goedemiddag")
+else:
+    print("Goedenavond")
+```
+
+Uitvoer:
+
+```
+Goedemorgen
+Goedemiddag
+```
+
+Om 9 uur krijg je twee begroetingen. Het zijn twee losse beslissingen geworden: de tweede `if` weet niets van de eerste, en 9 is ook kleiner dan 18. De `else` hoort alleen nog bij de tweede `if`.
+
+### Koppel de takken
+
+`elif` (een afkorting van *else if*) maakt van twee beslissingen één: Python kijkt alleen naar een `elif` als de voorwaarde erboven `False` was. In de gemarkeerde regel is `if` nu `elif`:
+
+```python {5}
+uur = 9
+
+if uur < 12:
+    print("Goedemorgen")
+elif uur < 18:
+    print("Goedemiddag")
+else:
+    print("Goedenavond")
+```
+
+Uitvoer:
+
+```
+Goedemorgen
+```
+
+Python loopt de voorwaarden **van boven naar beneden** af en stopt bij de eerste die `True` is. `uur < 18` is om 9 uur ook `True`, maar daar komt Python niet meer. Je mag zoveel `elif`-takken toevoegen als je wilt; `else` vangt onderaan de rest op.
 
 ### Voorspel
 
@@ -73,6 +128,49 @@ elif score >= 80:
 :::tip[Eerst op papier]
 Speel dit eerst na zonder computer, met getallenkaartjes en poortwachters: [De beslismachine](site:python/docs/projecten/unplugged/beslismachine). Je docent kan de hand-out printen.
 :::
+
+## Maak het af
+
+Een webwinkel rekent bezorgkosten: vanaf 50 euro is bezorgen gratis, vanaf 20 euro kost het 2 euro, en daaronder 5 euro. De drie prijzen staan er al, en twee hebben een `if`. Maar bij een bestelling van 60 euro noemt het programma ze alle drie. Twee stappen zijn nog open: de tweede `if` aan de eerste koppelen, en de laagste prijs alleen noemen als de andere twee niet gelden. Doe die zelf, en laat de drie prijzen staan.
+
+Verwachte uitvoer:
+
+```
+Bezorgen is gratis.
+```
+
+<CodeExercise>{`bedrag = 60
+
+if bedrag >= 50:
+    print("Bezorgen is gratis.")
+if bedrag >= 20:
+    print("Bezorgen kost 2 euro.")
+print("Bezorgen kost 5 euro.")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Welk woord laat Python alleen naar een voorwaarde kijken als de voorwaarde erboven `False` was? En welk woord vangt op wat overblijft? Wat bij een tak hoort, springt in.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+bedrag = 60
+
+if bedrag >= 50:
+    print("Bezorgen is gratis.")
+elif bedrag >= 20:
+    print("Bezorgen kost 2 euro.")
+else:
+    print("Bezorgen kost 5 euro.")
+```
+
+Met alleen `else` erbij staan er nog twee prijzen: de tweede `if` blijft een losse beslissing, en 60 is ook 20 of meer.
+
+</details>
 
 ## Puzzel
 
@@ -130,6 +228,28 @@ Mooie kleur
 ```
 
 Geen foutmelding, en toch klopt het niet: groen is geen rood of blauw. Python leest dit als `kleur == "rood"` of `"blauw"`, en een tekst die niet leeg is telt als `True`. Vergelijk aan beide kanten: `kleur == "rood" or kleur == "blauw"`.
+
+### if in plaats van elif
+
+```python
+getal = 150
+
+if getal >= 100:
+    print("Groot")
+if getal >= 10:
+    print("Middel")
+else:
+    print("Klein")
+```
+
+Uitvoer:
+
+```
+Groot
+Middel
+```
+
+Geen foutmelding, maar je krijgt twee antwoorden. De tweede `if` begint een nieuwe beslissing, los van de eerste, en 150 is ook 10 of meer. Maak er `elif` van: dan kijkt Python er alleen naar als de eerste voorwaarde `False` was.
 
 ---
 

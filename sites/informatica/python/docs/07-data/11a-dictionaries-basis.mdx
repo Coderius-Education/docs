@@ -7,26 +7,102 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 # 11a Dictionaries
 
-Een lijst slaat waardes op een **positie** op (0, 1, 2, ...). Wil je een waarde opzoeken met een **naam**, zoals in een telefoonboek, dan gebruik je een **dictionary**.
+Een lijst slaat waardes op een **plek** op (0, 1, 2, ...). Wil je een waarde opzoeken met een **naam**, zoals in een telefoonboek, dan gebruik je een **dictionary**.
 
-## Een dictionary maken
+## Een held in een spel
 
-Tussen accolades, met sleutel-waarde-paren gescheiden door komma's:
+### Maak de dictionary
+
+In een spel heeft je held een naam en een aantal levens. Een dictionary bewaart die gegevens bij elkaar, tussen accolades. Elk paar bestaat uit een **sleutel**, een dubbele punt en een **waarde**, met komma's tussen de paren:
 
 ```python
-leerling = {
-    "naam": "Sara",
-    "leeftijd": 15,
-    "klas": "3B"
+held = {
+    "naam": "Mira",
+    "levens": 3
 }
 
-print(leerling["naam"])      # Sara
-print(leerling["leeftijd"])  # 15
+print(held)
 ```
 
-- De **sleutel** staat links van de dubbele punt (`"naam"`).
-- De **waarde** staat rechts (`"Sara"`).
-- Met `dictionary[sleutel]` haal je de waarde op. Een naam leest makkelijker dan een nummer: bij `leerling["naam"]` zie je meteen wat je krijgt.
+Uitvoer:
+
+```
+{'naam': 'Mira', 'levens': 3}
+```
+
+De sleutels zijn `"naam"` en `"levens"`, de waardes `"Mira"` en `3`. De hele dictionary staat op één regel, met accolades en al. Hoeveel levens Mira heeft, staat er niet los bij.
+
+### Zoek een waarde op
+
+Eén waarde haal je op met blokhaken achter de naam van de dictionary, met daartussen de sleutel. De gemarkeerde regel is nieuw: de waarde die bij `"levens"` hoort.
+
+```python {7}
+held = {
+    "naam": "Mira",
+    "levens": 3
+}
+
+print(held)
+print(held["levens"])
+```
+
+Uitvoer:
+
+```
+{'naam': 'Mira', 'levens': 3}
+3
+```
+
+Een sleutel leest makkelijker dan een nummer: bij `held["levens"]` zie je meteen wat je krijgt. Mira loopt in een val en verliest een leven, maar in de dictionary staat nog `3`.
+
+### Wijzig een waarde
+
+Mira heeft een leven verloren: ze heeft er nog twee. Een waarde wijzigen is een toekenning met de sleutel tussen blokhaken. De gemarkeerde regel is nieuw: bij `"levens"` hoort vanaf die regel `2`.
+
+```python {6}
+held = {
+    "naam": "Mira",
+    "levens": 3
+}
+
+held["levens"] = 2
+print(held)
+print(held["levens"])
+```
+
+Uitvoer:
+
+```
+{'naam': 'Mira', 'levens': 2}
+2
+```
+
+De oude waarde `3` is overschreven. Verderop in het spel vindt Mira een boog, en voor een wapen heeft de dictionary nog geen sleutel.
+
+### Voeg een paar toe
+
+Mira heeft een boog gevonden. Een sleutel toevoegen ziet er net zo uit als een waarde wijzigen. De gemarkeerde regel is nieuw: de sleutel `"wapen"` bestond nog niet, dus Python maakt hem aan.
+
+```python {7}
+held = {
+    "naam": "Mira",
+    "levens": 3
+}
+
+held["levens"] = 2
+held["wapen"] = "boog"
+print(held)
+print(held["levens"])
+```
+
+Uitvoer:
+
+```
+{'naam': 'Mira', 'levens': 2, 'wapen': 'boog'}
+2
+```
+
+Bestaat de sleutel al, dan overschrijft Python de waarde. Bestaat hij nog niet, dan komt het paar erbij, achteraan in de dictionary.
 
 ### Voorspel
 
@@ -48,21 +124,54 @@ print(leerling[0])
   </Uitleg>
 </Voorspel>
 
-## Toevoegen en wijzigen
-
-Een waarde aanpassen of een nieuwe sleutel toevoegen werkt hetzelfde:
-
-{/* niet-draaien: fragment; leerling komt uit het blok erboven */}
-```python
-leerling["leeftijd"] = 16        # wijzigt bestaande sleutel
-leerling["hobby"] = "muziek"     # voegt nieuwe sleutel toe
-```
-
-Bestaat de sleutel al, dan wordt de waarde overschreven. Bestaat hij nog niet, dan wordt hij toegevoegd.
-
 :::tip[Eerst op papier]
 Speel dit eerst na zonder computer, met enveloppen als kluisjes: [Kluisjes met naamkaartjes](site:python/docs/projecten/unplugged/kluisjes). Je docent kan de hand-out printen.
 :::
+
+## Maak het af
+
+Je zet je oude fiets te koop. De advertentie staat in een dictionary, en het programma print hem twee keer: zoals hij was en zoals hij wordt. Niemand reageert, dus de prijs gaat naar 95 euro en je zet de kleur erbij: rood. Nu zijn de twee regels uitvoer nog gelijk. Twee stappen zijn nog open: de prijs wijzigen en de kleur toevoegen. Doe die zelf, zonder de dictionary over te typen.
+
+Verwachte uitvoer:
+
+```
+{'soort': 'omafiets', 'prijs': 120}
+{'soort': 'omafiets', 'prijs': 95, 'kleur': 'rood'}
+```
+
+<CodeExercise>{`fiets = {
+    "soort": "omafiets",
+    "prijs": 120
+}
+
+print(fiets)
+print(fiets)`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+De nieuwe regels komen tussen de twee `print`-regels. Wijzigen en toevoegen zien er hetzelfde uit: de sleutel tussen blokhaken, een `=` en de waarde. Vergeet de aanhalingstekens om de sleutel niet.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+fiets = {
+    "soort": "omafiets",
+    "prijs": 120
+}
+
+print(fiets)
+fiets["prijs"] = 95
+fiets["kleur"] = "rood"
+print(fiets)
+```
+
+De eerste `print` laat de dictionary zien zoals hij op dat moment is. Daarom verschillen de twee regels uitvoer.
+
+</details>
 
 ## Er gaat iets mis
 
@@ -99,6 +208,22 @@ NameError: name 'naam' is not defined
 ```
 
 Zonder aanhalingstekens zoekt Python een variabele `naam`, en die is er niet. De sleutel is de tekst `"naam"`: `leerling["naam"]`.
+
+### Een tikfout in de sleutel
+
+```python
+leerling = {"naam": "Sara", "klas": "3B"}
+leerling["Klas"] = "3A"
+print(leerling)
+```
+
+Uitvoer:
+
+```
+{'naam': 'Sara', 'klas': '3B', 'Klas': '3A'}
+```
+
+Geen foutmelding, maar Sara zit nog in 3B. `"Klas"` met een hoofdletter is een andere sleutel dan `"klas"`, dus Python voegt een paar toe in plaats van de waarde te wijzigen. Schrijf de sleutel precies zoals hij in de dictionary staat.
 
 ---
 
