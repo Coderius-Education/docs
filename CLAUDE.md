@@ -1612,9 +1612,32 @@ de lessen zijn anders gebouwd:
   voorzegt, en `## Maak het af` is een nieuw programma waarin één of twee
   stappen open zijn. De regels en wat een review eraan veranderde, staan in
   `sites/informatica/python/CLAUDE.md`.
+- **algoritmes**: de bouw-route was al een voorbeeld in stappen, een pagina
+  per bouwsteen. Het blok van een bouwsteen markeert wat er nieuw is, en de
+  compleet-pagina eindigt met het tabblad Maak het af: het algoritme op één
+  bouwsteen na, op een ander geval (tien routes; minimax en cfg niet, met de
+  reden in `stappen.test.ts`). Als eigen tabblad heeft Maak het af het icoon
+  van een opdracht (`vormNaarStartcode`); als stap van de uitleg, zoals in
+  python, niet.
+- **web** (js-basics, elf van de zestien lessen): de uitleg in stappen met
+  de markering, zonder Maak het af: Opdracht 1 is daar al code die de leerling
+  aanpast. Het voorbeeld heeft een eigen onderwerp, want Predict gaat over de
+  startcode en mag niet voorgezegd zijn.
 - **fullstack en Godot**: alleen de markering, in het hele bestand na de les
   (het tabblad `main.py`, Je script tot nu toe). Daar bouwt de leerling zelf
   mee in zijn eigen editor; een stap met een oefenveld is er niet.
+- **play: niet.** Elk voorbeeld is daar een eigen programma per onderwerp:
+  vier codeblokken in drie lessen bouwen voort op het blok ervoor. In een
+  tabblad staat die code bovendien in de speeltuin (het codeblok vervalt),
+  dus een markering vroeg een wijziging van de editor voor bijna niets. En de
+  eerste opdracht van een les begint er vaak al met code die de leerling
+  aanpast.
+- **robotica, linux, de editor-cursus en ctf: niet.** Daar schrijft de
+  leerling in de les geen programma dat groeit.
+
+Dwing de vorm niet af waar er niets groeit: 9c (scope) van python toont
+hetzelfde programma in drie versies, en in knapsack is elke bouwsteen een
+nieuwe functie. Een gezocht voorbeeld is slechter dan het oude.
 
 **Wat nieuw of veranderd is, is gemarkeerd, en de tekst zegt het ook.** De
 fence heeft een metastring (```` ```python {2-3} ````), en de alinea erboven
@@ -1626,15 +1649,17 @@ die er sinds het blok ervoor bij kwamen of veranderden (een langste
 gemeenschappelijke reeks; van gelijke regels telt de bovenste als nieuw, een
 lege regel nooit), `uitMeta` leest een metastring en `alsMeta` schrijft hem.
 Elke cursus heeft een test die de markering daarmee vergelijkt
-(`uitgewerkt.test.ts` van python, `stand-markering.test.ts` van fullstack,
-`script-markering.test.ts` van Godot); die van fullstack en Godot schrijven
+(`uitgewerkt.test.ts` van python, `stappen.test.ts` van algoritmes en van
+web, `stand-markering.test.ts` van fullstack, `script-markering.test.ts` van
+Godot); die van fullstack en Godot schrijven
 hem ook, met `SCHRIJF_MARKERING=1`. Een markering met de hand klopt niet meer
 zodra het blok ervoor verandert.
 
 **Wie een codeblok leest, leest de fence met wat erachter staat**
-(```` ```python[^\n]*\n ````). Zeven tests en een script van fullstack lazen
-```` ```python ```` met direct een regeleinde, en vonden een gemarkeerde stand
-niet meer. De blokrunners en `packages/shared/codeblokken.js` lazen de
+(```` ```python[^\n]*\n ````). Zeven tests en een script van fullstack, drie
+tests van algoritmes en twee van web lazen de fence met direct een regeleinde,
+en vonden een gemarkeerd blok niet meer, of lazen de tekst tussen twee blokken
+als code. De blokrunners en `packages/shared/codeblokken.js` lazen de
 metastring al mee.
 
 ## Code in MDX-expressies
