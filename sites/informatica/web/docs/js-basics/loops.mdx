@@ -76,43 +76,77 @@ export const makeJs = `// Schrijf hier je code
 
 Soms wil je dezelfde actie meerdere keren uitvoeren: een tafel printen, tien sterretjes tonen. In plaats van tien keer dezelfde regel typen, gebruik je een **loop**.
 
-## De for-loop: vooraf bekend aantal keer
+### Herhaal de regel
+
+Deze for-loop schrijft drie strafregels in de console:
 
 ```js
-for (let i = 0; i < 5; i++) {
-  console.log('Hallo.');
+for (let i = 1; i <= 3; i++) {
+  console.log('Ik kom op tijd.');
 }
 ```
 
-Lees dit als: start met `i = 0`, blijf herhalen zolang `i < 5`, en verhoog `i` na elke ronde met 1. Resultaat: `Hallo.` verschijnt vijf keer in de console.
+Uitvoer in de console:
 
-- **Beginwaarde**: `let i = 0`, een tellervariabele (vaak `i`).
-- **Voorwaarde**: `i < 5`. Zolang dit `true` is, blijft de loop draaien.
+```
+Ik kom op tijd.
+Ik kom op tijd.
+Ik kom op tijd.
+```
+
+Tussen de haakjes van `for` staan drie delen:
+
+- **Beginwaarde**: `let i = 1`, een tellervariabele (vaak `i`).
+- **Voorwaarde**: `i <= 3`. Zolang dit `true` is, blijft de loop draaien.
 - **Stap**: `i++`, wat er na elke ronde gebeurt (`i++` is de korte vorm van `i = i + 1`).
 
-### De teller gebruiken
+Drie keer dezelfde regel: welke de hoeveelste is, zie je niet.
 
-Binnen de loop kun je `i` gebruiken, zodat elke ronde net iets anders doet:
+### Gebruik de teller
 
-```js
-for (let i = 1; i <= 5; i++) {
-  console.log('5 × ' + i + ' = ' + (5 * i));
+Binnen de loop kun je `i` gebruiken, zodat elke ronde iets anders doet. De gemarkeerde regel is veranderd: de teller staat vooraan in de tekst.
+
+```js {2}
+for (let i = 1; i <= 3; i++) {
+  console.log(i + '. Ik kom op tijd.');
 }
 ```
 
-## Verzamelen in een string
+Uitvoer in de console:
 
-Wil je het resultaat op de pagina tonen in plaats van in de console, dan bouw je een verzamel-string op: begin leeg, en plak er elke ronde een regel bij. `'\n'` is een regeleinde.
-
-```js
-let resultaat = '';
-for (let i = 1; i <= 10; i++) {
-  resultaat = resultaat + '5 × ' + i + ' = ' + (5 * i) + '\n';
-}
-document.getElementById('uitvoer').textContent = resultaat;
+```
+1. Ik kom op tijd.
+2. Ik kom op tijd.
+3. Ik kom op tijd.
 ```
 
-Pas ná de loop, als alle regels verzameld zijn, zet je de string in één keer op de pagina. In de CSS van het oefenveld staat daarvoor `white-space: pre-line`: die regel houdt de regeleindes zichtbaar in de `<p>`.
+De regels zijn genummerd. Ze staan alleen in de console, en die ziet een bezoeker van je pagina niet.
+
+### Toon op de pagina
+
+Op de pagina staat een `<p id="uitvoer">`. De gemarkeerde regel is veranderd: in plaats van `console.log` zet de loop de tekst in die alinea.
+
+```js {2}
+for (let i = 1; i <= 3; i++) {
+  document.getElementById('uitvoer').textContent = i + '. Ik kom op tijd.';
+}
+```
+
+Op de pagina staat alleen `3. Ik kom op tijd.` Elke ronde overschrijft de tekst van de ronde ervoor, en alleen de laatste blijft staan.
+
+### Verzamel de regels
+
+Tekst die je in een loop op de pagina zet, overschrijft de tekst van de ronde ervoor. Een verzamel-string voorkomt dat: hij begint leeg, en elke ronde plakt de loop er een regel bij. `'\n'` is een regeleinde. De gemarkeerde regels zijn nieuw of veranderd: `straf` begint leeg, groeit in de loop, en gaat na de loop naar de pagina.
+
+```js {1,3,5}
+let straf = '';
+for (let i = 1; i <= 3; i++) {
+  straf = straf + i + '. Ik kom op tijd.\n';
+}
+document.getElementById('uitvoer').textContent = straf;
+```
+
+Pas ná de loop, als alle regels verzameld zijn, gaat de string in één keer naar de pagina. Daar staan nu drie genummerde regels onder elkaar. In de CSS van het oefenveld staat daarvoor `white-space: pre-line`: die regel houdt de regeleindes zichtbaar in de `<p>`.
 
 ## De while-loop: zolang iets waar is
 

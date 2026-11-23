@@ -77,28 +77,46 @@ export const makeJs = `// Schrijf hier je code
 
 In de vorige les stond je JavaScript in een `<script>`-tag onderaan de body. Bij grotere projecten wil je HTML en JavaScript in aparte bestanden houden: overzichtelijker en makkelijker te hergebruiken.
 
-Je maakt een bestand `script.js` en koppelt dat in de `<head>` met het `defer`-attribuut:
+### Koppel het bestand
+
+Een pagina met een wekker: een alinea en een knop. De JavaScript komt in een eigen bestand, `script.js`, en de HTML koppelt dat bestand in de `<head>` met het `defer`-attribuut:
 
 ```html
 <head>
   <script src="script.js" defer></script>
 </head>
+<body>
+  <p id="wekker">Je slaapt nog.</p>
+  <button onclick="wekMij()">Wek mij</button>
+</body>
 ```
 
-`defer` betekent: laad het script, maar voer het pas uit als de volledige HTML geladen is. Hetzelfde effect als de `<script>`-tag onderaan de body, maar netter in de `<head>`.
+`defer` betekent: laad het script, maar voer het pas uit als de volledige HTML geladen is. Hetzelfde effect als de `<script>`-tag onderaan de body, maar netter in de `<head>`. Het bestand script.js is nog leeg: een klik op de knop geeft in de console een melding die eindigt op `wekMij is not defined`.
 
-In het oefenveld van deze les staat de JavaScript in **script.js**, naast index.html en style.css.
+### Schrijf de functie
 
-## De console: een kijkglas op je code
-
-**`console.log()`** toont een bericht in de **console**: een paneel dat bezoekers niet zien, maar jij als programmeur wel. In het oefenveld staat hij onder het voorbeeld; in een gewone browser open je hem met **F12** → tabblad "Console".
+De functie `wekMij` komt in script.js. In dat bestand staat alleen JavaScript, zonder `<script>`-tags eromheen:
 
 ```js
-console.log('Knop is geklikt.');
-console.log('Naam:', naam);
+function wekMij() {
+  document.getElementById('wekker').textContent = 'Goedemorgen.';
+}
 ```
 
-Je gebruikt `console.log` vooral om te **debuggen** (fouten opsporen): zet hem op een paar plekken in je code, en je ziet precies welke regels draaien en met welke waarden.
+Na een klik staat er `Goedemorgen.` op de pagina. In het oefenveld van deze les staat de JavaScript ook in **script.js**, naast index.html en style.css. Of de functie draaide, zie je alleen aan de pagina: verandert daar niets, dan weet je niet of de klik aankwam.
+
+### Log een bericht
+
+**`console.log()`** toont een bericht in de **console**: een paneel dat bezoekers niet zien, maar jij als programmeur wel. De gemarkeerde regel is nieuw: de functie meldt in de console dat hij draait.
+
+```js {3}
+function wekMij() {
+  document.getElementById('wekker').textContent = 'Goedemorgen.';
+  console.log('De wekker ging af.');
+}
+```
+
+Na een klik staat `De wekker ging af.` in de console. In het oefenveld staat de console onder het voorbeeld; in een gewone browser open je hem met **F12** → tabblad "Console". Je gebruikt `console.log` vooral om te **debuggen** (fouten opsporen): zet hem op een paar plekken in je code, en je ziet welke regels draaien.
 
 ## Predict
 

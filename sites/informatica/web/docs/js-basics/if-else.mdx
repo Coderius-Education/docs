@@ -95,49 +95,75 @@ export const makeHtml = `<!DOCTYPE html>
 export const makeJs = `// Schrijf hier je code
 `;
 
-Tot nu toe deed je code altijd hetzelfde. Vaak wil je een andere actie afhankelijk van een waarde: "als de score boven 10 is, toon dan…". Dat schrijf je met een `if`-statement:
+Tot nu toe deed je code altijd hetzelfde. Vaak wil je een andere actie afhankelijk van een waarde: als de batterij bijna leeg is, toon dan een waarschuwing. Dat schrijf je met een `if`-statement.
+
+### Schrijf de if
+
+Een telefoon waarschuwt als de batterij onder de 20 procent komt:
 
 ```js
-if (score > 10) {
-  document.getElementById('uitvoer').textContent = 'Gewonnen.';
+const batterij = 15;
+
+if (batterij < 20) {
+  console.log('Zoek een oplader.');
 }
 ```
 
-Tussen de haakjes staat een **voorwaarde**: een expressie die `true` of `false` oplevert, precies wat je in [Vergelijken](site:web/docs/js-basics/vergelijken) leerde. Is de voorwaarde `true`, dan voert JavaScript de regels tussen `{ ... }` uit; anders slaat hij het blok over.
+Tussen de haakjes staat een **voorwaarde**: een expressie die `true` of `false` oplevert, zoals in [Vergelijken](site:web/docs/js-basics/vergelijken). Is de voorwaarde `true`, dan voert JavaScript de regels tussen `{ ... }` uit: de console logt `Zoek een oplader.` Anders slaat hij het blok over. Bij een batterij van 80 blijft de console leeg, en zie je niet of de code wel draaide.
 
-## `else`: anders dit
+### Voeg else toe
 
-Met `else` geef je het alternatief voor wanneer de voorwaarde **niet** waar is:
+Met `else` geef je het alternatief voor wanneer de voorwaarde **niet** waar is. De gemarkeerde regels zijn nieuw of veranderd: de batterij staat op 80, en het `else`-blok heeft een eigen bericht.
 
-```js
-if (score > 10) {
-  document.getElementById('uitvoer').textContent = 'Gewonnen.';
+```js {1,5-6}
+const batterij = 80;
+
+if (batterij < 20) {
+  console.log('Zoek een oplader.');
 } else {
-  document.getElementById('uitvoer').textContent = 'Niet genoeg punten.';
+  console.log('Genoeg stroom.');
 }
 ```
 
-Precies één van de twee blokken draait — nooit allebei.
+De console logt `Genoeg stroom.` Eén van de twee blokken draait, nooit allebei. Een batterij van 25 krijgt hetzelfde bericht als een van 80, terwijl hij bijna leeg is.
 
-## `else if`: meerdere opties
+### Voeg een tak toe
 
-Voor meer dan twee gevallen zet je er `else if`-takken tussen:
+Voor meer dan twee gevallen zet je er een `else if`-tak tussen, met een eigen voorwaarde. De gemarkeerde regels zijn nieuw of veranderd: de batterij staat op 25, en er is een tak voor alles onder de 50.
 
-```js
-let cijfer;
+```js {1,5-6}
+const batterij = 25;
 
-if (score >= 90) {
-  cijfer = 'A';
-} else if (score >= 70) {
-  cijfer = 'B';
-} else if (score >= 50) {
-  cijfer = 'C';
+if (batterij < 20) {
+  console.log('Zoek een oplader.');
+} else if (batterij < 50) {
+  console.log('Laad straks op.');
 } else {
-  cijfer = 'Onvoldoende';
+  console.log('Genoeg stroom.');
 }
 ```
 
-JavaScript probeert de voorwaarden van boven naar beneden en stopt bij de eerste die `true` is. De regel `let cijfer;` maakt de variabele alvast aan zonder waarde; precies één van de takken vult hem daarna.
+De console logt `Laad straks op.` JavaScript probeert de voorwaarden van boven naar beneden en stopt bij de eerste die `true` is. Elke tak heeft een eigen `console.log`: moet het bericht naar de pagina, dan verander je drie regels.
+
+### Bewaar de uitkomst
+
+`let advies;` maakt een variabele aan zonder waarde; één van de takken vult hem. De gemarkeerde regels zijn nieuw of veranderd: elke tak bewaart zijn tekst in `advies`, en de laatste regel logt hem.
+
+```js {2,5,7,9,11}
+const batterij = 25;
+let advies;
+
+if (batterij < 20) {
+  advies = 'Zoek een oplader.';
+} else if (batterij < 50) {
+  advies = 'Laad straks op.';
+} else {
+  advies = 'Genoeg stroom.';
+}
+console.log(advies);
+```
+
+De console logt nog steeds `Laad straks op.` Het bericht naar de pagina sturen kost nu één regel.
 
 ## Predict
 

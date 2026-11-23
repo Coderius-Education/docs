@@ -79,24 +79,61 @@ export const makeHtml = `<!DOCTYPE html>
 export const makeJs = `// Schrijf hier je code
 `;
 
-Een variabele is een plek in het geheugen met een naam. Je maakt hem aan met `let`, geeft hem een naam en kent er een waarde aan toe:
+Een variabele is een plek in het geheugen met een naam. Hij onthoudt een waarde, en die waarde kun je later veranderen.
+
+### Maak de variabele
+
+Een variabele houdt bij hoeveel euro er in je spaarpot zit. Je maakt hem aan met `let`:
 
 ```js
-let teller = 0;
+let spaarpot = 0;
+console.log('In de pot:', spaarpot);
 ```
 
-`let` maakt een nieuwe variabele aan, `teller` is de naam (kies zelf; kleine letters, geen spaties) en `= 0` is de beginwaarde.
+`let` maakt een nieuwe variabele aan, `spaarpot` is de naam (kies zelf; kleine letters, geen spaties) en `= 0` is de beginwaarde. De console logt `In de pot: 0`: na de komma zet `console.log` een tweede waarde achter de tekst. De pot is leeg, en er komt nog niets bij.
 
-Daarna kun je de waarde aanpassen en tonen, bijvoorbeeld in een functie die bij elke klik draait:
+### Verander de waarde
 
-```js
-function telOp() {
-  teller = teller + 1;  // voeg 1 toe aan de huidige waarde
-  document.getElementById('uitvoer').textContent = teller;
+De waarde van een variabele kun je veranderen. De gemarkeerde regel is nieuw: er gaat 2 euro in de pot.
+
+```js {2}
+let spaarpot = 0;
+spaarpot = spaarpot + 2;
+console.log('In de pot:', spaarpot);
+```
+
+JavaScript rekent eerst de rechterkant uit, `0 + 2`, en bewaart de uitkomst weer in `spaarpot`. De console logt `In de pot: 2`. Dat gebeurt één keer, bij het laden van de pagina: nog een keer sparen kan niet.
+
+### Spaar met een knop
+
+Een knop met `onclick="spaar()"` roept een functie aan, en die spaart bij elke klik opnieuw. De gemarkeerde regels zijn nieuw of veranderd: de functie `spaar`, met de twee regels erin. `let spaarpot = 0;` blijft erboven staan, **buiten** de functie: binnen de functie zou elke klik weer bij 0 beginnen.
+
+```js {3-6}
+let spaarpot = 0;
+
+function spaar() {
+  spaarpot = spaarpot + 2;
+  console.log('In de pot:', spaarpot);
 }
 ```
 
-De regel `let teller = 0;` staat **buiten** de functie: dan blijft de variabele bestaan tussen de klikken door en onthoudt hij zijn waarde. Dat onthouden is precies waar variabelen voor zijn.
+Bij de eerste klik logt de console `In de pot: 2`, bij de tweede `In de pot: 4`. De variabele blijft bestaan tussen de klikken door en onthoudt zijn waarde: daar zijn variabelen voor. Op de pagina zelf is nog niets te zien.
+
+### Toon de waarde
+
+Op de pagina staat een `<p id="pot">` voor het bedrag. De gemarkeerde regel is nieuw: na elke klik zet de functie de waarde van `spaarpot` in die alinea.
+
+```js {5}
+let spaarpot = 0;
+
+function spaar() {
+  spaarpot = spaarpot + 2;
+  document.getElementById('pot').textContent = spaarpot;
+  console.log('In de pot:', spaarpot);
+}
+```
+
+Het bedrag op de pagina loopt nu gelijk met de console.
 
 ## `let` of `const`?
 

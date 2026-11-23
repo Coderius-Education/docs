@@ -82,67 +82,65 @@ export const makeHtml = `<!DOCTYPE html>
 export const makeCss = `/* Schrijf hier je stijl */
 `;
 
-Tot nu toe schreef je code direct in `onclick`. Dat werkt voor één regel, maar in [Opdracht 2 van Inline stijl](site:web/docs/js-basics/inline-stijl) zag je al hoe onleesbaar het wordt zodra er meer bij komt:
+Tot nu toe schreef je code direct in `onclick`. Dat werkt voor één regel, maar in [Opdracht 2 van Inline stijl](site:web/docs/js-basics/inline-stijl) zag je al hoe onleesbaar het wordt zodra er meer bij komt. De oplossing is een **functie**: een blok code met een naam.
 
-```html
-<!-- Onoverzichtelijk: -->
-<button onclick="document.getElementById('a').textContent='X'; document.getElementById('b').style.color='red'; ...">
-```
+### Schrijf de functie
 
-De oplossing is een **functie**.
-
-## Functies
-
-Een functie is een blok code met een naam. Je definieert hem één keer en roept hem daarna aan zo vaak als je wil:
+Een wekker verandert de tekst van een alinea en kleurt hem oranje: twee regels code. In een functie staan ze bij elkaar, onder één naam:
 
 ```js
-function verander() {
-  document.getElementById('bericht').textContent = 'Geklikt.';
-  document.getElementById('bericht').style.color = 'green';
+function wekMij() {
+  document.getElementById('wekker').textContent = 'Goedemorgen.';
+  document.getElementById('wekker').style.color = 'orange';
 }
 ```
 
 1. `function`: het sleutelwoord dat zegt dat hier een functie begint.
-2. `verander`: de **naam**, die kies je zelf. Geen spaties; gebruik camelCase voor meer woorden (`maakKleurRood`).
+2. `wekMij`: de **naam**, die kies je zelf. Geen spaties; gebruik camelCase voor meer woorden (`maakKleurRood`).
 3. `()`: twee ronde haakjes. Die horen bij elke functie; ze blijven in deze cursus leeg.
-4. `{ ... }`: accolades met daartussen de regels code die draaien zodra je de functie aanroept.
+4. `{ ... }`: accolades met daartussen de regels code die bij de functie horen.
 
-### Definiëren is nog niet uitvoeren
+De functie hoort nog bij geen pagina: er is geen alinea om te veranderen en geen knop om op te klikken.
 
-De code binnen de accolades draait niet vanzelf. Hij draait pas als je de functie **aanroept**: de naam typen met `()` erachter.
+### Zet hem in script
 
-```js
-verander();   // nu draait de code binnenin
-```
-
-In HTML gebeurt dat aanroepen via `onclick`:
-
-```html
-<button onclick="verander()">Klik mij</button>
-```
-
-:::tip[Naam zonder haakjes vs. mét haakjes]
-`verander` (zonder haakjes) is een **verwijzing** naar de functie — alsof je een telefoonnummer noemt.
-`verander()` (mét haakjes) is een **aanroep** — alsof je dat nummer ook echt belt.
-:::
-
-## De script-tag
-
-De functie zelf zet je in een `<script>`-tag, **onderaan** de `<body>` — zo bestaan alle HTML-elementen al op het moment dat de code laadt:
+De functie `wekMij` komt in een `<script>`-tag, **onderaan** de `<body>`: zo bestaan alle HTML-elementen al op het moment dat de code laadt. Erboven staan de alinea en de knop:
 
 ```html
 <body>
-  <p id="bericht">Klik op de knop.</p>
-  <button onclick="verander()">Klik mij</button>
+  <p id="wekker">Je slaapt nog.</p>
+  <button>Wek mij</button>
 
   <script>
-    function verander() {
-      document.getElementById('bericht').textContent = 'Geklikt.';
-      document.getElementById('bericht').style.color = 'green';
+    function wekMij() {
+      document.getElementById('wekker').textContent = 'Goedemorgen.';
+      document.getElementById('wekker').style.color = 'orange';
     }
   </script>
 </body>
 ```
+
+Een klik op de knop doet niets, en de console blijft leeg. De code tussen de accolades draait niet vanzelf: de functie bestaat, maar niemand voert hem uit.
+
+### Roep hem aan
+
+De code tussen de accolades draait pas als je de functie **aanroept**: zijn naam met `()` erachter. De gemarkeerde regel is veranderd: de knop roept `wekMij()` aan in zijn `onclick`.
+
+```html {3}
+<body>
+  <p id="wekker">Je slaapt nog.</p>
+  <button onclick="wekMij()">Wek mij</button>
+
+  <script>
+    function wekMij() {
+      document.getElementById('wekker').textContent = 'Goedemorgen.';
+      document.getElementById('wekker').style.color = 'orange';
+    }
+  </script>
+</body>
+```
+
+Na een klik staat er `Goedemorgen.` in oranje letters. De haakjes horen erbij: `wekMij` zonder haakjes noemt alleen de naam van de functie, `wekMij()` voert hem uit.
 
 ## Predict
 

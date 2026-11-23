@@ -73,13 +73,44 @@ export const makeHtml = `<!DOCTYPE html>
 export const makeJs = `// Schrijf hier je code
 `;
 
-Een vergelijking is een vraag met twee mogelijke antwoorden: `true` of `false`. Dat antwoord is een **boolean**, en je kunt hem opslaan en tonen als elke andere waarde:
+Een vergelijking is een vraag met twee mogelijke antwoorden: `true` of `false`.
+
+### Stel de vraag
+
+In een achtbaan mag je alleen als je minstens 140 centimeter lang bent. De vergelijking `lengte >= 140` stelt die vraag: `>=` betekent groter dan of gelijk aan.
 
 ```js
-const leeftijd = 16;
-const meerderjarig = leeftijd >= 18;
-console.log(meerderjarig);   // false
+const lengte = 150;
+console.log(lengte >= 140);
 ```
+
+De console logt `true`: 150 is lang genoeg. Het antwoord staat alleen in de console. Verderop in je code kun je er niets mee.
+
+### Bewaar het antwoord
+
+Het antwoord op een vergelijking is een **boolean**, en je kunt hem opslaan als elke andere waarde. De gemarkeerde regels zijn nieuw of veranderd: het antwoord gaat eerst naar de variabele `langGenoeg`, en de console logt die variabele.
+
+```js {2-3}
+const lengte = 150;
+const langGenoeg = lengte >= 140;
+console.log(langGenoeg);
+```
+
+De console logt nog steeds `true`. De achtbaan heeft een tweede regel: je moet ook 12 jaar of ouder zijn. Daar kijkt de code niet naar.
+
+### Stel twee vragen
+
+Met **`&&`** (en) combineer je twee vergelijkingen: het geheel is alleen `true` als beide kanten waar zijn. De gemarkeerde regels zijn nieuw of veranderd: een leeftijd, en de variabele `magErin`, die ook naar die leeftijd kijkt.
+
+```js {2,4-5}
+const lengte = 150;
+const leeftijd = 11;
+const langGenoeg = lengte >= 140;
+const magErin = langGenoeg && leeftijd >= 12;
+console.log(magErin);
+```
+
+De console logt `false`: lang genoeg, maar te jong. Met **`||`** (of) is één kant al genoeg: `langGenoeg || leeftijd >= 12` is hier `true`. Met **`!`** (niet) draai je een boolean om: `!magErin` is `true`.
 
 ## Vergelijkingsoperatoren
 
@@ -93,21 +124,6 @@ console.log(meerderjarig);   // false
 | `<=` | Kleiner of gelijk | `5 <= 3` is `false` |
 
 Het type telt mee: `5 === '5'` is `false`, want een number en een string zijn niet gelijk.
-
-## Voorwaarden combineren met en/of
-
-Soms is één vergelijking niet genoeg. Met **`&&`** (en) en **`||`** (of) combineer je er twee; met **`!`** (niet) draai je een boolean om.
-
-```js
-const leeftijd = 15;
-const lidVanDeClub = true;
-
-leeftijd >= 12 && leeftijd <= 17   // true: allebei waar (en)
-leeftijd < 12 || leeftijd >= 65    // false: geen van beide waar (of)
-!lidVanDeClub                      // false: het omgekeerde van true
-```
-
-`&&` is alleen `true` als **beide** kanten waar zijn; `||` is al `true` zodra **één** kant waar is.
 
 ## Predict
 

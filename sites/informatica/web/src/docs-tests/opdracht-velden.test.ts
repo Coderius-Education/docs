@@ -175,7 +175,7 @@ describe('oefenvelden per opdracht (web)', () => {
     for (const les of opdrachtVorm) {
       const code = [
         ...[...les.inhoud.matchAll(/^export const \w+ = `([\s\S]*?)`;$/gm)].map((m) => m[1]),
-        ...[...les.inhoud.matchAll(/```\w*\n([\s\S]*?)```/g)].map((m) => m[1]),
+        ...[...les.inhoud.matchAll(/```\w*[^\n]*\n([\s\S]*?)```/g)].map((m) => m[1]),
       ].join('\n');
       if (/function\s*\(/.test(code)) fouten.push(`${les.naam}: anonieme functie`);
       if (/=>/.test(code)) fouten.push(`${les.naam}: arrow-functie`);
@@ -229,7 +229,7 @@ describe('oefenvelden per opdracht (web)', () => {
         if (namen.length === 0) continue;
         // Antwoordcode mag in elk codeblok van de opdracht staan (js, of een
         // volledige pagina in een html-blok met een <script> erin).
-        const antwoord = [...s.tekst.matchAll(/```\w*\n([\s\S]*?)```/g)]
+        const antwoord = [...s.tekst.matchAll(/```\w*[^\n]*\n([\s\S]*?)```/g)]
           .map((m) => m[1])
           .join('\n');
         for (const naam of new Set(namen)) {

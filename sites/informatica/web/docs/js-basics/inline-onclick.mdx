@@ -66,21 +66,40 @@ export const makeHtml = `<!DOCTYPE html>
 export const makeCss = `/* Schrijf hier je stijl */
 `;
 
-Dit is je eerste regel JavaScript, en hij staat rechtstreeks in de HTML:
+Je eerste JavaScript staat rechtstreeks in de HTML: een knop zoekt een alinea op en verandert de tekst erin.
+
+### Maak de pagina
+
+Eerst de pagina zonder JavaScript, met een alinea en een knop:
 
 ```html
-<p id="bericht">Nog niet geklikt.</p>
-<button onclick="document.getElementById('bericht').textContent = 'Je hebt geklikt.'">
-  Klik mij
-</button>
+<p>De deur is dicht.</p>
+<button>Open</button>
 ```
 
-In die ene regel zitten twee dingen:
+De knop staat er en je kunt erop klikken, maar er gebeurt niets: nergens staat wat hij moet doen.
 
-- **`onclick`** is een HTML-attribuut. De code die erin staat, voert de browser uit zodra je op het element klikt.
-- **`document.getElementById('bericht')`** zoekt het element met `id="bericht"`. Het `id` is het naamplaatje van een element.
+### Geef een id
 
-Wat `.textContent = '...'` daarna met dat element doet, is het onderwerp van [de volgende les](site:web/docs/js-basics/tekst-veranderen). Nu draait het om het **vinden**.
+De knop moet de alinea kunnen aanwijzen. Daarvoor krijgt de alinea een `id`: het naamplaatje van een element. De gemarkeerde regel is veranderd: de `<p>` heet nu `deur`.
+
+```html {1}
+<p id="deur">De deur is dicht.</p>
+<button>Open</button>
+```
+
+Op de pagina zie je geen verschil, en een klik doet nog steeds niets. De alinea is nu wel te vinden.
+
+### Voeg onclick toe
+
+**`onclick`** is een HTML-attribuut. De code die erin staat, voert de browser uit zodra je op het element klikt. De gemarkeerde regel is veranderd: de knop heeft nu een `onclick`.
+
+```html {2}
+<p id="deur">De deur is dicht.</p>
+<button onclick="document.getElementById('deur').textContent = 'De deur is open.'">Open</button>
+```
+
+Na een klik staat er `De deur is open.` in de alinea. **`document.getElementById('deur')`** zoekt het element met `id="deur"`. Wat `.textContent = '...'` daarna met dat element doet, is het onderwerp van [de volgende les](site:web/docs/js-basics/tekst-veranderen). Nu draait het om het **vinden**.
 
 De browser bewaart alle elementen van je pagina in een boomstructuur, de **DOM** (Document Object Model). `document` is de ingang van die boom, en `getElementById` haalt er een element uit.
 

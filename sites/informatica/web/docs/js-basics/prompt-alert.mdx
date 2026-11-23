@@ -70,26 +70,37 @@ export const makeJs = `// Schrijf hier je code
 
 Tot nu toe stond alle tekst vast in je code. Met twee ingebouwde functies praat je pagina met de gebruiker: **`alert()`** toont een bericht, **`prompt()`** stelt een vraag.
 
-## `alert()`: toon een berichtvenster
+### Toon een bericht
+
+`alert()` krijgt tussen de haakjes de tekst die hij moet tonen:
 
 ```js
-alert('Hallo wereld.');
+alert('Groeten aan iedereen.');
 ```
 
-Er verschijnt een pop-upvenster met je tekst en een OK-knop. De code wacht tot de gebruiker op OK klikt.
+Er verschijnt een pop-upvenster met je tekst en een OK-knop. De code wacht tot de gebruiker op OK klikt. Iedereen krijgt dezelfde groet: de pagina weet niets over wie er kijkt.
 
-## `prompt()`: vraag om invoer
+### Vraag om invoer
 
-```js
-const naam = prompt('Hoe heet je?');
+`prompt()` toont een pop-upvenster met een vraag en een tekstveld. De gemarkeerde regel is nieuw: wat de gebruiker typt, komt in de variabele `stad` te staan.
+
+```js {1}
+const stad = prompt('Waar woon je?');
+alert('Groeten aan iedereen.');
 ```
 
-Een pop-upvenster vraagt om tekst. Wat de gebruiker typt, komt in de variabele `naam` te staan. Daarna kun je die waarde gebruiken, bijvoorbeeld door hem met `+` aan een andere tekst te plakken:
+Eerst komt de vraag, daarna de groet. Die is nog steeds `Groeten aan iedereen.`: met het antwoord in `stad` gebeurt niets.
 
-```js
-const naam = prompt('Hoe heet je?');
-alert('Welkom, ' + naam + '.');
+### Gebruik de invoer
+
+Met `+` plak je de waarde van een variabele aan een andere tekst. De gemarkeerde regel is veranderd: het antwoord staat nu in de groet.
+
+```js {2}
+const stad = prompt('Waar woon je?');
+alert('Groeten aan ' + stad + '.');
 ```
+
+Typ je Zwolle, dan zegt de pop-up `Groeten aan Zwolle.`
 
 :::tip[Wanneer wel/niet?]
 - **Wel**: snelle demo, mini-oefening, één losse vraag.
