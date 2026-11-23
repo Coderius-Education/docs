@@ -7,7 +7,79 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 # 6d Stoppen met break
 
+Soms is een loop eerder klaar dan je van tevoren dacht. Met `break` stap je er middenin uit.
+
+## Sparen tot het genoeg is
+
+### Schrijf de loop
+
+Je spaart drie euro per week voor een spel van twintig euro. Schrijf eerst de loop die tien weken spaart en elke week het saldo laat zien:
+
 ```python
+saldo = 0
+
+for week in range(1, 11):
+    saldo = saldo + 3
+    print(f"Week {week}: {saldo} euro")
+```
+
+Uitvoer:
+
+```
+Week 1: 3 euro
+Week 2: 6 euro
+Week 3: 9 euro
+Week 4: 12 euro
+Week 5: 15 euro
+Week 6: 18 euro
+Week 7: 21 euro
+Week 8: 24 euro
+Week 9: 27 euro
+Week 10: 30 euro
+```
+
+Na tien weken heb je dertig euro. Maar vanaf week 7 had je al genoeg.
+
+### Zoek het moment
+
+Een `if` in de loop kijkt elke week of het saldo de twintig euro heeft bereikt. De gemarkeerde regels zijn nieuw:
+
+```python {6-7}
+saldo = 0
+
+for week in range(1, 11):
+    saldo = saldo + 3
+    print(f"Week {week}: {saldo} euro")
+    if saldo >= 20:
+        print("Genoeg gespaard.")
+```
+
+Uitvoer:
+
+```
+Week 1: 3 euro
+Week 2: 6 euro
+Week 3: 9 euro
+Week 4: 12 euro
+Week 5: 15 euro
+Week 6: 18 euro
+Week 7: 21 euro
+Genoeg gespaard.
+Week 8: 24 euro
+Genoeg gespaard.
+Week 9: 27 euro
+Genoeg gespaard.
+Week 10: 30 euro
+Genoeg gespaard.
+```
+
+Het programma ziet in week 7 dat het genoeg is, en spaart toch door tot week 10.
+
+### Stop de loop
+
+**`break`** stopt de loop op de plek waar hij staat. Zet hem onderaan in het `if`-blok, dan komt de melding nog op het scherm en de rest van de weken niet meer:
+
+```python {8}
 saldo = 0
 
 for week in range(1, 11):
@@ -18,16 +90,20 @@ for week in range(1, 11):
         break
 ```
 
-<CodeExercise>{`saldo = 0
+Uitvoer:
 
-for week in range(1, 11):
-    saldo = saldo + 3
-    print(f"Week {week}: {saldo} euro")
-    if saldo >= 20:
-        print("Genoeg gespaard.")
-        break`}</CodeExercise>
+```
+Week 1: 3 euro
+Week 2: 6 euro
+Week 3: 9 euro
+Week 4: 12 euro
+Week 5: 15 euro
+Week 6: 18 euro
+Week 7: 21 euro
+Genoeg gespaard.
+```
 
-De loop staat op tien weken, maar hij haalt er zeven. Zodra `saldo` de 20 bereikt, stapt **`break`** uit de loop en gaat het programma verder onder de loop.
+De loop staat op tien weken, maar hij haalt er zeven. Na `break` gaat het programma verder onder de loop.
 
 ## Wat break precies stopt
 
@@ -73,6 +149,52 @@ Je kent `continue` al uit [6c](site:python/docs/herhalen/06c-continue). De twee 
 `break` gebruik je als je iets **gevonden** hebt of als er een grens bereikt is: doorzoeken heeft dan geen zin meer.
 
 **Tip:** `break` werkt ook in een while-loop, en die komt in de [volgende les](site:python/docs/herhalen/while-loop). In het project [Raad het getal](site:python/docs/projecten/raad-het-getal/stap-5-break) stopt de speler zo het spel.
+
+## Maak het af
+
+Je vult een emmer van tien liter met scheppen van twee liter. De loop en de `if` staan er al, maar het programma schept door tot schep 20. Doe zelf de laatste stap: stop zodra de emmer vol is.
+
+Verwachte uitvoer:
+
+```
+Schep 1: 2 liter
+Schep 2: 4 liter
+Schep 3: 6 liter
+Schep 4: 8 liter
+Schep 5: 10 liter
+De emmer is vol.
+```
+
+<CodeExercise>{`liters = 0
+
+for schep in range(1, 21):
+    liters = liters + 2
+    print(f"Schep {schep}: {liters} liter")
+    if liters >= 10:
+        print("De emmer is vol.")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Draai het programma eerst en kijk waar het misgaat. Het woord dat de loop stopt, hoort in het `if`-blok, onder de `print`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+liters = 0
+
+for schep in range(1, 21):
+    liters = liters + 2
+    print(f"Schep {schep}: {liters} liter")
+    if liters >= 10:
+        print("De emmer is vol.")
+        break
+```
+
+</details>
 
 ## Puzzel
 

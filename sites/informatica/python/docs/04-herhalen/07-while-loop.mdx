@@ -9,7 +9,54 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 Met een `for`-loop weet je van tevoren hoe vaak je herhaalt, bijvoorbeeld 5 keer met `range(5)`. Soms weet je dat niet, alleen wanneer je klaar bent. Dan gebruik je een `while`-loop: die herhaalt **zolang een voorwaarde `True` is**.
 
+### Schrijf één ronde
+
+Je telt af voor een start: `5`, `4`, `3`, `2`, `1`. Eén ronde van dat aftellen is: print het getal, en haal er één af.
+
 ```python
+getal = 5
+
+print(getal)
+getal -= 1
+```
+
+Uitvoer:
+
+```
+5
+```
+
+`getal -= 1` is een korte schrijfwijze voor `getal = getal - 1`. Hetzelfde geldt voor `+=`, `*=` en `/=`. Na deze ronde is `getal` 4, maar dat zie je nog niet.
+
+### Herhaal de ronde
+
+De ronde van het aftellen moet terugkomen zolang er iets af te tellen valt: zolang `getal` groter is dan 0. Zet die voorwaarde achter `while` en laat de twee regels van de ronde inspringen. De gemarkeerde regels zijn veranderd:
+
+```python {3-5}
+getal = 5
+
+while getal > 0:
+    print(getal)
+    getal -= 1
+```
+
+Uitvoer:
+
+```
+5
+4
+3
+2
+1
+```
+
+Voor elke ronde kijkt Python of `getal > 0` nog `True` is. Na de 1 is `getal` 0, en dan stopt de loop.
+
+### Na de loop
+
+Wat ná het aftellen komt, springt niet in. Die regel hoort niet bij de loop en komt dus één keer:
+
+```python {7}
 getal = 5
 
 while getal > 0:
@@ -30,11 +77,9 @@ Uitvoer:
 Start!
 ```
 
-`getal -= 1` is een korte schrijfwijze voor `getal = getal - 1`. Hetzelfde geldt voor `+=`, `*=` en `/=`.
-
 ### Drie ingrediënten
 
-Drie ingrediënten die je altijd nodig hebt:
+Een `while`-loop heeft altijd drie ingrediënten, en je hebt ze net alle drie neergezet:
 
 1. Een variabele met een startwaarde (`getal = 5`).
 2. Een voorwaarde achter `while` (`getal > 0`).
@@ -67,6 +112,47 @@ print(getal)
 :::tip[Eerst op papier]
 Speel dit eerst na zonder computer, met een tracetabel op papier: [Jij bent de loop](site:python/docs/projecten/unplugged/jij-bent-de-loop). Je docent kan de hand-out printen.
 :::
+
+### Maak het af
+
+De batterij van je telefoon loopt leeg, tien procent per ronde. Eén ronde staat er al uitgeschreven. Doe zelf de laatste twee stappen: herhaal de ronde zolang de batterij boven de 0 is, en print daarna één keer dat hij leeg is.
+
+Verwachte uitvoer:
+
+```
+Batterij: 40%
+Batterij: 30%
+Batterij: 20%
+Batterij: 10%
+Leeg. Zoek een oplader.
+```
+
+<CodeExercise>{`batterij = 40
+
+print(f"Batterij: {batterij}%")
+batterij -= 10`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Zet `while batterij > 0:` boven de twee regels van de ronde en laat ze allebei inspringen. Vergeet je de update in te springen, dan stopt de loop nooit. De regel over de oplader springt niet in.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+batterij = 40
+
+while batterij > 0:
+    print(f"Batterij: {batterij}%")
+    batterij -= 10
+
+print("Leeg. Zoek een oplader.")
+```
+
+</details>
 
 ## Puzzel
 

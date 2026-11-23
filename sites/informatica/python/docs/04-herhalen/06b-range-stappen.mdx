@@ -11,7 +11,7 @@ Met `range(n)` herhaal je n keer, en je begint altijd bij `0`. Geef je `range` e
 
 ## range(start, stop)
 
-`range()` kan een begin- én eindgetal krijgen:
+Je wilt de getallen 1 tot en met 5. `range()` kan een begin- én een eindgetal krijgen. Het begin is `1`. Het einde doet zelf niet mee, dus neem je één verder dan het laatste getal dat je wilt: `6`.
 
 ```python
 for i in range(1, 6):
@@ -28,21 +28,47 @@ Uitvoer:
 5
 ```
 
-`range(1, 6)` begint bij **1** en stopt vóór **6**. Het einde doet zelf nooit mee, en daar trapt bijna iedereen een keer in.
+`range(1, 6)` begint bij **1** en stopt vóór **6**. Daar trapt bijna iedereen een keer in.
 
-## range(start, stop, step)
+## Aftellen in stappen
 
-Met een derde argument bepaal je de **stapgrootte**:
+### Kies begin en eind
+
+Je wilt aftellen met sprongen van twee: `10`, `8`, `6`, `4`, `2`. Begin met de getallen die je nodig hebt, nog in de gewone volgorde. Het kleinste is `2` en het grootste `10`, dus het einde is `11`:
 
 ```python
-for i in range(0, 11, 2):
+for i in range(2, 11):
     print(i)
 ```
 
 Uitvoer:
 
 ```
-0
+2
+3
+4
+5
+6
+7
+8
+9
+10
+```
+
+Alle getallen van 2 tot en met 10 staan er. De oneven getallen moeten nog weg.
+
+### Kies de stap
+
+Met een derde getal bepaal je de **stapgrootte**. Met stappen van 2 sla je steeds één getal over. De gemarkeerde regel is veranderd:
+
+```python {1}
+for i in range(2, 11, 2):
+    print(i)
+```
+
+Uitvoer:
+
+```
 2
 4
 6
@@ -50,14 +76,26 @@ Uitvoer:
 10
 ```
 
-Met stappen van 2 krijg je de even getallen. Een **negatieve** stap telt achteruit:
+Dat zijn de goede getallen, nog in de verkeerde volgorde.
 
-```python
-for i in range(10, 0, -1):
+### Draai de richting om
+
+Een **negatieve** stap telt achteruit. Begin en eind wisselen dan van plek: je begint bij `10`. Het einde doet weer niet mee, dus neem je het eerste getal dat je níet wilt zien: `0`.
+
+```python {1}
+for i in range(10, 0, -2):
     print(i)
 ```
 
-Dit print `10, 9, 8, ..., 1`. De stopwaarde `0` doet ook hier niet mee.
+Uitvoer:
+
+```
+10
+8
+6
+4
+2
+```
 
 ### Voorspel
 
@@ -76,6 +114,41 @@ for i in range(5, 0):
 
   </Uitleg>
 </Voorspel>
+
+## Maak het af
+
+Dit programma telt de seconden van een wachttijd op: `15`, `20`, `25`, `30`. Het moet aftellen, van `30` naar `15`. Begin, eind en stap staan er al. Doe zelf de laatste stap: draai de richting om.
+
+Verwachte uitvoer:
+
+```
+30
+25
+20
+15
+```
+
+<CodeExercise>{`for seconden in range(15, 31, 5):
+    print(seconden)`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Je begint nu bij `30` en de stap wordt negatief. Het einde is het eerste getal dat je niet wilt zien.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+for seconden in range(30, 10, -5):
+    print(seconden)
+```
+
+Na `15` zou `10` komen, en daar stopt `range`: het einde doet niet mee.
+
+</details>
 
 ## Er gaat iets mis
 

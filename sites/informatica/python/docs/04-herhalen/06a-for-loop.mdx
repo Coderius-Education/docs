@@ -14,7 +14,67 @@ Wil je tien keer hetzelfde doen, bijvoorbeeld de getallen 0 tot en met 9 printen
 - Op [pydle.net](https://pydle.net) staat elke dag een nieuwe puzzel: een raster van gekleurde vakjes dat je namaakt met code. De dubbele for-loop staat er al klaar; jij schrijft de if-statements die bepalen welk vakje welke kleur krijgt, en die ken je al. Kijk eens hoe de loops het hele raster aflopen. De site is Engelstalig en sommige dagen zijn pittig; een puzzel overslaan is prima.
 :::
 
-## Een simpele for-loop
+## Van losse regels naar een loop
+
+### Schrijf het uit
+
+Je kondigt de rondes van een quiz aan. Zonder loop typ je elke regel zelf:
+
+```python
+print("Ronde 0")
+print("Ronde 1")
+print("Ronde 2")
+```
+
+Uitvoer:
+
+```
+Ronde 0
+Ronde 1
+Ronde 2
+```
+
+Voor drie rondes gaat dat nog. Kijk wat er per regel verandert: alleen het getal. De rest staat er drie keer.
+
+### Laat Python tellen
+
+Het getal in elke regel hoef je niet zelf te typen. `range(3)` geeft de getallen `0`, `1` en `2`, en een `for`-loop draait voor elk getal één ronde:
+
+```python
+for i in range(3):
+    print("Ronde")
+```
+
+Uitvoer:
+
+```
+Ronde
+Ronde
+Ronde
+```
+
+De `print` springt vier spaties in, net als onder een `if`. Zo weet Python welke regel bij de loop hoort. Er zijn nu drie rondes, maar het getal staat er nog niet bij.
+
+### Gebruik het getal
+
+Elke ronde zet Python het volgende getal in `i`, de **loop-variabele**. Zet `i` met een f-string in de zin. De gemarkeerde regel is veranderd:
+
+```python {2}
+for i in range(3):
+    print(f"Ronde {i}")
+```
+
+Uitvoer:
+
+```
+Ronde 0
+Ronde 1
+Ronde 2
+```
+
+Dat is dezelfde uitvoer als van de drie losse regels. Voor honderd rondes verander je alleen `3` in `100`.
+
+### Voorspel
 
 ```python
 for i in range(5):
@@ -32,19 +92,48 @@ for i in range(5):
   </Uitleg>
 </Voorspel>
 
-### Hoe het werkt
+## Waar range stopt
 
-- `range(5)` betekent: "geef vijf getallen, beginnend bij 0" — dus `0, 1, 2, 3, 4`.
-- `i` is de **loop-variabele**. Python vult hem elke ronde met het volgende getal.
-- De code binnen de loop springt **4 spaties** in, net als bij `if`.
+`range(5)` geeft vijf getallen en begint bij 0: `0, 1, 2, 3, 4`. Het stopt dus bij **4**, niet bij 5: de stop-waarde is *exclusief*. Wil je tot en met 5 tellen, gebruik dan `range(6)`.
 
-**Let op:** `range(5)` stopt bij **4**, niet bij 5. De stop-waarde is *exclusief*. Wil je tot en met 5 tellen? Gebruik `range(6)`.
-
-De naam `i` is geen wet: je mag de variabele ook `teller` of `getal` noemen. `i` is traditie (van *index*).
+De naam `i` is geen wet: je mag de loop-variabele ook `teller` of `getal` noemen. `i` is traditie (van *index*).
 
 :::tip[Eerst op papier]
 Speel dit eerst na zonder computer, met losgeknipte regels code: [Codestroken leggen](site:python/docs/projecten/unplugged/codestroken). Je docent kan de hand-out printen.
 :::
+
+## Maak het af
+
+Dit programma nummert de stoelen in een zaal. De loop staat er al en draait vier rondes. Doe zelf de laatste stap: zet het nummer van de stoel in de zin.
+
+Verwachte uitvoer:
+
+```
+Stoel 0 is vrij
+Stoel 1 is vrij
+Stoel 2 is vrij
+Stoel 3 is vrij
+```
+
+<CodeExercise>{`for stoel in range(4):
+    print("Stoel is vrij")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+De loop-variabele heet hier `stoel`. Maak van de tekst een f-string en zet `{stoel}` op de plek van het nummer.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+for stoel in range(4):
+    print(f"Stoel {stoel} is vrij")
+```
+
+</details>
 
 ## Er gaat iets mis
 
