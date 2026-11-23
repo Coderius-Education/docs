@@ -299,6 +299,15 @@ describe('play-nakijker', () => {
     // gevorderd, en levels zijn er expert.
     expect(voorstel([...basis, knop].join('\n'), '1')).toBe('gevorderd');
     expect(voorstel([...basis, ...level].join('\n'), '1')).toBe('expert');
+    // Ook één regel clone() geeft op niveau 1 expert: clone() is daar
+    // expert, en een expertconcept telt ook voor gevorderd. Dat volgt uit de
+    // indeling van de docent; het cijfer is hetzelfde als bij gevorderd.
+    // Zonder gevorderd concept bij Python blijft het basis.
+    const kloon = 'kopie = cirkel.clone()';
+    expect(voorstel([...basis, kloon].join('\n'), '1')).toBe('expert');
+    expect(
+      voorstel(['import play', 'c = play.new_circle()', 'k = c.clone()'].join('\n'), '1'),
+    ).toBe('basis');
     expect(leerdoelenJson.gevorderdInGroepen).toEqual({ '2': { play: 2 } });
   });
 

@@ -21,8 +21,9 @@ import leerdoelenJson from '../leerdoelen.json';
 // leerling die de cursus afmaakte zag daardoor de helft van zijn eigen werk
 // als gevorderd staan, en het onderscheid zei niets meer. De moeilijkheden
 // komen nu uit het blad, en verschillen per niveau: wat op niveau 1 nog
-// gevorderd is, is op niveau 3 en 4 basis, en op niveau 3 zijn vijf
-// concepten expert.
+// gevorderd is, is op niveau 3 en 4 basis, en op niveau 1 en 3 zijn vijf
+// concepten expert (niet dezelfde vijf; niveau 4 heeft er geen). De precieze
+// indeling staat in src/leerdoelen.json.
 //
 // Naast de moeilijkheid heeft elk concept een denkvaardigheid van Bloom. Dat
 // is een tweede as, geen extra niveau: de moeilijkheid zegt wélke concepten
