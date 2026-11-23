@@ -80,6 +80,11 @@ kleur dan zijn eigen tegel.
 - De neutralen hebben een zweem bordgroen (tint 165).
 - `--coderius-markeer` is de markeerstift: gemarkeerde coderegels en
   selecties. Alleen als vlak achter tekst, nooit als tekstkleur.
+- Een gemarkeerde coderegel (```` ```python {2-3} ````) heeft de tint van de
+  markeerstift en een balk links in `--coderius-markeer-rand`. In donker is de
+  tint 4%: sterker, en gekleurde code op die regel zakt onder 4,5:1
+  (`prism-thema.test.tsx`). Zeg in de tekst ook in woorden welke regel
+  gemarkeerd is: een schermlezer ziet de markering niet.
 
 ## Letters
 

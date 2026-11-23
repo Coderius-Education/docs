@@ -25,6 +25,14 @@
   color: var(--ifm-color-content);
 }
 
+/* Een gemarkeerde regel code (```python {2-3}) heeft naast de tint een balk
+   links. De tint alleen is in donker zo zwak dat hij wegvalt (sterker maakt
+   gekleurde code onleesbaar), en op papier print een achtergrond niet. */
+.theme-code-block-highlighted-line {
+  border-left: 4px solid var(--coderius-markeer-rand);
+  padding-left: calc(var(--ifm-pre-padding) - 4px);
+}
+
 /* Donkere footer in het bordgroen van de huisstijl, niet Infima's leisteen. */
 .footer--dark:not(#\#):not(#\#) {
   --ifm-footer-background-color: var(--ifm-color-gray-900);

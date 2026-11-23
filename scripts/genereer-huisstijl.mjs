@@ -27,6 +27,11 @@ const { parse } = require('opentype.js');
 const { NEUTRAAL, GRIJS, MARKEER, CURSUSSEN, CURSUS_KLEUREN, LETTERS } = require('./huisstijl');
 const { merk, tegel, xml } = require('./huisstijl/merk');
 
+// De balk links van een gemarkeerde regel code. Op licht is het geel van de
+// markeerstift te licht voor een lijn (1,3:1); dit is hetzelfde amber als
+// `changed` in het lichte codethema, 4,2:1 op een gemarkeerde regel.
+const MARKEER_RAND = '#9a6700';
+
 const lees = (pkg, bestand) => {
   const buf = fs.readFileSync(
     path.join(path.dirname(require.resolve(`${pkg}/package.json`)), 'files', bestand),
@@ -171,6 +176,7 @@ zet(
       ...Object.fromEntries(Object.entries(GRIJS).map(([s, v]) => [`--ifm-color-gray-${s}`, v])),
       '--coderius-markeer': MARKEER,
       '--docusaurus-highlighted-code-line-bg': `color-mix(in srgb, ${MARKEER} 38%, transparent)`,
+      '--coderius-markeer-rand': MARKEER_RAND,
       ...primaryVars(CURSUS_KLEUREN.home.licht),
     }),
     '\n',
@@ -179,7 +185,11 @@ zet(
       '--ifm-background-surface-color': NEUTRAAL.donker.oppervlak,
       '--ifm-color-content': NEUTRAAL.donker.inkt,
       '--ifm-heading-color': NEUTRAAL.donker.inkt,
-      '--docusaurus-highlighted-code-line-bg': `color-mix(in srgb, ${MARKEER} 20%, transparent)`,
+      // Geel maakt een donkere regel lichter, en dan zakt het contrast van
+      // gekleurde code: met 20% stond een getal op 3,0:1. Met 4% blijft elke
+      // kleur boven 4,5:1; de balk links (css/custom.css) draagt de markering.
+      '--docusaurus-highlighted-code-line-bg': `color-mix(in srgb, ${MARKEER} 4%, transparent)`,
+      '--coderius-markeer-rand': MARKEER,
       ...primaryVars(CURSUS_KLEUREN.home.donker),
     }),
   ].join(''),

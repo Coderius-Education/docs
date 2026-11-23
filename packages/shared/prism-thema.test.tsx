@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { readFileSync, readdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
+import { dirname, join } from 'node:path';
 import { render } from '@testing-library/react';
 import { Highlight, type PrismTheme, themes } from 'prism-react-renderer';
 import { describe, expect, it } from 'vitest';
@@ -151,5 +152,96 @@ describe('de kleuren van Python-code in licht en donker', () => {
     expect(
       contrast(GETAL_KLEUR, hex(donker.plain.backgroundColor as string)),
     ).toBeGreaterThanOrEqual(4.5);
+  });
+});
+
+// Een gemarkeerde regel (```python {2-3}) krijgt de tint van de markeerstift
+// achter de code. Geel maakt een donkere regel lichter: met 20% tint stond
+// een getal in donker op 3,0:1 en een sleutelwoord op 3,4:1, terwijl ze op een
+// gewone regel boven 4,5:1 staan. Niemand zag dat, want tot de proef in het
+// hoofdstuk Herhalen van python gebruikte geen les een markering. Wat op een
+// gewone regel goed leesbaar is, moet dat op een gemarkeerde regel ook zijn;
+// de markering zelf draagt de balk links.
+describe('code op een gemarkeerde regel blijft leesbaar', () => {
+  // De test draait in jsdom, waar import.meta.url geen bestand is.
+  const css = (naam: string) =>
+    readFileSync(join(dirname(require.resolve('./prism-thema')), 'css', naam), 'utf8');
+  const huisstijl = css('huisstijl.css');
+  const opmaak = css('custom.css');
+  const tinten = [
+    ...huisstijl.matchAll(
+      /--docusaurus-highlighted-code-line-bg: color-mix\(in srgb, (#[0-9a-f]{6}) (\d+)%, transparent\)/g,
+    ),
+  ].map((m) => ({ kleur: m[1], deel: Number(m[2]) / 100 }));
+  const randen = [...huisstijl.matchAll(/--coderius-markeer-rand: (#[0-9a-f]{6})/g)].map(
+    (m) => m[1],
+  );
+
+  /** De kleur van een regel met de tint eroverheen. */
+  const gemarkeerd = (grond: string, tint: { kleur: string; deel: number }) =>
+    `#${[1, 3, 5]
+      .map((i) => {
+        const van = (h: string) => Number.parseInt(h.slice(i, i + 2), 16);
+        return Math.round(tint.deel * van(tint.kleur) + (1 - tint.deel) * van(grond))
+          .toString(16)
+          .padStart(2, '0');
+      })
+      .join('')}`;
+
+  const standen = [
+    { naam: 'licht', thema: licht },
+    { naam: 'donker', thema: donker },
+  ];
+
+  it('de huisstijl heeft een tint en een balk voor licht en voor donker', () => {
+    expect(tinten.length).toBe(2);
+    expect(randen.length).toBe(2);
+  });
+
+  it.each(standen.map((s, i) => ({ ...s, tint: tinten[i] })))(
+    '$naam: Python die op een gewone regel 4,5:1 haalt, haalt dat ook op een gemarkeerde',
+    ({ thema, tint }) => {
+      const grond = hex(thema.plain.backgroundColor as string);
+      const regel = gemarkeerd(grond, tint);
+      const code = 'for i in range(3):\n    print("hoi", 5, True)';
+      const kleuren = ['for', 'in', 'range', 'print', '3', '"hoi"', 'True', 'i']
+        .map((stuk) => kleurVan(thema, code, stuk) ?? (thema.plain.color as string))
+        .map(hex);
+      const leesbaar = [...new Set(kleuren)].filter((k) => contrast(k, grond) >= 4.5);
+      expect(leesbaar.length).toBeGreaterThanOrEqual(2);
+      expect(leesbaar.filter((k) => contrast(k, regel) < 4.5)).toEqual([]);
+    },
+  );
+
+  it.each(standen.map((s, i) => ({ ...s, tint: tinten[i] })))(
+    '$naam: geen kleur van het thema verliest op een gemarkeerde regel meer dan een tiende',
+    ({ thema, tint }) => {
+      // Een paar kleuren staan op een gewone regel al op de grens (4,5 tot
+      // 4,6:1); elke tint kost die iets. Met 20% tint verloor in donker elke
+      // kleur ruim veertig procent.
+      const grond = hex(thema.plain.backgroundColor as string);
+      const regel = gemarkeerd(grond, tint);
+      const kleuren = [thema.plain.color, ...thema.styles.map((s) => s.style.color)]
+        .filter((k): k is string => typeof k === 'string')
+        .map(hex);
+      expect(kleuren.length).toBeGreaterThan(5);
+      expect(
+        [...new Set(kleuren)].filter((k) => contrast(k, regel) < 0.9 * contrast(k, grond)),
+      ).toEqual([]);
+    },
+  );
+
+  it.each(standen.map((s, i) => ({ ...s, tint: tinten[i], rand: randen[i] })))(
+    '$naam: de balk links is te zien op de gemarkeerde regel (3:1)',
+    ({ thema, tint, rand }) => {
+      const regel = gemarkeerd(hex(thema.plain.backgroundColor as string), tint);
+      expect(contrast(rand, regel)).toBeGreaterThanOrEqual(3);
+    },
+  );
+
+  it('de balk is een rand en geen schaduw: een rand komt ook op papier', () => {
+    const blok = /\.theme-code-block-highlighted-line \{([^}]*)\}/.exec(opmaak)?.[1] ?? '';
+    expect(blok).toMatch(/border-left: 4px solid var\(--coderius-markeer-rand\)/);
+    expect(blok).toMatch(/padding-left: calc\(var\(--ifm-pre-padding\) - 4px\)/);
   });
 });

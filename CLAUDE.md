@@ -385,6 +385,19 @@ van CodeMirror in licht en oneDark in donker. `prism-thema.test.tsx` en
 nieuwe editor gaat langs dezelfde tests. De IDE (Monaco, `vs` en `vs-dark`) en
 web (één donker thema) hadden het verschil niet.
 
+**Een gemarkeerde regel code** (```` ```python {2-3} ````, voor het eerst
+gebruikt in de proef met voorbeelden in stappen, hoofdstuk Herhalen van
+python) heeft de tint van de markeerstift en een balk links
+(`.theme-code-block-highlighted-line` in `css/custom.css`, kleuren uit de
+huisstijl). In donker is de tint 4%: geel maakt een donkere regel lichter, en
+met de 20% die er stond zakte een getal op die regel naar 3,0:1 en een
+sleutelwoord naar 3,4:1. De balk draagt daar de markering; hij is een rand en
+geen schaduw, want een rand komt ook op papier. `prism-thema.test.tsx` eist dat
+Python die op een gewone regel 4,5:1 haalt dat op een gemarkeerde ook doet,
+dat geen kleur meer dan een tiende verliest, en dat de balk 3:1 haalt. Een
+schermlezer ziet de markering niet: de tekst boven het blok zegt ook in
+woorden welke regel nieuw is (`uitgewerkt.test.ts` van python).
+
 ## Les-tabbladen
 
 De opdrachtgever wil dat een leerling in een les niet meer hoeft te scrollen.
