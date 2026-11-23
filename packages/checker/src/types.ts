@@ -57,6 +57,15 @@ export type ConceptDetect =
        */
       minDelen?: number;
       /**
+       * De onderdelen zijn soorten die de leerling zelf vond (de nieuwe nodes
+       * van Godot), en het aantal van het concept is het aantal soorten, niet
+       * het aantal treffers. Een CanvasModulate in twee scènes stond er eerst
+       * als "(2×)", en dat las als twee nieuwe nodes. De naam blijft zoals hij
+       * in het bestand staat (`CanvasModulate`, niet `canvasmodulate`). Alleen
+       * met `delen: true`.
+       */
+      soorten?: boolean;
+      /**
        * `minCount` en `minDelen` moeten in één bestand gehaald worden, niet
        * over alle bestanden samen. Drie scripts met 1, 2 en 2 sensoren zijn
        * geen robot met vier sensoren.

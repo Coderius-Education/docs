@@ -670,7 +670,39 @@ describe('godotConfig — patronen die er net naast zitten', () => {
     // Drie soorten, ook verspreid over scènes, en een bekende node telt niet.
     const drie = meer('Marker2D', 'Path2D', 'Timer', 'RayCast2D');
     expect(drie.used).toBe(true);
-    expect(drie.delen).toEqual(['marker2d', 'path2d', 'raycast2d']);
+    expect(drie.delen).toEqual(['Marker2D', 'Path2D', 'RayCast2D']);
+  });
+
+  it('telt een CanvasModulate in twee scènes als één nieuwe node', () => {
+    // Bij een leerling stond er "nieuwe nodes (2×)": de nakijker telde de
+    // treffers, en een CanvasModulate in level 1 en level 2 las zo als twee
+    // nieuwe nodes. De rij telt nu soorten en noemt ze.
+    const canvas = (naam: string) => `[node name="${naam}" type="CanvasModulate" parent="."]`;
+    const rapport = analyze(
+      files({
+        'level1.tscn': `[node name="Level1" type="Node2D"]\n\n${canvas('Donker')}`,
+        'level2.tscn': `[node name="Level2" type="Node2D"]\n\n${canvas('Donker')}\n\n${canvas('Rood')}`,
+      }),
+      godotConfig,
+    );
+    const een = score(rapport, '2d-nieuwe-nodes');
+    // Drie keer een CanvasModulate, in twee scènes: één soort, en dus geen
+    // "(3×)" achter de rij. Node2D kent de cursus en telt niet.
+    expect(een).toMatchObject({ used: true, count: 1, delen: ['CanvasModulate'] });
+    // Een klik op de rij toont nog steeds alle drie de plekken.
+    expect(een.plekken).toHaveLength(3);
+    const meer = score(rapport, '2d-nieuwe-nodes-meer');
+    expect(meer.used).toBe(false);
+    expect(meer.delen).toEqual(['CanvasModulate']);
+    // Met een tweede soort erbij telt de rij twee.
+    const twee = score(
+      analyze(
+        files({ 'a.tscn': `${canvas('A')}\n[node name="M" type="Marker2D" parent="."]` }),
+        godotConfig,
+      ),
+      '2d-nieuwe-nodes',
+    );
+    expect(twee).toMatchObject({ used: true, count: 2, delen: ['CanvasModulate', 'Marker2D'] });
   });
 
   it('ziet een startscherm alleen in een scène met een Control bovenaan', () => {

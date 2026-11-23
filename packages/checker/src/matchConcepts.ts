@@ -176,6 +176,7 @@ export function analyze(
       return { id: c.id, count: used ? 1 : 0, used, plekken };
     }
     const { delen, perBestand } = c.detect;
+    const soorten = c.detect.soorten === true && delen === true;
     const bron = c.detect.metCommentaar ? ruwByKind : textByKind;
     const kinds = c.detect.in ?? config.textKinds;
     const patroon = withGlobal(c.detect.pattern);
@@ -184,11 +185,12 @@ export function analyze(
     // De onderdelen van het bestand met de meeste, voor `perBestand`.
     let meesteDelen = 0;
     const deelVan = (m: RegExpMatchArray): string | undefined => {
-      if (delen === true)
-        return m
-          .slice(1)
-          .find((g) => g !== undefined && g !== '')
-          ?.toLowerCase();
+      if (delen === true) {
+        const groep = m.slice(1).find((g) => g !== undefined && g !== '');
+        // Een soort (een node van Godot) houdt zijn hoofdletters; een tag of
+        // een event is in elke schrijfwijze hetzelfde onderdeel.
+        return soorten ? groep : groep?.toLowerCase();
+      }
       if (!delen) return undefined;
       const i = delen.findIndex((_, j) => m.groups?.[`d${j}`] !== undefined);
       return i === -1 ? undefined : delen[i];
@@ -231,9 +233,12 @@ export function analyze(
     }
     const genoegDelen = (perBestand ? meesteDelen : gevonden.size) >= (c.detect.minDelen ?? 0);
     const used = (perBestand ? meesteInEen : count) >= minimum && genoegDelen;
+    // Bij soorten is het aantal dat het rapport noemt het aantal soorten: twee
+    // keer dezelfde node is één nieuwe node. De plekken blijven alle treffers.
+    const aantal = soorten ? gevonden.size : count;
     const match: ConceptMatch = metPlekken
-      ? { id: c.id, count, used, plekken }
-      : { id: c.id, count, used };
+      ? { id: c.id, count: aantal, used, plekken }
+      : { id: c.id, count: aantal, used };
     return metDelen(match);
   };
 

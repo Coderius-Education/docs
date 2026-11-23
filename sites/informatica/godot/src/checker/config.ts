@@ -380,10 +380,15 @@ const DETECTIE: Record<string, ConceptDetect> = {
       /\[node name="(?![^"]*(?:hud|pauze|pause))[^"]*" type="(?:Control|CanvasLayer)"(?![^\]]*\bparent=)[^\]]*\][\s\S]*?\[node [^\]]*type="(?:Button|TextureButton)"/gi,
     in: ['tscn'],
   },
+  // Het rapport noemt de soorten en telt die, niet de treffers: een
+  // CanvasModulate in twee levels stond er eerst als "(2×)", en dat las als
+  // twee nieuwe nodes.
   '2d-nieuwe-nodes': {
     type: 'regex',
-    pattern: new RegExp(`\\[node [^\\]]*type="(?!(?:${BEKENDE_NODES.join('|')})")\\w+"`, 'g'),
+    pattern: new RegExp(`\\[node [^\\]]*type="(?!(?:${BEKENDE_NODES.join('|')})")(\\w+)"`, 'g'),
     in: ['tscn'],
+    delen: true,
+    soorten: true,
   },
   // Dezelfde nodes, maar dan drie verschillende soorten: op niveau 3 en 4 is
   // één nieuwe node de basis, en drie ontdekken gevorderd. De namen van de
@@ -397,6 +402,7 @@ const DETECTIE: Record<string, ConceptDetect> = {
     ),
     in: ['tscn'],
     delen: true,
+    soorten: true,
     minDelen: 3,
   },
 

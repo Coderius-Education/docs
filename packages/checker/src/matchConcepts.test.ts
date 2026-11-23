@@ -361,6 +361,45 @@ describe('analyze — onderdelen en extra concepten', () => {
     expect(matchOf(drieVerschillende, 'nodes')).toMatchObject({ used: true, count: 3 });
   });
 
+  it('telt met soorten de soorten, en noemt ze zoals ze in het bestand staan', () => {
+    // Een leerling had een CanvasModulate in twee levels: het rapport zei
+    // "(2×)", en dat las als twee nieuwe nodes. Het aantal is nu het aantal
+    // soorten; de plekken zijn nog steeds alle treffers.
+    const detect = {
+      type: 'regex' as const,
+      pattern: /type="(\w+)"/g,
+      delen: true as const,
+      soorten: true,
+    };
+    const tweeKeer = analyze(
+      projectFiles(
+        file('level1.html', 'html', 'type="CanvasModulate"'),
+        file('level2.html', 'html', 'type="CanvasModulate"'),
+      ),
+      config([concept('nodes', detect)]),
+    );
+    expect(matchOf(tweeKeer, 'nodes')).toMatchObject({
+      used: true,
+      count: 1,
+      delen: ['CanvasModulate'],
+    });
+    expect(matchOf(tweeKeer, 'nodes')?.plekken).toHaveLength(2);
+    const tweeSoorten = analyze(
+      projectFiles(file('a.html', 'html', 'type="Marker2D" type="CanvasModulate" type="Marker2D"')),
+      config([concept('nodes', detect)]),
+    );
+    expect(matchOf(tweeSoorten, 'nodes')).toMatchObject({
+      count: 2,
+      delen: ['CanvasModulate', 'Marker2D'],
+    });
+    // Zonder soorten verandert er niets: treffers, en kleine letters.
+    const zonder = analyze(
+      projectFiles(file('a.html', 'html', 'type="Marker2D" type="Marker2D"')),
+      config([concept('nodes', { ...detect, soorten: undefined })]),
+    );
+    expect(matchOf(zonder, 'nodes')).toMatchObject({ count: 2, delen: ['marker2d'] });
+  });
+
   it('neemt met delen: true de eerste groep als onderdeel', () => {
     const files = projectFiles(file('a.css', 'css', 'p { color: red; }\nh1, h2 { margin: 0; }'));
     const report = analyze(

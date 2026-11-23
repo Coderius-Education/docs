@@ -229,6 +229,22 @@ describe('validateCheckerConfig — tracks en minCount', () => {
     expect(problemen).toContain("Concept 'c' heeft een minCount die geen geheel getal ≥ 1 is.");
   });
 
+  it('klaagt over soorten zonder delen: true', () => {
+    // Soorten zijn de namen die het patroon vangt; een lijst vaste namen of
+    // geen onderdelen heeft er geen.
+    expect(metConcept(concept('basis', { type: 'regex', pattern: /x/g, soorten: true }))).toContain(
+      "Concept 'c' heeft soorten zonder delen: true.",
+    );
+    expect(
+      metConcept(
+        concept('basis', { type: 'regex', pattern: /(?<d0>x)/g, delen: ['x'], soorten: true }),
+      ),
+    ).toContain("Concept 'c' heeft soorten zonder delen: true.");
+    expect(
+      metConcept(concept('basis', { type: 'regex', pattern: /(x)/g, delen: true, soorten: true })),
+    ).toEqual([]);
+  });
+
   it('klaagt over een minDelen zonder delen, of die geen geheel getal ≥ 1 is', () => {
     expect(metConcept(concept('basis', { type: 'regex', pattern: /x/g, minDelen: 3 }))).toContain(
       "Concept 'c' heeft minDelen zonder delen.",
