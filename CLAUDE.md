@@ -1717,7 +1717,9 @@ heet), een reservekopie (`… - kopie`, `backup`), een bibliotheek
 (`bibliotheek` in de config: addons van Godot, `lib/` van robotica,
 `controleer.py` van fullstack) en commentaar (`commentaar`: per
 bestandssoort de taal, `packages/checker/src/commentaar.ts`). Verder kent de
-config `perBestand` (een drempel in één bestand), `metCommentaar` (een concept
+config `perBestand` (een drempel in één bestand), `soorten` (het aantal achter
+een concept is het aantal verschillende onderdelen, met hun naam zoals in het
+bestand: de nieuwe nodes van Godot), `metCommentaar` (een concept
 over commentaar) en `detectieVoor` (een herkenning die van het project
 afhangt, zoals de namen van de autoloads).
 

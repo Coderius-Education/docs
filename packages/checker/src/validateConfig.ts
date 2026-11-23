@@ -157,6 +157,10 @@ export function validateCheckerConfig(config: CheckerConfig): string[] {
       if (minDelen !== undefined && !delen) {
         problems.push(`Concept '${concept.id}' heeft minDelen zonder delen.`);
       }
+      // Soorten zijn de namen die het patroon zelf vangt.
+      if (concept.detect.soorten && delen !== true) {
+        problems.push(`Concept '${concept.id}' heeft soorten zonder delen: true.`);
+      }
     }
   }
 

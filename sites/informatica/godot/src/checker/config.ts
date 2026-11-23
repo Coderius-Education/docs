@@ -21,8 +21,9 @@ import leerdoelenJson from '../leerdoelen.json';
 // leerling die de cursus afmaakte zag daardoor de helft van zijn eigen werk
 // als gevorderd staan, en het onderscheid zei niets meer. De moeilijkheden
 // komen nu uit het blad, en verschillen per niveau: wat op niveau 1 nog
-// gevorderd is, is op niveau 3 en 4 basis, en op niveau 3 zijn vijf
-// concepten expert.
+// gevorderd is, is op niveau 3 en 4 basis, en op niveau 1 en 3 zijn vijf
+// concepten expert (niet dezelfde vijf; niveau 4 heeft er geen). De precieze
+// indeling staat in src/leerdoelen.json.
 //
 // Naast de moeilijkheid heeft elk concept een denkvaardigheid van Bloom. Dat
 // is een tweede as, geen extra niveau: de moeilijkheid zegt wélke concepten
@@ -379,13 +380,19 @@ const DETECTIE: Record<string, ConceptDetect> = {
       /\[node name="(?![^"]*(?:hud|pauze|pause))[^"]*" type="(?:Control|CanvasLayer)"(?![^\]]*\bparent=)[^\]]*\][\s\S]*?\[node [^\]]*type="(?:Button|TextureButton)"/gi,
     in: ['tscn'],
   },
+  // Het rapport noemt de soorten en telt die, niet de treffers: een
+  // CanvasModulate in twee levels stond er eerst als "(2×)", en dat las als
+  // twee nieuwe nodes.
   '2d-nieuwe-nodes': {
     type: 'regex',
-    pattern: new RegExp(`\\[node [^\\]]*type="(?!(?:${BEKENDE_NODES.join('|')})")\\w+"`, 'g'),
+    pattern: new RegExp(`\\[node [^\\]]*type="(?!(?:${BEKENDE_NODES.join('|')})")(\\w+)"`, 'g'),
     in: ['tscn'],
+    delen: true,
+    soorten: true,
   },
   // Dezelfde nodes, maar dan drie verschillende soorten: op niveau 3 en 4 is
-  // één nieuwe node de basis, en meer ontdekken gevorderd. Drie keer een
+  // één nieuwe node de basis, en drie ontdekken gevorderd. De namen van de
+  // twee rijen noemen dat aantal (1 en 3). Drie keer een
   // Marker2D is één soort; daarom minDelen en niet minCount.
   '2d-nieuwe-nodes-meer': {
     type: 'regex',
@@ -395,6 +402,7 @@ const DETECTIE: Record<string, ConceptDetect> = {
     ),
     in: ['tscn'],
     delen: true,
+    soorten: true,
     minDelen: 3,
   },
 
@@ -435,9 +443,11 @@ const DETECTIE: Record<string, ConceptDetect> = {
   ),
 
   // --- GDScript: verder met code ---
-  // "Nuttig gebruik" is een oordeel dat een regex niet kan vellen. Wat hij
-  // wél kan: het verschil tussen één keer toevallig en er echt mee werken.
-  // Daarom een drempel van twee op de concepten waar de tabel "nuttig" zegt.
+  // Of iets nuttig gebruikt is, kan een regex niet zien. Wat hij wél kan: het
+  // verschil tussen één keer toevallig en er echt mee werken. Daarom een
+  // drempel van twee bij globals, loops en eigen functies. De tabel zei hier
+  // eerst "nuttig gebruik"; die woorden zijn in november 2026 uit de namen
+  // gehaald, en de herkenning is gebleven.
   'gd-globals': gd(/\bGlobal\.\w+/g, 2),
   'gd-instantiate': gd(/\.instantiate\s*\(/g),
   'gd-groups': gd(

@@ -12,10 +12,10 @@ import leerdoelenJson from '../leerdoelen.json';
 //
 // De groepen heten naar de hoofdstukken (1 Vormen tot en met 10 Pygame-ce),
 // de Python-concepten naar hun onderwerp. Op niveau 1 zijn de hoofdstukken 1
-// tot en met 4 basis (clone, distance_to en de fysica-instellingen
-// gevorderd), en tijd, opslaan, een startmenu met iets van UI (één rij) en
-// levels gevorderd; het bestand database.json en pygame-ce tellen daar niet
-// mee, dus niveau 1 heeft geen expert. Op niveau 2 is alles uit 1 tot en met
+// tot en met 4 basis (distance_to en de fysica-instellingen gevorderd,
+// clone() expert), tijd, opslaan en een startmenu met iets van UI (één rij)
+// gevorderd, en levels expert; het bestand database.json en pygame-ce tellen
+// daar niet mee. Op niveau 2 is alles uit 1 tot en met
 // 6 basis; het startmenu, levels, een tweede module en een simpel spel in
 // pygame-ce zijn gevorderd, en pymunk is expert. Gevorderd vraagt daar een
 // gevorderd concept in twee van de hoofdstukken 7, 9 en 10

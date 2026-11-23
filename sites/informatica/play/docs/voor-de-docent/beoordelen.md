@@ -10,7 +10,8 @@ Op [Leerdoelen](site:play/leerdoelen) staat per niveau op welke concepten je beo
 ## Niveau 1
 
 - De hoofdstukken 1 tot en met 4 zijn de basis. `repeat_forever` hoort daar ook bij.
-- Gevorderd zijn clone, distance_to en de fysica-instellingen, en daarnaast de timer, de database, levels en een startmenu met iets van UI. Voor dat laatste is één element genoeg: een knop of bijvoorbeeld een schuifbalk.
+- Gevorderd zijn `distance_to()` en de fysica-instellingen, en daarnaast de timer, de database en een startmenu met iets van UI. Voor dat laatste is één element genoeg: een knop of bijvoorbeeld een schuifbalk.
+- Expert zijn `clone()` en levels: instellingen per level in een lijst, een level opruimen met `remove()` en een functie die een level opbouwt.
 - Het bestand `database.json` telt op dit niveau niet mee.
 
 ## Niveau 2
