@@ -62,7 +62,7 @@ describe('accounts in de basis', () => {
       ['FastAPI/accounts/inloggen', 'wachtwoord: str = Form(...)'],
     ]) {
       const stand = tekst(id).match(
-        /<summary>Zo ziet je `main\.py` er nu uit<\/summary>[\s\S]*?```python\n([\s\S]*?)```/,
+        /<summary>Zo ziet je `main\.py` er nu uit<\/summary>[\s\S]*?```python[^\n]*\n([\s\S]*?)```/,
       )?.[1];
       expect(stand, id).toContain('app = FastAPI()');
       expect(stand, id).toContain(kop);

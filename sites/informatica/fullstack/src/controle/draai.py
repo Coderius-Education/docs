@@ -62,7 +62,7 @@ from uitbreidingen import STAPPEN  # noqa: E402
 
 SITE = HIER.parent.parent
 SCRIPT = SITE / "static" / "controleer.py"
-STAND = re.compile(r"<summary>Zo ziet je `main\.py` er nu uit</summary>[\s\S]*?```python\n([\s\S]*?)```")
+STAND = re.compile(r"<summary>Zo ziet je `main\.py` er nu uit</summary>[\s\S]*?```python[^\n]*\n([\s\S]*?)```")
 BESTAND = re.compile(
     r'<Bestand pad="([^"]+)" />\s*\n(?:\{/\*[^\n]*\*/\}\s*\n)?```(\w+)[^\n]*\n([\s\S]*?)```'
 )

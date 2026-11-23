@@ -153,7 +153,7 @@ describe('de stand van main.py per les', () => {
   const basis = plat((sidebars.apiSidebar as unknown as Item[]).slice(0, eersteUitbreiding));
   const stand = (tekst: string) =>
     tekst.match(
-      /<summary>Zo ziet je `main\.py` er nu uit<\/summary>[\s\S]*?```python\n([\s\S]*?)```/,
+      /<summary>Zo ziet je `main\.py` er nu uit<\/summary>[\s\S]*?```python[^\n]*\n([\s\S]*?)```/,
     )?.[1];
 
   it('elke basisles met een endpoint heeft het hele main.py', () => {

@@ -44,8 +44,12 @@ function items(tekst: string): Item[] {
   return uit;
 }
 
+// Ook een fence met iets achter de taal: een stand markeert wat er nieuw is
+// (```python {3,71-73}).
 const codeblokken = (tekst: string, taal = '[^\\n]*') =>
-  [...tekst.matchAll(new RegExp(`\`\`\`${taal}\\n([\\s\\S]*?)\`\`\``, 'g'))].map((m) => m[1]);
+  [...tekst.matchAll(new RegExp(`\`\`\`${taal}[^\\n]*\\n([\\s\\S]*?)\`\`\``, 'g'))].map(
+    (m) => m[1],
+  );
 
 const cheatItems = items(CHEATSHEET);
 const foutItems = items(FOUTEN);

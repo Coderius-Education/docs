@@ -75,7 +75,9 @@ Je karakter zakt met een constante, hele lage snelheid naar beneden in plaats va
 
 ## Je script tot nu toe
 
-```gdscript
+De gemarkeerde regels zijn nieuw of veranderd in deze les.
+
+```gdscript {4}
 extends CharacterBody2D
 
 func _physics_process(delta: float) -> void:

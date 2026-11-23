@@ -25,7 +25,8 @@ const tekst = (id: string) => {
     } catch {}
   return '';
 };
-const STAND = /<summary>Zo ziet je `main\.py` er nu uit<\/summary>[\s\S]*?```python\n([\s\S]*?)```/;
+const STAND =
+  /<summary>Zo ziet je `main\.py` er nu uit<\/summary>[\s\S]*?```python[^\n]*\n([\s\S]*?)```/;
 const hoofdtekst = (bron: string) =>
   bron.split(/\n## Opdrachten\n/)[0].replace(/<details>[\s\S]*?<\/details>/g, '');
 

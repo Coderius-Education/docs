@@ -41,7 +41,8 @@ const basis = api
   .filter((i): i is Exclude<Item, string> => typeof i !== 'string');
 
 const lesTekst = (id: string) => readFileSync(join(DOCS, `${id}.mdx`), 'utf8');
-const STAND = /<summary>Zo ziet je `main\.py` er nu uit<\/summary>[\s\S]*?```python\n([\s\S]*?)```/;
+const STAND =
+  /<summary>Zo ziet je `main\.py` er nu uit<\/summary>[\s\S]*?```python[^\n]*\n([\s\S]*?)```/;
 
 // Alle categorieën van de FastAPI-route: de basis, de uitbreidingen en Afronden.
 const categorieen = api.filter((i): i is Exclude<Item, string> => typeof i !== 'string');

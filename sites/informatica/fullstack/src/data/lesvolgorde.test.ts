@@ -239,7 +239,7 @@ describe('de dieren en /zoek in de standen van main.py', () => {
   // opslaan. Een later endpoint komt eronder.
   const stand = (id: string) =>
     tekst(id).match(
-      /<summary>Zo ziet je `main\.py` er nu uit<\/summary>[\s\S]*?```python\n([\s\S]*?)```/,
+      /<summary>Zo ziet je `main\.py` er nu uit<\/summary>[\s\S]*?```python[^\n]*\n([\s\S]*?)```/,
     )?.[1];
   const metStand = lessen.filter((id) => stand(id) !== undefined);
   const plek = (id: string) => lessen.indexOf(id);

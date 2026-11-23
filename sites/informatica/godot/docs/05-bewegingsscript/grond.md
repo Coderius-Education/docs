@@ -91,7 +91,9 @@ Haal de `print` daarna weer weg. Je code zegt nu wat je bedoelt: trek hem alleen
 
 ## Je script tot nu toe
 
-```gdscript
+De gemarkeerde regels zijn nieuw of veranderd in deze les.
+
+```gdscript {4-5}
 extends CharacterBody2D
 
 func _physics_process(delta: float) -> void:

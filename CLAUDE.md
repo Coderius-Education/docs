@@ -1596,6 +1596,47 @@ onder het veld.
 verwijzingen per scherm, en dat een scherm dat de speeltuin noemt er een
 heeft.
 
+## Een voorbeeld in stappen
+
+Een uitleg die het programma in één keer toont, laat het resultaat zien en
+niet hoe je erop komt (vakdidactiek, Eerst een uitgewerkt voorbeeld). Na een
+proef in het hoofdstuk Herhalen van python (november 2026) geldt de vorm
+hieronder waar een programma in de les groeit. Per cursus is het anders, want
+de lessen zijn anders gebouwd:
+
+- **python** (Beslissen, Herhalen, Functies 8 tot 9b, Data): de hele vorm.
+  Het voorbeeld groeit in twee tot vier stappen (`###`, de kop in gebiedende
+  wijs en los van het verhaal: "Schrijf de loop", "Herken de ronde"), elke
+  stap toont de code tot dan toe met zijn uitvoer en wat er nog niet klopt,
+  de voorspelvraag komt erna en gaat over een geval dat het voorbeeld niet
+  voorzegt, en `## Maak het af` is een nieuw programma waarin één of twee
+  stappen open zijn. De regels en wat een review eraan veranderde, staan in
+  `sites/informatica/python/CLAUDE.md`.
+- **fullstack en Godot**: alleen de markering, in het hele bestand na de les
+  (het tabblad `main.py`, Je script tot nu toe). Daar bouwt de leerling zelf
+  mee in zijn eigen editor; een stap met een oefenveld is er niet.
+
+**Wat nieuw of veranderd is, is gemarkeerd, en de tekst zegt het ook.** De
+fence heeft een metastring (```` ```python {2-3} ````), en de alinea erboven
+noemt de markering ("De gemarkeerde regels zijn nieuw: …"): een markering is
+een kleur, en op papier en voor een schermlezer is hij er niet (zie Kleuren
+van code voor de tint en de balk). **De markering is uit te rekenen**:
+`nieuwSinds(vorige, nu)` in `packages/shared/nieuw-sinds.js` geeft de regels
+die er sinds het blok ervoor bij kwamen of veranderden (een langste
+gemeenschappelijke reeks; van gelijke regels telt de bovenste als nieuw, een
+lege regel nooit), `uitMeta` leest een metastring en `alsMeta` schrijft hem.
+Elke cursus heeft een test die de markering daarmee vergelijkt
+(`uitgewerkt.test.ts` van python, `stand-markering.test.ts` van fullstack,
+`script-markering.test.ts` van Godot); die van fullstack en Godot schrijven
+hem ook, met `SCHRIJF_MARKERING=1`. Een markering met de hand klopt niet meer
+zodra het blok ervoor verandert.
+
+**Wie een codeblok leest, leest de fence met wat erachter staat**
+(```` ```python[^\n]*\n ````). Zeven tests en een script van fullstack lazen
+```` ```python ```` met direct een regeleinde, en vonden een gemarkeerde stand
+niet meer. De blokrunners en `packages/shared/codeblokken.js` lazen de
+metastring al mee.
+
 ## Code in MDX-expressies
 
 MDX eet van elke vervolgregel in een `{`…`}`-expressie tot twee spaties op.
