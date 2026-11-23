@@ -1390,6 +1390,44 @@ describe('groepeer', () => {
         t.attributes?.find((a) => a.name === 'werkvorm')?.value,
       ]);
 
+    it('Maak het af als eigen tabblad is een opdracht, als stap van de uitleg niet', () => {
+      // De compleet-pagina van een algoritme: het programma staat er op één
+      // stap na. Het tabblad had het icoon van uitleg.
+      const compleet = groepeer([
+        titel,
+        kop(2, 'Alles samen'),
+        alinea('Het hele algoritme.'),
+        kop(2, 'Onderzoek'),
+        alinea('Probeer een andere lijst.'),
+        kop(2, 'Maak het af'),
+        alinea('Eén stap is nog open: vergelijken. Doe die zelf.'),
+        veld('def zoek(lijst, doel):\n    return -1'),
+      ]);
+      expect(vormen(compleet)).toEqual([
+        ['Alles samen', 'uitleg'],
+        ['Onderzoek', 'onderzoeken'],
+        ['Maak het af', 'aanpassen'],
+      ]);
+      // In de python-cursus staat hij tussen de uitleg: daar blijft hij een
+      // stap van het tabblad Uitleg, en de uitleg erna hoort er nog bij.
+      const les = groepeer([
+        titel,
+        kop(2, 'Een loop stoppen'),
+        alinea('Uitleg.'),
+        kop(2, 'Maak het af'),
+        alinea('Eén stap is nog open: break. Doe die zelf.'),
+        veld('for i in range(3):\n    print(i)'),
+        kop(2, 'Wat break stopt'),
+        alinea('Meer uitleg.'),
+        kop(2, 'Opdracht 6d.1: Zoek'),
+        veld('# Schrijf hier je code'),
+      ]);
+      expect(vormen(les)).toEqual([
+        ['Uitleg', 'uitleg'],
+        ['Opdracht 6d.1', 'maken'],
+      ]);
+    });
+
     it('Er gaat iets mis staat na de opdrachten, ook als de bron hem ervoor heeft', () => {
       // In 44 lessen van de Python-cursus stond hij tussen de uitleg en de
       // eerste opdracht: de knop Volgende bracht een leerling langs fouten

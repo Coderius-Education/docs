@@ -1328,6 +1328,13 @@ const heeftCodeVraag = (node) =>
  * @param {string} vorm de werkvorm naar de kop
  */
 function vormNaarStartcode(tab, vorm) {
+  // Maak het af als eigen tabblad (de compleet-pagina van een algoritme): het
+  // programma staat er op één stap na, en die schrijft de leerling in het
+  // veld. Aan de kop is dat geen opdracht: in de python-cursus is Maak het af
+  // een stap van de uitleg, en als opdracht zou hij daar niet meer bij de
+  // uitleg vooraan horen. Hier is de uitleg al samengevoegd.
+  if (vorm === 'uitleg' && eigenschap(tab, 'titel') === 'Maak het af' && vindVeld(tab))
+    return 'aanpassen';
   if (!OPDRACHT.includes(vorm) || !/^Opdracht\b/.test(eigenschap(tab, 'titel'))) return vorm;
   // Code met "**Vraag:** …" ernaast en geen veld: de leerling schrijft niets,
   // hij voorspelt (Code beter begrijpen bij robotica: acht opdrachten met het

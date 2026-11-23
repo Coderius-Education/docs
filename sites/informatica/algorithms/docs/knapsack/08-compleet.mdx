@@ -211,3 +211,73 @@ groot genoeg wordt voor een nieuw item. Bij W=21 zit je op het maximum
 (75), want dan passen alle items.
 
 </details>
+
+## Maak het af
+
+Deze `knapsack` staat er op één bouwsteen na. Hij maakt de lege tabel en
+loopt elke rij en elke kolom af, maar vult geen cel in: elke uitkomst is
+nu 0.
+Eén stap is nog open: bouwsteen 3, vul één rij in. Doe die zelf.
+
+Verwachte uitvoer:
+
+```
+W = 4: beste waarde = 5
+W = 7: beste waarde = 10
+W = 9: beste waarde = 12
+```
+
+<PyRunner initialCode={`def knapsack(items, capaciteit):
+    n = len(items)
+    tabel = []
+    for _ in range(n + 1):
+        tabel.append([0] * (capaciteit + 1))
+    for i in range(1, n + 1):
+        waarde, gewicht = items[i - 1]
+        for w in range(capaciteit + 1):
+            # hier komt de keuze voor cel (i, w)
+            pass
+    return tabel[n][capaciteit]
+
+
+items = [(4, 3), (5, 4), (7, 5), (3, 2)]
+for W in [4, 7, 9]:
+    print(f"W = {W}: beste waarde = {knapsack(items, W)}")`} />
+
+<details>
+<summary>Tip</summary>
+
+Bouwsteen 3 kent twee gevallen: het item past niet in `w` kilo, of het
+past wel. Past het niet, dan lees je één cel van de rij erboven; past het
+wel, dan vergelijk je er twee. Bij meenemen kijk je `gewicht` kolommen
+naar links.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def knapsack(items, capaciteit):
+    n = len(items)
+    tabel = []
+    for _ in range(n + 1):
+        tabel.append([0] * (capaciteit + 1))
+    for i in range(1, n + 1):
+        waarde, gewicht = items[i - 1]
+        for w in range(capaciteit + 1):
+            if gewicht > w:
+                tabel[i][w] = tabel[i - 1][w]
+            else:
+                skip = tabel[i - 1][w]
+                meenemen = waarde + tabel[i - 1][w - gewicht]
+                tabel[i][w] = max(skip, meenemen)
+    return tabel[n][capaciteit]
+
+
+items = [(4, 3), (5, 4), (7, 5), (3, 2)]
+for W in [4, 7, 9]:
+    print(f"W = {W}: beste waarde = {knapsack(items, W)}")
+```
+
+</details>

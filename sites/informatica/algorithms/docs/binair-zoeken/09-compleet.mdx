@@ -169,3 +169,73 @@ wél in staat, en soms toevallig het goede antwoord. Aan het antwoord zie
 je niet welke van de twee.
 
 </details>
+
+## Maak het af
+
+Deze `binair_zoek` staat er op één bouwsteen na: de lus vergelijkt nog
+niet, dus elk antwoord is nu `-1`.
+Eén stap is nog open: vergelijken en helft kiezen. Doe die zelf, op de
+plek van de `return -1` in de lus.
+
+**Pas op:** krimpt het zoekgebied niet, dan loopt het tabblad van de
+browser vast. Druk daarom eerst op Stap voor stap.
+
+Verwachte uitvoer:
+
+```
+56: 6
+8: 1
+50: -1
+```
+
+<PyRunner initialCode={`def binair_zoek(lijst, doel):
+    laag = 0
+    hoog = len(lijst) - 1
+    while laag <= hoog:
+        midden = (laag + hoog) // 2
+        # hier komt bouwsteen 3: vergelijken en helft kiezen
+        return -1   # vervang deze regel
+    return -1
+
+nummers = [4, 8, 15, 16, 23, 42, 56, 61, 77]
+print("56:", binair_zoek(nummers, 56))
+print("8:", binair_zoek(nummers, 8))
+print("50:", binair_zoek(nummers, 50))`} />
+
+<details>
+<summary>Tip</summary>
+
+Er zijn drie gevallen: het midden is het doel, het is te klein, of het
+is te groot. Wat gebeurt er in elk geval met `laag` of `hoog`? Kijk bij
+bouwsteen 3, vergelijken en helft kiezen, waarom daar `+ 1` en `- 1`
+staan.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def binair_zoek(lijst, doel):
+    laag = 0
+    hoog = len(lijst) - 1
+    while laag <= hoog:
+        midden = (laag + hoog) // 2
+        if lijst[midden] == doel:
+            return midden
+        elif lijst[midden] < doel:
+            laag = midden + 1
+        else:
+            hoog = midden - 1
+    return -1
+
+nummers = [4, 8, 15, 16, 23, 42, 56, 61, 77]
+print("56:", binair_zoek(nummers, 56))
+print("8:", binair_zoek(nummers, 8))
+print("50:", binair_zoek(nummers, 50))
+```
+
+De `return -1` in de lus is weg. Die onder de lus blijft: daar komt
+Python alleen als het zoekgebied leeg is.
+
+</details>

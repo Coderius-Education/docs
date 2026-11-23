@@ -22,9 +22,10 @@ is dat een `while`-lus met een stopvoorwaarde.
 ## Wanneer stoppen?
 
 `kies_volgende` geeft `None` terug als alles bezocht is. Dat is het
-stopsignaal:
+stopsignaal. De gemarkeerde regels zijn nieuw in deze bouwsteen: de
+`while True` en de `if` met `break`. De rest is de ronde van bouwsteen 5:
 
-```python
+```python {1,3-4}
 while True:
     huidige = kies_volgende(afstanden, bezocht)
     if huidige is None:

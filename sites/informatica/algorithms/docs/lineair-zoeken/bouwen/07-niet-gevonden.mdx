@@ -12,9 +12,11 @@ doel niet in de lijst zit.
 Bij een doel dat niet bestaat, gaf `zoek` in de vorige stap `None` terug.
 Liever `-1`: een duidelijk signaal voor "niet gevonden". Waar zet je die
 `return -1`? Dit is een valstrik waar veel mensen intrappen. Hier staat hij op een
-plek die er logisch uitziet. Wat denk je dat dit print?
+plek die er logisch uitziet. De gemarkeerde regels zijn nieuw in deze
+bouwsteen: `return -1`, en de twee tests met wat ze zouden moeten geven.
+Wat denk je dat dit print?
 
-```python
+```python {5,7-8}
 def zoek(lijst, doel):
     for i, waarde in enumerate(lijst):
         if waarde == doel:

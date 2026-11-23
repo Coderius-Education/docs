@@ -137,3 +137,60 @@ hoofdstuk [Big O](site:algorithms/docs/big-o/01-concept).
 
 Maar voor educatieve doeleinden en kleine lijsten is selection sort
 prima.
+
+## Maak het af
+
+Deze `selection_sort` staat er op één bouwsteen na. De buitenste lus en de
+swap staan er, maar het zoeken niet: `min_index` blijft `i`, dus de lijst
+komt terug zoals hij was.
+Eén stap is nog open: bouwsteen 3, zoek vanaf een bepaalde positie. Doe die zelf.
+
+Verwachte uitvoer:
+
+```
+[2, 4, 7, 9]
+[1, 3, 6, 6, 8]
+['appel', 'kiwi', 'peer']
+```
+
+<PyRunner initialCode={`def selection_sort(lijst):
+    n = len(lijst)
+    for i in range(n):
+        min_index = i
+        # hier komt het zoeken vanaf positie i
+        lijst[i], lijst[min_index] = lijst[min_index], lijst[i]
+    return lijst
+
+print(selection_sort([9, 4, 7, 2]))
+print(selection_sort([6, 6, 1, 8, 3]))
+print(selection_sort(["peer", "appel", "kiwi"]))`} />
+
+<details>
+<summary>Tip</summary>
+
+In bouwsteen 3 heette de startpositie `start`; hier is dat `i`. Geef de
+binnenste lus een eigen teller, bijvoorbeeld `j`: `i` is al van de
+buitenste lus. Wanneer krijgt `min_index` een nieuwe waarde?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def selection_sort(lijst):
+    n = len(lijst)
+    for i in range(n):
+        min_index = i
+        for j in range(i, n):
+            if lijst[j] < lijst[min_index]:
+                min_index = j
+        lijst[i], lijst[min_index] = lijst[min_index], lijst[i]
+    return lijst
+
+print(selection_sort([9, 4, 7, 2]))
+print(selection_sort([6, 6, 1, 8, 3]))
+print(selection_sort(["peer", "appel", "kiwi"]))
+```
+
+</details>

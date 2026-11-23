@@ -21,9 +21,11 @@ Daarvoor houd je een vlag bij, `geswapt`:
 
 ## Voorspel
 
-Wat denk je dat dit print?
+De gemarkeerde regels zijn nieuw in deze bouwsteen: de naam `bubble_sort`,
+de vlag `geswapt`, de `print` na elke ronde, de `if` met de `break` en de
+aanroep onderaan. Wat denk je dat dit print?
 
-```python
+```python {1,4,8-11,14}
 def bubble_sort(lijst):
     n = len(lijst)
     for ronde in range(n - 1):

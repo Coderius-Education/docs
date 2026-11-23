@@ -78,3 +78,67 @@ print(f"\\nTotaal: {len(zetten)} zetten   {formule}")`} />
 
 `enumerate(zetten, start=1)` geeft elke zet een nummer, vanaf 1 in plaats
 van 0, en `(bron, doel)` pakt de tuple van die zet meteen uit.
+
+## Maak het af
+
+Deze `hanoi` staat er op één bouwsteen na. De toren van drie schijven moet
+van rechts naar links. Het basisgeval en de lijst `zetten` staan er, maar
+er komt nog een lege lijst terug.
+Eén stap is nog open: bouwsteen 3, de recursie. Doe die zelf.
+
+Verwachte uitvoer:
+
+```
+van rechts naar links
+van rechts naar midden
+van links naar midden
+van rechts naar links
+van midden naar rechts
+van midden naar links
+van rechts naar links
+7 zetten
+```
+
+<PyRunner initialCode={`def hanoi(n, bron, doel, hulp):
+    if n == 0:
+        return []
+    zetten = []
+    # hier komen de drie stappen van de recursie
+    return zetten
+
+
+zetten = hanoi(3, "rechts", "links", "midden")
+for bron, doel in zetten:
+    print(f"van {bron} naar {doel}")
+print(f"{len(zetten)} zetten")`} />
+
+<details>
+<summary>Tip</summary>
+
+Het recept van bouwsteen 3 heeft drie stappen: de kleinere toren naar de
+hulp-paal, de grootste schijf naar doel, de kleinere toren er weer
+bovenop. Welke paal is in stap 1 de hulp, en welke in stap 3?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def hanoi(n, bron, doel, hulp):
+    if n == 0:
+        return []
+    zetten = []
+    zetten += hanoi(n - 1, bron, hulp, doel)
+    zetten.append((bron, doel))
+    zetten += hanoi(n - 1, hulp, doel, bron)
+    return zetten
+
+
+zetten = hanoi(3, "rechts", "links", "midden")
+for bron, doel in zetten:
+    print(f"van {bron} naar {doel}")
+print(f"{len(zetten)} zetten")
+```
+
+</details>

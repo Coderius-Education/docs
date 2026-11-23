@@ -57,7 +57,9 @@ function ontsnap(code: string): string {
 
 /** Het codeblok in het `<details><summary>Antwoord</summary>` van de pagina. */
 function antwoord(tekst: string): string | null {
-  const m = tekst.match(/<summary>Antwoord<\/summary>\s*```python\n([\s\S]*?)```/);
+  const m = tekst.match(
+    /<summary>Antwoord<\/summary>(?:(?!<\/details>)[\s\S])*?```python[^\n]*\n([\s\S]*?)```/,
+  );
   return m ? m[1] : null;
 }
 

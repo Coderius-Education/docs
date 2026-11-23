@@ -28,9 +28,11 @@ Beide regels geven een **tuple** met twee elementen terug.
 
 ## Voorspel
 
-Wat denk je dat dit print?
+De gemarkeerde regels zijn nieuw in deze bouwsteen: de naam van de
+functie, de `return` met twee waardes, en de aanroep met de twee regels
+die het resultaat printen. Wat denk je dat dit print?
 
-```python
+```python {1,8,10-12}
 def max_en_min(lijst):
     klein = groot = lijst[0]
     for waarde in lijst:

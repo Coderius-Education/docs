@@ -54,7 +54,9 @@ function startcode(tekst: string): string {
 
 /** Het eerste codeblok in een `<details><summary>Antwoord</summary>`. */
 function antwoord(tekst: string): string {
-  const m = tekst.match(/<summary>Antwoord<\/summary>\s*```python\n([\s\S]*?)```/);
+  const m = tekst.match(
+    /<summary>Antwoord<\/summary>(?:(?!<\/details>)[\s\S])*?```python[^\n]*\n([\s\S]*?)```/,
+  );
   expect(m, 'de pagina heeft een Antwoord-blok met code').not.toBeNull();
   return m?.[1] ?? '';
 }

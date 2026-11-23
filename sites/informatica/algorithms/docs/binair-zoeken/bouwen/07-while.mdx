@@ -57,9 +57,11 @@ Lijst `[5]`, doel `5`. Start: `laag = 0, hoog = 0`.
 ## Voorspel
 
 We voegen nu een `print` toe bij elke ronde om de stappen zichtbaar te
-maken. Wat denk je dat dit print bij doel = 11?
+maken. De gemarkeerde regels zijn nieuw of veranderd: `hoog` met `len`,
+de `while`, en alles wat nu in de lus staat. Wat denk je dat dit print
+bij doel = 11?
 
-```python
+```python {3,6-16}
 lijst = [1, 3, 5, 7, 9, 11, 13, 15]
 laag = 0
 hoog = len(lijst) - 1

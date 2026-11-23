@@ -141,3 +141,63 @@ wordt één keer gelezen in plaats van twee keer. Bij grote data, of data
 die van een trage bron komt, is dat wat telt.
 
 </details>
+
+## Maak het af
+
+Deze `max_en_min` staat er op één bouwsteen na. De startwaardes en de
+`return` staan er, maar de rest van de lijst doet nog niet mee: `klein`
+en `groot` blijven het eerste getal.
+Eén stap is nog open: beide accumulators updaten. Doe die zelf.
+
+Verwachte uitvoer:
+
+```
+koudst: 7
+warmst: 18
+(-6, 3)
+```
+
+<PyRunner initialCode={`def max_en_min(lijst):
+    klein = groot = lijst[0]
+    # hier komt bouwsteen 2: beide accumulators updaten
+    return klein, groot
+
+week = [12, 9, 15, 7, 18, 11]
+koudst, warmst = max_en_min(week)
+print("koudst:", koudst)
+print("warmst:", warmst)
+print(max_en_min([-2, -6, 3, 0]))`} />
+
+<details>
+<summary>Tip</summary>
+
+Elk getal van de lijst moet langs twee vragen: is het kleiner dan
+`klein`, of groter dan `groot`? Kijk bij bouwsteen 2, beide accumulators
+updaten, hoe één lus ze allebei stelt.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def max_en_min(lijst):
+    klein = groot = lijst[0]
+    for waarde in lijst:
+        if waarde < klein:
+            klein = waarde
+        elif waarde > groot:
+            groot = waarde
+    return klein, groot
+
+week = [12, 9, 15, 7, 18, 11]
+koudst, warmst = max_en_min(week)
+print("koudst:", koudst)
+print("warmst:", warmst)
+print(max_en_min([-2, -6, 3, 0]))
+```
+
+De lus staat tussen de startwaardes en de `return`: de functie geeft
+`klein` en `groot` pas terug als elk getal bekeken is.
+
+</details>
