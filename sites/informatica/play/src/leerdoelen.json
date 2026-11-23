@@ -25,7 +25,7 @@
     { "id": "play-physics-eigenschap", "onderwerp": "play", "concept": "bounciness, mass of sensor", "1": "gevorderd", "2": "basis", "groep": "2 Fysica", "les": "fysica/eigenschappen" },
     { "id": "play-hide-show", "onderwerp": "play", "concept": "hide() of show()", "1": "basis", "2": "basis", "groep": "3 Acties", "les": "acties/meer_acties" },
     { "id": "play-random", "onderwerp": "play", "concept": "iets willekeurigs", "1": "basis", "2": "basis", "groep": "3 Acties", "les": "acties/random" },
-    { "id": "play-clone", "onderwerp": "play", "concept": "clone()", "1": "gevorderd", "2": "basis", "groep": "3 Acties", "les": "acties/meer_acties" },
+    { "id": "play-clone", "onderwerp": "play", "concept": "clone()", "1": "expert", "2": "basis", "groep": "3 Acties", "les": "acties/meer_acties" },
     { "id": "play-distance", "onderwerp": "play", "concept": "distance_to()", "1": "gevorderd", "2": "basis", "groep": "3 Acties", "les": "acties/acties" },
     { "id": "play-key", "onderwerp": "play", "concept": "reageren op het toetsenbord", "1": "basis", "2": "basis", "groep": "4 Gebeurtenissen", "les": "gebeurtenissen/toetsenbord" },
     { "id": "play-mouse", "onderwerp": "play", "concept": "reageren op de muis", "1": "basis", "2": "basis", "groep": "4 Gebeurtenissen", "les": "gebeurtenissen/muis" },
@@ -38,9 +38,9 @@
     { "id": "play-data", "onderwerp": "play", "concept": "set_data en get_data", "1": "gevorderd", "2": "basis", "groep": "6 Opslaan", "les": "database/basis" },
     { "id": "play-database-bestand", "onderwerp": "play", "concept": "er staat een database.json in het project", "1": null, "2": "basis", "groep": "6 Opslaan", "les": "database/basis" },
     { "id": "play-menu-ui", "onderwerp": "play", "concept": "een startmenu met iets van UI (knop, schuifbalk of vinkje, uitklapmenu of keuzerondjes, invoerveld, voortgangsbalk of zweeftekst)", "1": "gevorderd", "2": "gevorderd", "groep": "7 Knoppen en UI", "les": ["jouw_project/startmenu", "ui/knop"] },
-    { "id": "play-level-instellingen", "onderwerp": "play", "concept": "instellingen per level in een lijst", "1": "gevorderd", "2": "gevorderd", "groep": "9 Levels", "les": "levels/instellingen" },
-    { "id": "play-level-opruimen", "onderwerp": "play", "concept": "een level opruimen met remove()", "1": "gevorderd", "2": "gevorderd", "groep": "9 Levels", "les": "levels/andere-vormen" },
-    { "id": "play-level-bouwen", "onderwerp": "play", "concept": "een functie die een level opbouwt", "1": "gevorderd", "2": "gevorderd", "groep": "9 Levels", "les": "levels/andere-vormen" },
+    { "id": "play-level-instellingen", "onderwerp": "play", "concept": "instellingen per level in een lijst", "1": "expert", "2": "gevorderd", "groep": "9 Levels", "les": "levels/instellingen" },
+    { "id": "play-level-opruimen", "onderwerp": "play", "concept": "een level opruimen met remove()", "1": "expert", "2": "gevorderd", "groep": "9 Levels", "les": "levels/andere-vormen" },
+    { "id": "play-level-bouwen", "onderwerp": "play", "concept": "een functie die een level opbouwt", "1": "expert", "2": "gevorderd", "groep": "9 Levels", "les": "levels/andere-vormen" },
     { "id": "pygame-spel", "onderwerp": "play", "concept": "een simpel spel in pygame-ce: een eigen venster en game-loop", "1": null, "2": "gevorderd", "groep": "10 Pygame-ce", "les": ["pygame-ce/je_eerste_programma", "pygame-ce/beweging"] },
     { "id": "pymunk", "onderwerp": "play", "concept": "fysica met pymunk", "1": null, "2": "expert", "groep": "10 Pygame-ce", "les": "pygame-ce/botsingen" }
   ]

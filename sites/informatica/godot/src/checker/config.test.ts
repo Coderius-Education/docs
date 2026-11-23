@@ -3,11 +3,11 @@ import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { levelVoor } from '@coderius/checker/conceptLevel';
 import { geldigeTrack } from '@coderius/checker/leerdoelen';
-import { computeLevelSummary } from '@coderius/checker/levelSummary';
+import { computeLevelSummary, voorstelOnderdelen } from '@coderius/checker/levelSummary';
 import { analyze } from '@coderius/checker/matchConcepts';
 import type { CheckReport, ConceptMatch, ProjectFiles } from '@coderius/checker/types';
 import { validateCheckerConfig } from '@coderius/checker/validateConfig';
-import { BLOOM } from '@coderius/shared/leerdoelen';
+import { BLOOM, moeilijkheidVoorstel } from '@coderius/shared/leerdoelen';
 import { describe, expect, it } from 'vitest';
 import { blokkenInVolgorde, functies } from '../godot-tests/lessen';
 import leerdoelen from '../leerdoelen.json';
@@ -189,7 +189,7 @@ describe('godotConfig — voorbeeldprojecten scoren', () => {
       [
         // `var levens = ["hart", "hart", "hart"]` staat er wel, maar wordt
         // nergens gebruikt. Eén voorkomen haalt de drempel niet, en dat is de
-        // bedoeling: de tabel vraagt om nuttig gebruik, niet om aanwezigheid.
+        // bedoeling: een lijst telt als hij gebruikt wordt, niet als hij er staat.
         'gd-lijsten',
         // AudioStreamPlayer2D en PathFollow2D: de volger hoort bij een pad, dus
         // dat is hooguit één soort, en meer ontdekken vraagt er drie.
@@ -223,35 +223,35 @@ describe('godotConfig — de leerdoelen', () => {
       ['2D', 'Area2D', B, B, B],
       ['2D', 'CanvasLayer', B, B, B],
       ['2D', 'Label', B, B, B],
-      ['2D', 'Control', B, B, B],
-      ['2D', 'Startscherm', B, B, B],
-      ['2D', 'zelf ontdekken en toepassen van nieuwe nodes', G, B, B],
+      // De nodes van het menu zijn op niveau 1 gevorderd (november 2026).
+      ['2D', 'Control', G, B, B],
+      ['2D', 'Startscherm', G, B, B],
+      // De rijen over nieuwe nodes noemen het aantal dat de nakijker telt.
+      ['2D', 'zelf ontdekken en toepassen van 1 nieuwe node', G, B, B],
       // Niet van het blad: op niveau 3 en 4 had 2D geen gevorderd concept,
       // dus telde 2D daar niet mee voor gevorderd. De docent voegde deze rij
       // toe (november 2026); op niveau 1 hoort hij er niet bij.
-      [
-        '2D',
-        'zelf ontdekken en toepassen van meerdere nieuwe nodes (drie soorten of meer)',
-        null,
-        G,
-        G,
-      ],
+      ['2D', 'zelf ontdekken en toepassen van 3 nieuwe nodes (drie soorten of meer)', null, G, G],
       ['GDScript', 'snelheid veranderen', B, B, B],
       ['GDScript', 'sprongkracht veranderen', B, B, B],
       ['GDScript', 'keybindings hernoemen', B, B, B],
       ['GDScript', 'animatie veranderen', B, B, B],
       ['GDScript', 'signal toepassen', B, B, B],
-      ['GDScript', 'naar volgend level', B, B, B],
-      ['GDScript', 'nuttig gebruik globals', G, B, B],
-      ['GDScript', 'nuttig gebruik instantiate', G, G, B],
+      // Niveau 1 sinds november 2026: naar volgend level gevorderd, globals
+      // basis, en lijsten, dictionaries, JSON, loops en tweens expert. De
+      // woorden "nuttig gebruik" zijn uit de namen: wat de nakijker als
+      // gebruik telt, is niet veranderd.
+      ['GDScript', 'naar volgend level', G, B, B],
+      ['GDScript', 'globals', B, B, B],
+      ['GDScript', 'instantiate', G, G, B],
       ['GDScript', 'groups', G, G, B],
       ['GDScript', 'modulaire eigen functies', G, E, G],
-      ['GDScript', 'nuttig gebruik lijsten', G, E, G],
-      ['GDScript', 'nuttig gebruik dictionaries', G, E, G],
-      ['GDScript', 'lezen en schrijven JSON', G, E, G],
-      ['GDScript', 'nuttige gebruik loops', G, E, G],
-      ['GDScript', 'tweens', G, G, G],
-      ['GDScript', 'nuttig gebruik timers (bijvoorbeeld await)', G, G, B],
+      ['GDScript', 'lijsten', E, E, G],
+      ['GDScript', 'dictionaries', E, E, G],
+      ['GDScript', 'lezen en schrijven JSON', E, E, G],
+      ['GDScript', 'loops', E, E, G],
+      ['GDScript', 'tweens', E, G, G],
+      ['GDScript', 'timers (bijvoorbeeld await)', G, G, B],
     ];
     const label = new Map(leerdoelen.onderwerpen.map((o) => [o.id, o.label]));
     expect(leerdoelen.niveaus).toEqual(['1', '3', '4']);
@@ -323,10 +323,32 @@ describe('godotConfig — de leerdoelen', () => {
     const telling = (route: string, m: string) =>
       godotConfig.concepts.filter((c) => levelVoor(c, route) === m).length;
     expect(telling('4', 'basis')).toBeGreaterThan(telling('1', 'basis'));
-    // Alleen niveau 3 heeft expert, zoals het blad: modulaire functies,
-    // lijsten, dictionaries, loops en JSON.
+    // Niveau 3 heeft expert, zoals het blad: modulaire functies, lijsten,
+    // dictionaries, loops en JSON. Niveau 1 sinds november 2026 ook: lijsten,
+    // dictionaries, JSON, loops en tweens. Niveau 4 niet.
     expect(telling('3', 'expert')).toBe(5);
-    expect(telling('1', 'expert') + telling('4', 'expert')).toBe(0);
+    expect(telling('1', 'expert')).toBe(5);
+    expect(telling('4', 'expert')).toBe(0);
+  });
+
+  it('stelt op niveau 1 gevorderd voor bij de nagedane cursus, en expert bij een eigen game', () => {
+    // Wat de indeling van november 2026 voor een leerling betekent. De cursus
+    // nagedaan heeft het menu (Control en Startscherm zijn op niveau 1
+    // gevorderd) en de vlag naar level 2: eerst was dat basis, omdat 2D
+    // alleen met een zelf gevonden node op gevorderd kwam. Een eigen game met
+    // een dictionary, JSON, loops en tweens is expert; eerst gevorderd. Op
+    // niveau 3 en 4 is er niets veranderd.
+    const voorstel = (fixture: string, niveau: string) =>
+      moeilijkheidVoorstel(
+        voorstelOnderdelen(analyze(leesFixture(fixture), godotConfig), godotConfig, niveau),
+      ).moeilijkheid;
+    expect(voorstel('minimaal', '1')).toBe('niet-aan-basis');
+    expect(voorstel('compleet', '1')).toBe('gevorderd');
+    expect(voorstel('eigen', '1')).toBe('expert');
+    for (const niveau of ['3', '4']) {
+      expect(voorstel('compleet', niveau), niveau).toBe('basis');
+      expect(voorstel('eigen', niveau), niveau).toBe('basis');
+    }
   });
 
   it('zet wat buiten het blad valt onder Ook gebruikt, en niet meer als gesprek', () => {
@@ -761,10 +783,13 @@ describe('godotConfig — patronen die er net naast zitten', () => {
       expect(samenvatting.gevorderd.total, `geen gevorderd-concepten in ${route}`).toBeGreaterThan(
         0,
       );
-      // Expert hoort bij niveau 3 en nergens anders; valt hij weg, dan
+      // Expert hoort bij niveau 1 en 3, niet bij 4; valt hij weg, dan
       // verdwijnt ook de tegel en de keuze in het blok Cijfer.
-      if (route === '3') {
-        expect(samenvatting.expert.total, 'geen expert-concepten op niveau 3').toBeGreaterThan(0);
+      if (route !== '4') {
+        expect(
+          samenvatting.expert.total,
+          `geen expert-concepten op niveau ${route}`,
+        ).toBeGreaterThan(0);
       } else {
         expect(samenvatting.expert.total, `expert op niveau ${route}`).toBe(0);
       }

@@ -156,10 +156,11 @@ describe('play-nakijker', () => {
     expect(niveau('pygame-spel')).toEqual({ '1': null, '2': 'gevorderd' });
     expect(niveau('pymunk')).toEqual({ '1': null, '2': 'expert' });
     // Niveau 1 zoals de docent het in november 2026 indeelde: botsingen, een
-    // muur en repeat_forever zijn basis; UI en levels gevorderd (eerst
-    // expert); geluid, video en het databasebestand tellen niet mee. Zo heeft
-    // niveau 1 geen expert meer. Gemeten zoals de nakijker telt: met inTrack
-    // en levelVoor.
+    // muur en repeat_forever zijn basis; UI gevorderd; geluid, video en het
+    // databasebestand tellen niet mee. De drie rijen van Levels en clone()
+    // zijn op niveau 1 expert: eerst expert, een tijd gevorderd, en later
+    // die maand weer expert. Gemeten zoals de nakijker telt: met inTrack en
+    // levelVoor.
     const concept = (id: string) => {
       const c = playConfig.concepts.find((x) => x.id === id);
       if (!c) throw new Error(`concept '${id}' bestaat niet in playConfig`);
@@ -171,9 +172,11 @@ describe('play-nakijker', () => {
       expect(opNiveau1(id), id).toBe('basis');
     }
     for (const id of ['play-level-instellingen', 'play-level-opruimen', 'play-level-bouwen']) {
-      expect(opNiveau1(id), id).toBe('gevorderd');
+      expect(opNiveau1(id), id).toBe('expert');
       expect(levelVoor(concept(id), '2'), id).toBe('gevorderd');
     }
+    // clone() is op niveau 1 expert en op niveau 2 basis.
+    expect(niveau('play-clone')).toEqual({ '1': 'expert', '2': 'basis' });
     // UI: op beide niveaus één rij, een startmenu met iets van UI, welk
     // element ook (november 2026; eerst telde op niveau 2 elk element apart).
     expect(niveau('play-menu-ui')).toEqual({ '1': 'gevorderd', '2': 'gevorderd' });
@@ -187,10 +190,16 @@ describe('play-nakijker', () => {
     expect(inTrack(concept('play-database-bestand'), '2')).toBe(true);
     // Een tweede module is op beide niveaus gevorderd.
     expect(niveau('py-import-extra')).toEqual({ '1': 'gevorderd', '2': 'gevorderd' });
-    const niveau1 = playConfig.concepts
-      .filter((c) => inTrack(c, '1'))
-      .map((c) => levelVoor(c, '1'));
-    expect(niveau1).not.toContain('expert');
+    // Expert op niveau 1 is precies dit: clone() en de drie rijen van Levels.
+    const expertOpNiveau1 = playConfig.concepts
+      .filter((c) => inTrack(c, '1') && levelVoor(c, '1') === 'expert')
+      .map((c) => c.id);
+    expect(expertOpNiveau1.sort()).toEqual([
+      'play-clone',
+      'play-level-bouwen',
+      'play-level-instellingen',
+      'play-level-opruimen',
+    ]);
     // Op niveau 2 vraagt "gevorderd" bij Python een gevorderd concept. Was
     // alleen de dictionary dat, dan haalde geen leerling zonder dictionary
     // het; lijst en for-loop horen bij hoofdstuk 9, dat daar gevorderd is.
@@ -286,8 +295,10 @@ describe('play-nakijker', () => {
     // gold eerst als tweede module, en die is op niveau 2 gevorderd.
     const zonderPython = ['import play', 'knop = play.new_button(text="Start")', ...pygameSpel];
     expect(voorstel(zonderPython.join('\n'), '2')).toBe('basis');
-    // Op niveau 1 blijft één hoofdstuk genoeg.
-    expect(voorstel([...basis, ...level].join('\n'), '1')).toBe('gevorderd');
+    // Op niveau 1 blijft één hoofdstuk genoeg: een startmenu is daar
+    // gevorderd, en levels zijn er expert.
+    expect(voorstel([...basis, knop].join('\n'), '1')).toBe('gevorderd');
+    expect(voorstel([...basis, ...level].join('\n'), '1')).toBe('expert');
     expect(leerdoelenJson.gevorderdInGroepen).toEqual({ '2': { play: 2 } });
   });
 

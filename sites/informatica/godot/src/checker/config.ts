@@ -385,7 +385,8 @@ const DETECTIE: Record<string, ConceptDetect> = {
     in: ['tscn'],
   },
   // Dezelfde nodes, maar dan drie verschillende soorten: op niveau 3 en 4 is
-  // één nieuwe node de basis, en meer ontdekken gevorderd. Drie keer een
+  // één nieuwe node de basis, en drie ontdekken gevorderd. De namen van de
+  // twee rijen noemen dat aantal (1 en 3). Drie keer een
   // Marker2D is één soort; daarom minDelen en niet minCount.
   '2d-nieuwe-nodes-meer': {
     type: 'regex',
@@ -435,9 +436,11 @@ const DETECTIE: Record<string, ConceptDetect> = {
   ),
 
   // --- GDScript: verder met code ---
-  // "Nuttig gebruik" is een oordeel dat een regex niet kan vellen. Wat hij
-  // wél kan: het verschil tussen één keer toevallig en er echt mee werken.
-  // Daarom een drempel van twee op de concepten waar de tabel "nuttig" zegt.
+  // Of iets nuttig gebruikt is, kan een regex niet zien. Wat hij wél kan: het
+  // verschil tussen één keer toevallig en er echt mee werken. Daarom een
+  // drempel van twee bij globals, loops en eigen functies. De tabel zei hier
+  // eerst "nuttig gebruik"; die woorden zijn in november 2026 uit de namen
+  // gehaald, en de herkenning is gebleven.
   'gd-globals': gd(/\bGlobal\.\w+/g, 2),
   'gd-instantiate': gd(/\.instantiate\s*\(/g),
   'gd-groups': gd(
