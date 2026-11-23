@@ -18,85 +18,79 @@ Wil je tien keer hetzelfde doen, bijvoorbeeld de getallen 0 tot en met 9 printen
 
 ### Schrijf het uit
 
-Je kondigt de rondes van een quiz aan. Zonder loop typ je elke regel zelf:
+Een lift meldt elke verdieping waar hij langskomt. Zonder loop staat elke melding op een eigen regel:
 
 ```python
-print("Ronde 0")
-print("Ronde 1")
-print("Ronde 2")
+print("Verdieping 0")
+print("Verdieping 1")
+print("Verdieping 2")
 ```
 
 Uitvoer:
 
 ```
-Ronde 0
-Ronde 1
-Ronde 2
+Verdieping 0
+Verdieping 1
+Verdieping 2
 ```
 
-Voor drie rondes gaat dat nog. Kijk wat er per regel verandert: alleen het getal. De rest staat er drie keer.
+Voor drie verdiepingen gaat dat nog. Kijk wat er per regel verandert: alleen het getal. De rest staat er drie keer.
 
-### Laat Python tellen
+### Herhaal de regel
 
-Het getal in elke regel hoef je niet zelf te typen. `range(3)` geeft de getallen `0`, `1` en `2`, en een `for`-loop draait voor elk getal één ronde:
+Wat drie keer hetzelfde is, hoeft er maar één keer te staan. Een `for`-loop herhaalt de `print`, en `range(3)` zegt hoe vaak: drie rondes.
 
 ```python
 for i in range(3):
-    print("Ronde")
+    print("Verdieping")
 ```
 
 Uitvoer:
 
 ```
-Ronde
-Ronde
-Ronde
+Verdieping
+Verdieping
+Verdieping
 ```
 
-De `print` springt vier spaties in, net als onder een `if`. Zo weet Python welke regel bij de loop hoort. Er zijn nu drie rondes, maar het getal staat er nog niet bij.
+De `print` springt vier spaties in, net als onder een `if`. Zo weet Python welke regel bij de loop hoort. Er staan drie regels, maar het nummer van de verdieping ontbreekt nog.
 
 ### Gebruik het getal
 
-Elke ronde zet Python het volgende getal in `i`, de **loop-variabele**. Zet `i` met een f-string in de zin. De gemarkeerde regel is veranderd:
+`range(3)` geeft de getallen `0`, `1` en `2`: de 3 zelf doet niet mee. Elke ronde zet Python het volgende getal in `i`, de **loop-variabele**. Met een f-string komt `i` in de zin. De gemarkeerde regel, de `print`, is veranderd:
 
 ```python {2}
 for i in range(3):
-    print(f"Ronde {i}")
+    print(f"Verdieping {i}")
 ```
 
 Uitvoer:
 
 ```
-Ronde 0
-Ronde 1
-Ronde 2
+Verdieping 0
+Verdieping 1
+Verdieping 2
 ```
 
-Dat is dezelfde uitvoer als van de drie losse regels. Voor honderd rondes verander je alleen `3` in `100`.
+Dat is dezelfde uitvoer als van de drie losse regels. Voor honderd verdiepingen verander je alleen `3` in `100`. De naam `i` is geen wet: je mag de loop-variabele ook `teller` of `verdieping` noemen. `i` is traditie (van *index*).
 
 ### Voorspel
 
 ```python
-for i in range(5):
-    print(i)
+for i in range(4):
+    print(i + 1)
 ```
 
 <Voorspel vraag="Welke getallen zet dit programma op het scherm?">
-  <Keuze uitleg="Kijk nog eens bij welk getal range begint te tellen.">`1`, `2`, `3`, `4` en `5`</Keuze>
-  <Keuze uitleg="Het begin klopt, maar range(5) geeft vijf getallen, geen zes.">`0`, `1`, `2`, `3`, `4` en `5`</Keuze>
-  <Keuze goed uitleg="range(5) geeft vijf getallen, beginnend bij 0.">`0`, `1`, `2`, `3` en `4`</Keuze>
+  <Keuze uitleg="Dat zijn de getallen die in i staan. De print doet er nog iets mee.">`0`, `1`, `2` en `3`</Keuze>
+  <Keuze goed uitleg="range(4) geeft 0, 1, 2 en 3, en de print telt er steeds 1 bij op.">`1`, `2`, `3` en `4`</Keuze>
+  <Keuze uitleg="range(4) geeft vier getallen, geen vijf: de 4 zelf doet niet mee.">`1`, `2`, `3`, `4` en `5`</Keuze>
   <Uitleg>
 
-  Je ziet `0` tot en met `4`, elk op een eigen regel: vijf rondes, en in elke ronde print de loop één getal.
+  Je ziet `1` tot en met `4`. `range(4)` geeft vier getallen en begint bij 0: `0`, `1`, `2` en `3`. Het laatste is dus **3**, niet 4. Wil je dat `i` zelf tot en met 4 loopt, gebruik dan `range(5)`.
 
   </Uitleg>
 </Voorspel>
-
-## Waar range stopt
-
-`range(5)` geeft vijf getallen en begint bij 0: `0, 1, 2, 3, 4`. Het stopt dus bij **4**, niet bij 5: de stop-waarde is *exclusief*. Wil je tot en met 5 tellen, gebruik dan `range(6)`.
-
-De naam `i` is geen wet: je mag de loop-variabele ook `teller` of `getal` noemen. `i` is traditie (van *index*).
 
 :::tip[Eerst op papier]
 Speel dit eerst na zonder computer, met losgeknipte regels code: [Codestroken leggen](site:python/docs/projecten/unplugged/codestroken). Je docent kan de hand-out printen.
@@ -104,24 +98,24 @@ Speel dit eerst na zonder computer, met losgeknipte regels code: [Codestroken le
 
 ## Maak het af
 
-Dit programma nummert de stoelen in een zaal. De loop staat er al en draait vier rondes. Doe zelf de laatste stap: zet het nummer van de stoel in de zin.
+Dit programma meldt welke kluisjes open zijn. De loop staat er al en draait vier rondes, maar het nummer van het kluisje ontbreekt. Eén stap is nog open: het nummer in de zin. Doe die zelf.
 
 Verwachte uitvoer:
 
 ```
-Stoel 0 is vrij
-Stoel 1 is vrij
-Stoel 2 is vrij
-Stoel 3 is vrij
+Kluisje 0 is open
+Kluisje 1 is open
+Kluisje 2 is open
+Kluisje 3 is open
 ```
 
-<CodeExercise>{`for stoel in range(4):
-    print("Stoel is vrij")`}</CodeExercise>
+<CodeExercise>{`for kluisje in range(4):
+    print("Kluisje is open")`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-De loop-variabele heet hier `stoel`. Maak van de tekst een f-string en zet `{stoel}` op de plek van het nummer.
+Welke variabele krijgt elke ronde een nieuw getal? En welke letter staat er vóór de aanhalingstekens als je een variabele in een tekst wilt zetten?
 
 </details>
 
@@ -129,8 +123,8 @@ De loop-variabele heet hier `stoel`. Maak van de tekst een f-string en zet `{sto
 <summary>Klik hier voor de oplossing.</summary>
 
 ```python
-for stoel in range(4):
-    print(f"Stoel {stoel} is vrij")
+for kluisje in range(4):
+    print(f"Kluisje {kluisje} is open")
 ```
 
 </details>
@@ -298,7 +292,7 @@ for i in range(10):
     print(f"2 x {i} = {2 * i}")
 ```
 
-In de [volgende les](site:python/docs/herhalen/06b-range-stappen) leer je hoe je `range` met een **begin-getal** en een **stapgrootte** gebruikt, zodat je niet altijd bij 0 hoeft te beginnen.
+In de [volgende les](site:python/docs/herhalen/06b-range-stappen) leer je hoe je `range` met een **begin** en een **stap** gebruikt, zodat je niet altijd bij 0 hoeft te beginnen.
 
 <CodeExercise>{`for i in range(10):
     print(f"2 x {i} = {2 * i}")`}</CodeExercise>
