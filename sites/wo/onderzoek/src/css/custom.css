@@ -222,38 +222,82 @@
 }
 
 /**
- * Handout van een hoofdstuk (Wetenschapsfilosofie op één vel)
- * ------------------------------------------------------------
+ * Een werkblad op één vel (werkvorm Wetenschapsfilosofie op één vel)
+ * ------------------------------------------------------------------
  * Twee printbare blokken, het tweede met `nieuwe-pagina`: voor- en
- * achterkant van één A4. Op papier kleiner en dichter dan een werkblad,
- * want er staat een heel hoofdstuk op.
+ * achterkant van één A4. `werkblad-dicht` zet de afdruk op 10 punt met
+ * minder lucht; `invulschema-woord` is een vak voor een woord of een
+ * halve zin, `invulschema-middel` een vak van een paar woorden,
+ * `smal-antwoord` maakt het laatste vak smal, `wie-smal` het middelste van drie, en `eerste-smal` geeft
+ * de kolom met de labels minder ruimte in een tabel van drie of vier
+ * kolommen.
  */
+.invulschema-woord {
+  --schrijfruimte: 2rem;
+}
+
+.invulschema-middel {
+  --schrijfruimte: 2.5rem;
+}
+
+.smal-antwoord thead th:last-child {
+  width: 20%;
+}
+
+.wie-smal thead th:first-child {
+  width: 40%;
+}
+
+.wie-smal thead th:nth-child(2) {
+  width: 16%;
+}
+
+.eerste-smal thead th:first-child {
+  width: 17%;
+}
+
 @media print {
-  .handout-vel {
+  .werkblad-dicht {
+    --schrijfruimte: 1.5cm;
     font-size: 10pt;
-    line-height: 1.4;
+    line-height: 1.35;
   }
 
-  .handout-vel > h2 {
-    margin: 0.5rem 0 0.25rem;
+  .werkblad-dicht .invulschema-kort {
+    --schrijfruimte: 1.55cm;
+  }
+
+  .werkblad-dicht .invulschema-middel {
+    --schrijfruimte: 1.1cm;
+  }
+
+  .werkblad-dicht .wie-smal {
+    --schrijfruimte: 1.3cm;
+  }
+
+  .werkblad-dicht .invulschema-woord {
+    --schrijfruimte: 0.8cm;
+  }
+
+  .werkblad-dicht > h2 {
+    margin: 0.5rem 0 0.2rem;
     font-size: 12pt;
   }
 
-  .handout-vel > h2:first-child {
+  .werkblad-dicht > h2:first-child {
     margin-top: 0;
   }
 
-  .handout-vel > p,
-  .handout-vel > ol {
-    margin-bottom: 0.35rem;
+  .werkblad-dicht p {
+    margin-bottom: 0.3rem;
   }
 
-  .handout-vel table {
+  .werkblad-dicht table {
     margin-bottom: 0.4rem;
   }
 
-  .handout-vel th,
-  .handout-vel td {
+  .werkblad-dicht th,
+  .werkblad-dicht td {
     padding: 0.15rem 0.4rem;
   }
 }
