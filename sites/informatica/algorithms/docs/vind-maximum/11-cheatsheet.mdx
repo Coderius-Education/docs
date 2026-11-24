@@ -161,13 +161,14 @@ In productie-code gebruik je vaak gewoon `max()` van Python. Maar de
 ## Veelgemaakte fouten (snel)
 
 <details>
-<summary>Top-3 fouten</summary>
+<summary>Veelgemaakte fouten</summary>
 
-{/* foutmelding-van: [][0] */}
+{/* foutmelding-los: samenvatting van de foutenpagina, waar beide meldingen gereproduceerd worden */}
 
 1. `maximum = 0` als startwaarde → mist negatieve lijsten.
 2. `max` als variabelenaam → schaduwt de ingebouwde `max()`.
 3. Geen lege-lijst-check → `IndexError` bij `lijst[0]`.
+4. De `if` niet verder ingesprongen dan de `for` → `IndentationError`.
 
 </details>
 

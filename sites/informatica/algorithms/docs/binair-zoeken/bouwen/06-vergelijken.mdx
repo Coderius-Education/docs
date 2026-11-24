@@ -44,7 +44,7 @@ regels zijn nieuw in deze bouwsteen: het `doel`, de `if`, de `elif` en de
 ```python {4,7-12,14}
 lijst = [1, 3, 5, 7, 9, 11, 13, 15]
 laag = 0
-hoog = 7
+hoog = len(lijst) - 1
 doel = 11
 
 midden = (laag + hoog) // 2
@@ -79,7 +79,7 @@ Het zoekgebied is nu indexen 4 t/m 7: de rechter helft. Gehalveerd.
 
 <PyRunner initialCode={`lijst = [1, 3, 5, 7, 9, 11, 13, 15]
 laag = 0
-hoog = 7
+hoog = len(lijst) - 1
 doel = 11
 
 midden = (laag + hoog) // 2
@@ -102,7 +102,7 @@ bij doel 7?
 
 <PyRunner initialCode={`lijst = [1, 3, 5, 7, 9, 11, 13, 15]
 laag = 0
-hoog = 7
+hoog = len(lijst) - 1
 doel = 11
 
 midden = (laag + hoog) // 2

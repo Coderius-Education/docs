@@ -4,12 +4,67 @@ sidebar_position: 8
 
 # Het complete algoritme
 
-**Leerdoel:** je herkent alle bouwstenen die je hebt geleerd en ziet ze
-samen werken. Daarna onderzoek je het algoritme als geheel.
+**Leerdoel:** je maakt de functie af met een bouwsteen die je al kent,
+ziet alle bouwstenen samen werken en onderzoekt het algoritme als geheel.
+
+## Maak het af
+
+Je hebt de vier bouwstenen los gebouwd. In deze `zoek` staan ze samen,
+op één na: hij loopt door een lijst namen en geeft een index terug, maar
+vergelijkt nog niet met het doel. Bij elke naam komt er nu `0` uit.
+Eén stap is nog open: bouwsteen 2, vergelijken met het doel. Doe die zelf.
+
+Verwachte uitvoer:
+
+```
+Yara: 2
+Sam: 1
+Lotte: -1
+```
+
+<PyRunner initialCode={`def zoek(lijst, doel):
+    for i, waarde in enumerate(lijst):
+        # hier komt bouwsteen 2: vergelijken met het doel
+        return i
+    return -1
+
+namen = ["Noor", "Sam", "Yara", "Daan", "Sam"]
+print("Yara:", zoek(namen, "Yara"))
+print("Sam:", zoek(namen, "Sam"))
+print("Lotte:", zoek(namen, "Lotte"))`} />
+
+<details>
+<summary>Tip</summary>
+
+Draai de code eerst. `return i` draait nu al in de eerste ronde, wat het
+doel ook is. Wanneer mag hij pas draaien? Kijk bij bouwsteen 2,
+vergelijken met het doel, en let daarna op de inspringing van `return i`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def zoek(lijst, doel):
+    for i, waarde in enumerate(lijst):
+        if waarde == doel:
+            return i
+    return -1
+
+namen = ["Noor", "Sam", "Yara", "Daan", "Sam"]
+print("Yara:", zoek(namen, "Yara"))
+print("Sam:", zoek(namen, "Sam"))
+print("Lotte:", zoek(namen, "Lotte"))
+```
+
+`return i` staat nu in het `if`-blok: hij draait alleen bij een match.
+
+</details>
 
 ## Alles samen
 
-Hier is het hele algoritme, in 5 regels:
+Zo ziet de hele functie eruit, met bij elke regel zijn bouwsteen:
 
 <CodeUitleg>
 
@@ -96,60 +151,5 @@ print(zoek(["appel", "peer", "kers"], "Peer"))`} />
 
 Lineair zoeken is *type-onafhankelijk*: het werkt op alles waar `==`
 betekenis heeft.
-
-</details>
-
-## Maak het af
-
-Deze `zoek` staat er op één bouwsteen na. Hij loopt door een lijst namen
-en geeft een index terug, maar vergelijkt nog niet met het doel: bij elke
-naam komt er nu `0` uit.
-Eén stap is nog open: vergelijken met het doel. Doe die zelf.
-
-Verwachte uitvoer:
-
-```
-Yara: 2
-Sam: 1
-Lotte: -1
-```
-
-<PyRunner initialCode={`def zoek(lijst, doel):
-    for i, waarde in enumerate(lijst):
-        # hier komt bouwsteen 2: vergelijken met het doel
-        return i
-    return -1
-
-namen = ["Noor", "Sam", "Yara", "Daan", "Sam"]
-print("Yara:", zoek(namen, "Yara"))
-print("Sam:", zoek(namen, "Sam"))
-print("Lotte:", zoek(namen, "Lotte"))`} />
-
-<details>
-<summary>Tip</summary>
-
-Draai de code eerst. `return i` draait nu al in de eerste ronde, wat het
-doel ook is. Wanneer mag hij pas draaien? Kijk bij bouwsteen 2,
-vergelijken met het doel, en let daarna op de inspringing van `return i`.
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-```python
-def zoek(lijst, doel):
-    for i, waarde in enumerate(lijst):
-        if waarde == doel:
-            return i
-    return -1
-
-namen = ["Noor", "Sam", "Yara", "Daan", "Sam"]
-print("Yara:", zoek(namen, "Yara"))
-print("Sam:", zoek(namen, "Sam"))
-print("Lotte:", zoek(namen, "Lotte"))
-```
-
-`return i` staat nu in het `if`-blok: hij draait alleen bij een match.
 
 </details>

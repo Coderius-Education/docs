@@ -4,7 +4,69 @@ sidebar_position: 7
 
 # Het complete algoritme
 
-**Leerdoel:** je ziet alle bouwstenen samen en onderzoekt het algoritme.
+**Leerdoel:** je maakt de functie af met een bouwsteen die je al kent,
+ziet alle bouwstenen samen en onderzoekt het algoritme.
+
+## Maak het af
+
+In deze `max_en_min` staan de bouwstenen samen, op één na. De
+startwaardes en de `return` staan er, maar de rest van de lijst doet nog
+niet mee: `klein` en `groot` blijven het eerste getal.
+Eén stap is nog open: bouwsteen 2, beide accumulators updaten. Doe die zelf,
+met één `for`-lus en zonder de functies `min` en `max` van Python.
+
+Verwachte uitvoer:
+
+```
+koudst: 7
+warmst: 18
+(-6, 3)
+```
+
+<PyRunner initialCode={`def max_en_min(lijst):
+    klein = groot = lijst[0]
+    # hier komt bouwsteen 2: beide accumulators updaten
+    return klein, groot
+
+week = [12, 9, 15, 7, 18, 11]
+koudst, warmst = max_en_min(week)
+print("koudst:", koudst)
+print("warmst:", warmst)
+print(max_en_min([-2, -6, 3, 0]))`} />
+
+<details>
+<summary>Tip</summary>
+
+Elk getal van de lijst moet langs twee vragen: is het kleiner dan
+`klein`, of groter dan `groot`? Kijk bij bouwsteen 2, beide accumulators
+updaten, hoe één lus ze allebei stelt.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def max_en_min(lijst):
+    klein = groot = lijst[0]
+    for waarde in lijst:
+        if waarde < klein:
+            klein = waarde
+        elif waarde > groot:
+            groot = waarde
+    return klein, groot
+
+week = [12, 9, 15, 7, 18, 11]
+koudst, warmst = max_en_min(week)
+print("koudst:", koudst)
+print("warmst:", warmst)
+print(max_en_min([-2, -6, 3, 0]))
+```
+
+De lus staat tussen de startwaardes en de `return`: de functie geeft
+`klein` en `groot` pas terug als elk getal bekeken is.
+
+</details>
 
 ## Alles samen
 
@@ -131,73 +193,14 @@ for naam, lijst in soorten:
 - **Eén pass, willekeurig**: bijna 2000. `klein` is na een paar elementen
   al heel klein, dus `waarde < klein` is bijna nooit waar en de tweede
   vergelijking is bijna altijd nodig.
-- **Eén pass, aflopend**: precies 1000. Elke waarde is kleiner dan de
-  vorige, dus de eerste vergelijking is elke keer raak en de tweede wordt
-  overgeslagen.
+- **Eén pass, aflopend**: 1001. Elke waarde is kleiner dan de vorige, dus
+  de eerste vergelijking is raak en de tweede wordt overgeslagen. Alleen
+  het eerste getal vergelijkt de lus met zichzelf: dat is niet kleiner,
+  dus daar komt de tweede vergelijking erbij. Dat is `n + 1`.
 
-In vergelijkingen scheelt één pass dus tussen niets en de helft, en op
+In vergelijkingen scheelt één pass dus tussen niets en bijna de helft, en op
 gewone data bijna niets. De echte winst zit ergens anders: elk element
 wordt één keer gelezen in plaats van twee keer. Bij grote data, of data
 die van een trage bron komt, is dat wat telt.
-
-</details>
-
-## Maak het af
-
-Deze `max_en_min` staat er op één bouwsteen na. De startwaardes en de
-`return` staan er, maar de rest van de lijst doet nog niet mee: `klein`
-en `groot` blijven het eerste getal.
-Eén stap is nog open: beide accumulators updaten. Doe die zelf.
-
-Verwachte uitvoer:
-
-```
-koudst: 7
-warmst: 18
-(-6, 3)
-```
-
-<PyRunner initialCode={`def max_en_min(lijst):
-    klein = groot = lijst[0]
-    # hier komt bouwsteen 2: beide accumulators updaten
-    return klein, groot
-
-week = [12, 9, 15, 7, 18, 11]
-koudst, warmst = max_en_min(week)
-print("koudst:", koudst)
-print("warmst:", warmst)
-print(max_en_min([-2, -6, 3, 0]))`} />
-
-<details>
-<summary>Tip</summary>
-
-Elk getal van de lijst moet langs twee vragen: is het kleiner dan
-`klein`, of groter dan `groot`? Kijk bij bouwsteen 2, beide accumulators
-updaten, hoe één lus ze allebei stelt.
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-```python
-def max_en_min(lijst):
-    klein = groot = lijst[0]
-    for waarde in lijst:
-        if waarde < klein:
-            klein = waarde
-        elif waarde > groot:
-            groot = waarde
-    return klein, groot
-
-week = [12, 9, 15, 7, 18, 11]
-koudst, warmst = max_en_min(week)
-print("koudst:", koudst)
-print("warmst:", warmst)
-print(max_en_min([-2, -6, 3, 0]))
-```
-
-De lus staat tussen de startwaardes en de `return`: de functie geeft
-`klein` en `groot` pas terug als elk getal bekeken is.
 
 </details>

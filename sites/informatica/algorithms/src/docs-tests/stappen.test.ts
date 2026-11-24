@@ -23,9 +23,10 @@ import { describe, expect, it } from 'vitest';
 // zijn.
 
 const require = createRequire(import.meta.url);
-const { nieuwSinds, uitMeta, alsMeta } =
+const { nieuwSinds, uitMeta, alsMeta, bouwtVoortOp } =
   require('../../../../../packages/shared/nieuw-sinds.js') as {
     nieuwSinds: (vorige: string[], nu: string[]) => number[];
+    bouwtVoortOp: (vorige: string[], nu: string[]) => boolean;
     uitMeta: (meta: string) => number[];
     alsMeta: (nummers: number[]) => string;
   };
@@ -96,6 +97,8 @@ const routes = hoofdstukken.map((hoofdstuk) => {
 
 /** Een blok dat regels deelt met de pagina ervoor en er toch niet op voortbouwt, met de reden. */
 const BOUWT_NIET_VOORT: Record<string, string> = {
+  'binair-zoeken/bouwen/08-niet-gevonden.mdx':
+    'de code gaat in een functie; het blok met de inspringing in commentaar deelt met de pagina ervoor alleen de regel `...`',
   'minimax/bouwen/08-actions.mdx':
     'het blok is een bord om mee te testen; drie van zijn zes regels staan ook in een bord van de pagina ervoor',
 };
@@ -146,20 +149,27 @@ describe('een bouwsteen markeert wat er nieuw is', () => {
   });
 
   it('een blok dat voortbouwt op de bouwsteen ervoor, staat op een pagina met een markering', () => {
-    // Voortbouwen: minstens de helft van de regels staat letterlijk in één
-    // blok van de pagina ervoor, en er kwam iets bij.
+    // Voortbouwen: minstens de helft van de regels van een blok van de
+    // pagina ervoor staat er weer in, ook als ze nu inspringen, en er kwam
+    // iets bij (`bouwtVoortOp`). Eerst moest de helft van het nieuwe blok
+    // letterlijk gelijk zijn, en hoefde een blok dat er veel bij kreeg niets
+    // te markeren. Blijft er geen regel letterlijk staan (de code gaat in
+    // een functie of een lus, en elke regel springt anders in), dan zou de
+    // markering het hele blok zijn, en die zegt niets: bubble sort 06 en
+    // minimax 07.
     const zonder = stappen
       .filter(({ pagina, vorige }) => {
         if (!vorige || pagina.naam in BOUWT_NIET_VOORT) return false;
         if (pagina.fences.some((f) => f.meta)) return false;
-        return pagina.fences.some((fence) => {
-          const nu = vol(fence.regels);
-          if (nu.length < 3) return false;
-          return vorige.blokken.some((blok) => {
-            const nieuw = nieuwSinds(blok, fence.regels).length;
-            return nieuw > 0 && nu.length - nieuw >= nu.length / 2;
-          });
-        });
+        return pagina.fences.some(
+          (fence) =>
+            vol(fence.regels).length >= 3 &&
+            vorige.blokken.some(
+              (blok) =>
+                bouwtVoortOp(blok, fence.regels) &&
+                nieuwSinds(blok, fence.regels).length < vol(fence.regels).length,
+            ),
+        );
       })
       .map(({ pagina }) => pagina.naam);
     expect(zonder).toEqual([]);
@@ -173,6 +183,13 @@ const ZONDER_MAAK_HET_AF: Record<string, string> = {
   minimax:
     'geen compleet-pagina: de route eindigt met de tiende functie in het lokale tictactoe.py, en elke bouwpagina is al een Bouw zelf en test van die bouwsteen',
   cfg: 'de leerling plakt op de compleet-pagina zijn eigen grammatica, met zelfgekozen namen; geen les toont een grammatica, dus een Maak het af zou de eerste voorgeschreven zijn',
+  // Een doorloop als leerling (november 2026): in deze drie routes was elke
+  // bouwpagina al een Bouw en test van precies de stap die Maak het af open
+  // liet. In hanoi schreef de leerling dezelfde drie regels zo drie keer.
+  hanoi: 'elke bouwpagina is al een Bouw en test; Maak het af herhaalde de recursie-stap',
+  knapsack:
+    'elke bouwpagina is al een Bouw zelf en test; Maak het af herhaalde het vullen van een rij',
+  pagerank: 'elke bouwpagina is al een invuloefening; Maak het af herhaalde één update',
 };
 
 function compleetVan(hoofdstuk: string) {
@@ -204,6 +221,77 @@ function delen(sectie: string) {
   };
 }
 
+/** Zet `nieuw` op de plek van de regel die `plek` bevat, met zijn inspringing. */
+function opPlek(code: string, plek: RegExp, nieuw: string[]) {
+  return code
+    .split('\n')
+    .flatMap((regel) =>
+      plek.test(regel) ? nieuw.map((n) => regel.match(/^\s*/)?.[0] + n) : [regel],
+    )
+    .join('\n');
+}
+
+// Een Maak het af die je zonder het algoritme haalt, oefent niets (doorloop
+// als leerling, november 2026). Per route de manieren die een leerling kent
+// om de open stap over te slaan: geeft zo'n manier de verwachte uitvoer, dan
+// zegt de opdracht dat het niet mag. Bij de sorteeralgoritmes print het
+// programma de lijst na elke ronde, en dan geeft een `sort` een andere
+// uitvoer.
+interface Flauw {
+  naam: string;
+  maak: (start: string) => string;
+  verboden: RegExp;
+}
+const OPEN = /# hier komt/;
+const FLAUW: Record<string, Flauw[]> = {
+  'vind-maximum': [
+    {
+      naam: 'met max overslaat',
+      maak: (s) =>
+        opPlek(
+          s.replace(/\n\s*if waarde > maximum:\n\s*maximum = waarde/, ''),
+          /waarde = lijst\[1\]/,
+          ['maximum = max(lijst)'],
+        ),
+      verboden: /niet de functie `max`/,
+    },
+  ],
+  'max-en-min': [
+    {
+      naam: 'met min en max overslaat',
+      maak: (s) => opPlek(s, OPEN, ['klein, groot = min(lijst), max(lijst)']),
+      verboden: /zonder de functies `min` en `max`/,
+    },
+    {
+      naam: 'met twee lussen doet',
+      maak: (s) =>
+        opPlek(s, OPEN, [
+          'for getal in lijst:',
+          '    if getal < klein:',
+          '        klein = getal',
+          'for getal in lijst:',
+          '    if getal > groot:',
+          '        groot = getal',
+        ]),
+      verboden: /met één `for`-lus/,
+    },
+  ],
+  'selection-sort': [
+    {
+      naam: 'met sort overslaat',
+      maak: (s) => opPlek(s, OPEN, ['lijst.sort()']),
+      verboden: /niet de functie `sorted`/,
+    },
+  ],
+  'bubble-sort': [
+    {
+      naam: 'met sorted nagaat',
+      maak: (s) => opPlek(s, OPEN, ['if lijst == sorted(lijst):', '    break']),
+      verboden: /niet de functie `sorted`/,
+    },
+  ],
+};
+
 const draai = (code: string) =>
   spawnSync('python3', ['-c', code], { encoding: 'utf8', timeout: 5000 });
 
@@ -216,12 +304,16 @@ describe('de compleet-pagina eindigt met Maak het af', () => {
     for (const naam of Object.keys(BOUWT_NIET_VOORT)) expect(namen).toContain(naam);
   });
 
-  describe.each(paginas.filter((p) => p.naam))('$naam', ({ koppen, sectie }) => {
+  describe.each(paginas.filter((p) => p.naam))('$naam', ({ hoofdstuk, koppen, sectie }) => {
     const { tekst, verwacht, start, hulp } = delen(sectie ?? '');
     const antwoord = /```python[^\n]*\n([\s\S]*?)```/.exec(hulp?.[1] ?? '')?.[1] ?? null;
 
-    it('is het laatste tabblad, en de rij blijft kort', () => {
-      expect(koppen?.at(-1)).toBe('Maak het af');
+    it('is het eerste tabblad, en de rij blijft kort', () => {
+      // Eerst stond Maak het af achteraan, na Run, waar de leerling in de
+      // Code-oefening van het model de hele functie al zelf schreef: de hulp
+      // nam af en daarna weer toe. Nu komt hij van de laatste bouwpagina en
+      // vult hij één bouwsteen in, en daarna schrijft hij alles.
+      expect(koppen?.[0]).toBe('Maak het af');
       expect(koppen?.length).toBeLessThanOrEqual(8);
     });
 
@@ -268,6 +360,15 @@ describe('de compleet-pagina eindigt met Maak het af', () => {
       // Een while die de leerling zelf schrijft, kan eindeloos lopen.
       if (open.some((regel) => /^\s*while\b/.test(regel))) expect(tekst).toMatch(/\*\*Pas op:\*\*/);
     });
+
+    it.each(FLAUW[hoofdstuk] ?? [])(
+      'wie de stap $naam, haalt de verwachte uitvoer niet, of de opdracht sluit dat uit',
+      ({ maak, verboden }) => {
+        const uit = draai(maak(start ?? ''));
+        expect(uit.status, uit.stderr).toBe(0);
+        if (uit.stdout.trimEnd() === (verwacht ?? '').trimEnd()) expect(tekst).toMatch(verboden);
+      },
+    );
 
     it('een regel code is hooguit 66 tekens', () => {
       const lang = [...regelsVan(start ?? ''), ...regelsVan(antwoord ?? '')].filter(

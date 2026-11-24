@@ -2,7 +2,7 @@
 sidebar_position: 11
 ---
 
-# Er gaat iets mis — top-3 fouten
+# Er gaat iets mis — vier fouten
 
 **Leerdoel:** je herkent veelvoorkomende fouten en begrijpt **waarom** ze
 optreden.
@@ -85,3 +85,30 @@ else:
 ```
 
 Meer uitleg: [Het complete algoritme](site:algorithms/docs/lineair-zoeken/08-compleet).
+
+## Vergeten in te springen
+
+{/* foutmelding-van: def zoek(lijst, doel):\n    for i, waarde in enumerate(lijst):\n        if waarde == doel:\n        return i */}
+```
+IndentationError: expected an indented block after 'if' statement on line 3
+```
+
+**Oorzaak:** na een regel die op een dubbele punt eindigt, zoals een `if`,
+verwacht Python een blok dat verder inspringt. Staat `return i` even ver
+als de `if`, dan heeft de `if` geen blok. Het getal aan het eind is de
+regel van de `if`.
+
+**Oplossing:** laat `return i` vier spaties verder inspringen dan de `if`.
+
+{/* niet-compileren: toont bewust een regel die niet inspringt */}
+```python
+# FOUT
+        if waarde == doel:
+        return i
+
+# GOED
+        if waarde == doel:
+            return i
+```
+
+Meer uitleg: [Bouwsteen 2 — vergelijken met het doel](site:algorithms/docs/lineair-zoeken/bouwen/05-vergelijken).

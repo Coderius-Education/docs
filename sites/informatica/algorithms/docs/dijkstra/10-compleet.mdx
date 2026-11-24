@@ -4,8 +4,118 @@ sidebar_position: 10
 
 # Het complete algoritme
 
-**Leerdoel:** je ziet alle bouwstenen samenkomen in één functie, en je
-tekent het resultaat op de graph.
+**Leerdoel:** je maakt de functie af met een bouwsteen die je al kent,
+ziet alle bouwstenen samenkomen in één functie en tekent het resultaat op
+de graph.
+
+## Maak het af
+
+In deze `dijkstra` staan de bouwstenen samen, op één na, met een andere
+graph dan in de bouwstenen. De lus kiest en markeert elke ronde een node,
+maar werkt geen buur bij: alles behalve de start blijft `inf`.
+Eén stap is nog open: bouwsteen 3, update één buur (relax). Doe die zelf,
+voor elke buur van `huidige`.
+
+Verwachte uitvoer:
+
+```
+{'P': 0, 'Q': 6, 'R': 3, 'S': 4}
+{'P': 6, 'Q': 0, 'R': 3, 'S': 2}
+```
+
+<PyRunner initialCode={`def kies_volgende(afstanden, bezocht):
+    beste_node = None
+    kleinste = float('inf')
+    for node, d in afstanden.items():
+        if node in bezocht:
+            continue
+        if d < kleinste:
+            kleinste = d
+            beste_node = node
+    return beste_node
+
+
+def dijkstra(graph, start):
+    afstanden = {}
+    for node in graph:
+        afstanden[node] = float('inf')
+    afstanden[start] = 0
+    bezocht = set()
+    while True:
+        huidige = kies_volgende(afstanden, bezocht)
+        if huidige is None:
+            break
+        bezocht.add(huidige)
+        # hier komt bouwsteen 3: relax elke buur van huidige
+    return afstanden
+
+
+graph = {
+    'P': [('Q', 7), ('R', 3)],
+    'Q': [('P', 7), ('S', 2)],
+    'R': [('P', 3), ('S', 1)],
+    'S': [('Q', 2), ('R', 1)],
+}
+print(dijkstra(graph, 'P'))
+print(dijkstra(graph, 'Q'))`} />
+
+<details>
+<summary>Tip</summary>
+
+Loop over `graph[huidige]`: elke buur komt met zijn gewicht. Wat kost
+de buur als je via `huidige` gaat, en wanneer is dat beter dan wat hij nu
+heeft? Kijk bij bouwsteen 3, update één buur, hoe je dat vergelijkt.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def kies_volgende(afstanden, bezocht):
+    beste_node = None
+    kleinste = float('inf')
+    for node, d in afstanden.items():
+        if node in bezocht:
+            continue
+        if d < kleinste:
+            kleinste = d
+            beste_node = node
+    return beste_node
+
+
+def dijkstra(graph, start):
+    afstanden = {}
+    for node in graph:
+        afstanden[node] = float('inf')
+    afstanden[start] = 0
+    bezocht = set()
+    while True:
+        huidige = kies_volgende(afstanden, bezocht)
+        if huidige is None:
+            break
+        bezocht.add(huidige)
+        for buur, gewicht in graph[huidige]:
+            nieuwe = afstanden[huidige] + gewicht
+            if nieuwe < afstanden[buur]:
+                afstanden[buur] = nieuwe
+    return afstanden
+
+
+graph = {
+    'P': [('Q', 7), ('R', 3)],
+    'Q': [('P', 7), ('S', 2)],
+    'R': [('P', 3), ('S', 1)],
+    'S': [('Q', 2), ('R', 1)],
+}
+print(dijkstra(graph, 'P'))
+print(dijkstra(graph, 'Q'))
+```
+
+Vanuit `P` kost `Q` 6: via `R` en `S` (3 + 1 + 2) is korter dan de
+directe edge van 7.
+
+</details>
 
 ## Alles samen
 
@@ -230,113 +340,5 @@ print(dijkstra(graph, start))`} />
    in beide lijsten, `('E', 2)` bij `B` en `'E': [('B', 2)]`. Staat hij
    alleen bij `E`, dan komt Dijkstra vanaf `A` nooit bij `E` en blijft de
    afstand `inf`.
-
-</details>
-
-## Maak het af
-
-Deze `dijkstra` staat er op één bouwsteen na, met een andere graph. De
-lus kiest en markeert elke ronde een node, maar werkt geen buur bij:
-alles behalve de start blijft `inf`. Eén stap is nog open: bouwsteen 3,
-relax, voor elke buur van `huidige`. Doe die zelf.
-
-Verwachte uitvoer:
-
-```
-{'P': 0, 'Q': 6, 'R': 3, 'S': 4}
-{'P': 6, 'Q': 0, 'R': 3, 'S': 2}
-```
-
-<PyRunner initialCode={`def kies_volgende(afstanden, bezocht):
-    beste_node = None
-    kleinste = float('inf')
-    for node, d in afstanden.items():
-        if node in bezocht:
-            continue
-        if d < kleinste:
-            kleinste = d
-            beste_node = node
-    return beste_node
-
-
-def dijkstra(graph, start):
-    afstanden = {}
-    for node in graph:
-        afstanden[node] = float('inf')
-    afstanden[start] = 0
-    bezocht = set()
-    while True:
-        huidige = kies_volgende(afstanden, bezocht)
-        if huidige is None:
-            break
-        bezocht.add(huidige)
-        # hier komt bouwsteen 3: relax elke buur van huidige
-    return afstanden
-
-
-graph = {
-    'P': [('Q', 7), ('R', 3)],
-    'Q': [('P', 7), ('S', 2)],
-    'R': [('P', 3), ('S', 1)],
-    'S': [('Q', 2), ('R', 1)],
-}
-print(dijkstra(graph, 'P'))
-print(dijkstra(graph, 'Q'))`} />
-
-<details>
-<summary>Tip</summary>
-
-Loop over `graph[huidige]`: elke buur komt met zijn gewicht. Wat kost
-de buur als je via `huidige` gaat, en wanneer is dat beter dan wat hij nu
-heeft? Kijk bij bouwsteen 3, relax, hoe je dat vergelijkt.
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-```python
-def kies_volgende(afstanden, bezocht):
-    beste_node = None
-    kleinste = float('inf')
-    for node, d in afstanden.items():
-        if node in bezocht:
-            continue
-        if d < kleinste:
-            kleinste = d
-            beste_node = node
-    return beste_node
-
-
-def dijkstra(graph, start):
-    afstanden = {}
-    for node in graph:
-        afstanden[node] = float('inf')
-    afstanden[start] = 0
-    bezocht = set()
-    while True:
-        huidige = kies_volgende(afstanden, bezocht)
-        if huidige is None:
-            break
-        bezocht.add(huidige)
-        for buur, gewicht in graph[huidige]:
-            nieuwe = afstanden[huidige] + gewicht
-            if nieuwe < afstanden[buur]:
-                afstanden[buur] = nieuwe
-    return afstanden
-
-
-graph = {
-    'P': [('Q', 7), ('R', 3)],
-    'Q': [('P', 7), ('S', 2)],
-    'R': [('P', 3), ('S', 1)],
-    'S': [('Q', 2), ('R', 1)],
-}
-print(dijkstra(graph, 'P'))
-print(dijkstra(graph, 'Q'))
-```
-
-Vanuit `P` kost `Q` 6: via `R` en `S` (3 + 1 + 2) is korter dan de
-directe edge van 7.
 
 </details>
