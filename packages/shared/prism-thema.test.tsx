@@ -244,4 +244,21 @@ describe('code op een gemarkeerde regel blijft leesbaar', () => {
     expect(blok).toMatch(/border-left: 4px solid var\(--coderius-markeer-rand\)/);
     expect(blok).toMatch(/padding-left: calc\(var\(--ifm-pre-padding\) - 4px\)/);
   });
+
+  it('met regelnummers draagt het vak met het nummer de balk', () => {
+    // Een regel met nummers is een rij van een tabel (theme-classic,
+    // CodeBlock/Line: `display: table-row`), en een rij tekent geen rand. In
+    // algoritmes had zo geen enkele gemarkeerde regel een balk. Dat de balk
+    // nu te zien is, is in Chromium nagemeten; node rendert geen tabel.
+    const blok =
+      /\.theme-code-block-highlighted-line > \[class\*="codeLineNumber"\] \{([^}]*)\}/.exec(
+        opmaak,
+      )?.[1] ?? '';
+    expect(blok).toMatch(/border-left: 4px solid var\(--coderius-markeer-rand\)/);
+    expect(blok).toMatch(/padding-left: calc\(var\(--ifm-pre-padding\) - 4px\)/);
+    // Het vak plakt links en heeft een eigen achtergrond: de tint moet erover.
+    expect(blok).toMatch(
+      /var\(--docusaurus-highlighted-code-line-bg\)[\s\S]*var\(--ifm-pre-background\)/,
+    );
+  });
 });

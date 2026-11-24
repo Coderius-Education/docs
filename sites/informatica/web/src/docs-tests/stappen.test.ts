@@ -15,9 +15,10 @@ import { describe, expect, it } from 'vitest';
 // is hier al code die de leerling aanpast.
 
 const require = createRequire(import.meta.url);
-const { nieuwSinds, uitMeta, alsMeta } =
+const { nieuwSinds, uitMeta, alsMeta, bouwtVoortOp } =
   require('../../../../../packages/shared/nieuw-sinds.js') as {
     nieuwSinds: (vorige: string[], nu: string[]) => number[];
+    bouwtVoortOp: (vorige: string[], nu: string[]) => boolean;
     uitMeta: (meta: string) => number[];
     alsMeta: (nummers: number[]) => string;
   };
@@ -92,15 +93,15 @@ describe('de uitleg van een JavaScript-les groeit in stappen', () => {
   });
 
   it('een blok dat voortbouwt op het blok ervoor, heeft een markering', () => {
-    // Voortbouwen: minstens de helft van de regels staat in het blok van
-    // dezelfde taal ervoor, en er kwam iets bij of er veranderde iets.
+    // Voortbouwen: minstens de helft van de regels van het blok van dezelfde
+    // taal ervoor staat er weer in, ook als ze nu inspringen, en er kwam iets
+    // bij of er veranderde iets (`bouwtVoortOp`). Eerst telde een regel die
+    // in een functie kwam niet als dezelfde, en hoefde zo'n blok niets te
+    // markeren.
     const zonder = paren
-      .filter(({ blok, vorige }) => {
-        if (blok.meta || !vorige) return false;
-        const nu = vol(blok.regels);
-        const nieuw = nieuwSinds(vorige.regels, blok.regels).length;
-        return nu.length >= 3 && nieuw > 0 && nu.length - nieuw >= nu.length / 2;
-      })
+      .filter(
+        ({ blok, vorige }) => !blok.meta && vorige && bouwtVoortOp(vorige.regels, blok.regels),
+      )
       .map(({ naam, nr }) => `${naam}, blok ${nr}`);
     expect(zonder).toEqual([]);
   });

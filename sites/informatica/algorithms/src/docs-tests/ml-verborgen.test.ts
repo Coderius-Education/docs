@@ -59,7 +59,7 @@ function runner(tekst: string): string {
 
 /** De Python-blokken van een les. */
 function blokken(tekst: string): string[] {
-  return [...tekst.matchAll(/```python\n([\s\S]*?)```/g)].map((m) => m[1]);
+  return [...tekst.matchAll(/```python[^\n]*\n([\s\S]*?)```/g)].map((m) => m[1]);
 }
 
 function python(code: string): string {

@@ -33,6 +33,20 @@
   padding-left: calc(var(--ifm-pre-padding) - 4px);
 }
 
+/* Met regelnummers (algoritmes zet ze op elk python-blok) is een regel een
+   rij van een tabel (display: table-row), en een rij heeft geen rand: daar
+   viel de balk weg, en in donker bleef van de markering bijna niets over. Het
+   vak met het nummer draagt hem dan. Dat vak heeft een eigen achtergrond,
+   omdat het links plakt als de code zijwaarts schuift; de tint komt erover. */
+.theme-code-block-highlighted-line > [class*="codeLineNumber"] {
+  border-left: 4px solid var(--coderius-markeer-rand);
+  padding-left: calc(var(--ifm-pre-padding) - 4px);
+  background: linear-gradient(
+      var(--docusaurus-highlighted-code-line-bg),
+      var(--docusaurus-highlighted-code-line-bg)
+    ), var(--ifm-pre-background);
+}
+
 /* Donkere footer in het bordgroen van de huisstijl, niet Infima's leisteen. */
 .footer--dark:not(#\#):not(#\#) {
   --ifm-footer-background-color: var(--ifm-color-gray-900);

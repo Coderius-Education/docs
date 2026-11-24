@@ -133,7 +133,7 @@ describe('hanoi — de fouten-pagina laat zien wat de foute code echt doet', () 
   for (const sectie of stil) {
     const kop = sectie.split('\n')[0];
     it(kop, () => {
-      const fragment = sectie.match(/```python\n# FOUT[^\n]*\n([\s\S]*?)```/)?.[1] ?? '';
+      const fragment = sectie.match(/```python[^\n]*\n# FOUT[^\n]*\n([\s\S]*?)```/)?.[1] ?? '';
       expect(fragment).not.toBe('');
       const beloofd = sectie.match(/`(\[\[?[\s\S]*?\]\]?)`/)?.[1] ?? '';
       expect(beloofd, 'de sectie noemt de verkeerde lijst').not.toBe('');

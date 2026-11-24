@@ -55,7 +55,7 @@ const TEKENCOMMANDOS = new Set(
 
 /** De code van een pagina: de python-blokken en de velden van de speeltuin. */
 function codeVan(tekst: string): string {
-  const blokken = [...tekst.matchAll(/```python\n([\s\S]*?)```/g)].map((m) => m[1]);
+  const blokken = [...tekst.matchAll(/```python[^\n]*\n([\s\S]*?)```/g)].map((m) => m[1]);
   const velden = [...tekst.matchAll(/<CodeExercise[^>]*>\{`([\s\S]*?)`\}/g)].map((m) => m[1]);
   return [...blokken, ...velden].join('\n');
 }

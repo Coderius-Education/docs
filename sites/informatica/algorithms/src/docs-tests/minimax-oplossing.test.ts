@@ -80,14 +80,14 @@ function tests(tekst: string): string {
 
 /** Het testblok dat de leerling onderaan zijn lokale tictactoe.py plakt. */
 function lokaleTests(tekst: string): string {
-  const m = tekst.match(/```python\n(# === Tests ===[\s\S]*?)```/);
+  const m = tekst.match(/```python[^\n]*\n(# === Tests ===[\s\S]*?)```/);
   expect(m, 'de pagina heeft een testblok voor tictactoe.py').not.toBeNull();
   return m?.[1] ?? '';
 }
 
 function cheatsheet(): string {
   const m = lees('18-cheatsheet.mdx').match(
-    /<summary>Alle .*? bij elkaar<\/summary>\s*```python\n([\s\S]*?)```/,
+    /<summary>Alle .*? bij elkaar<\/summary>\s*```python[^\n]*\n([\s\S]*?)```/,
   );
   expect(m, 'de cheatsheet heeft een blok met de complete code').not.toBeNull();
   return m?.[1] ?? '';

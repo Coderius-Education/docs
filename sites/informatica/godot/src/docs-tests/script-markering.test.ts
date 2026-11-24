@@ -20,16 +20,19 @@ import { describe, expect, it } from 'vitest';
 // schuift mee.
 
 const require = createRequire(import.meta.url);
-const { nieuwSinds, uitMeta, alsMeta } =
+const { nieuwSinds, wegSinds, uitMeta, alsMeta, zinOverStand, ZIN_OVER_STAND, plekVoorZin } =
   require('../../../../../packages/shared/nieuw-sinds.js') as {
     nieuwSinds: (vorige: string[], nu: string[]) => number[];
+    wegSinds: (vorige: string[], nu: string[]) => number;
     uitMeta: (meta: string) => number[];
     alsMeta: (nummers: number[]) => string;
+    zinOverStand: (nieuw: number[], weg: number) => string;
+    ZIN_OVER_STAND: RegExp;
+    plekVoorZin: (tussen: string) => number;
   };
 
 const MAP = fileURLToPath(new URL('../../docs/05-bewegingsscript', import.meta.url));
 const SCHRIJF = process.env.SCHRIJF_MARKERING === '1';
-const ZIN = 'De gemarkeerde regels zijn nieuw of veranderd in deze les.';
 
 // De kop, wat ertussen staat, de fence met zijn metastring, en het script.
 const SCRIPT =
@@ -50,6 +53,8 @@ interface Script {
   regels: string[];
   /** Wat de markering hoort te zijn: het verschil met het script ervoor. */
   hoort: string;
+  /** De zin die erboven hoort: wat de markering betekent en wat er weg is. */
+  zin: string;
 }
 
 const scripts: Script[] = [];
@@ -58,12 +63,14 @@ for (const les of lessen) {
   if (!m) continue;
   const regels = m[5].replace(/\n$/, '').split('\n');
   const vorige = scripts.at(-1);
+  // Het eerste script heeft niets om mee te vergelijken.
+  const nieuw = vorige ? nieuwSinds(vorige.regels, regels) : [];
   scripts.push({
     les: les.naam,
     pad: les.pad,
     regels,
-    // Het eerste script heeft niets om mee te vergelijken.
-    hoort: vorige ? alsMeta(nieuwSinds(vorige.regels, regels)) : '',
+    hoort: alsMeta(nieuw),
+    zin: zinOverStand(nieuw, vorige ? wegSinds(vorige.regels, regels) : 0),
   });
 }
 
@@ -71,8 +78,12 @@ if (SCHRIJF) {
   for (const script of scripts) {
     const bron = readFileSync(script.pad, 'utf8');
     const nieuw = bron.replace(SCRIPT, (_heel, kop, tussen, fence, _meta, code) => {
-      const zonderZin = (tussen as string).replace(`${ZIN}\n\n`, '');
-      const metZin = script.hoort ? `${zonderZin}${ZIN}\n\n` : zonderZin;
+      const zonderZin = (tussen as string).replace(ZIN_OVER_STAND, '');
+      // Vóór markers in commentaar: die horen direct boven hun fence.
+      const plek = plekVoorZin(zonderZin);
+      const metZin = script.zin
+        ? `${zonderZin.slice(0, plek)}${script.zin}\n\n${zonderZin.slice(plek)}`
+        : zonderZin;
       return `${kop}${metZin}${fence}${script.hoort ? ` ${script.hoort}` : ''}\n${code}\`\`\``;
     });
     if (nieuw !== bron) writeFileSync(script.pad, nieuw);
@@ -90,11 +101,11 @@ describe('Je script tot nu toe markeert wat er in deze les bij kwam', () => {
     expect(alsMeta(uitMeta(meta))).toBe(script.hoort);
   });
 
-  it.each(scripts.filter((s) => s.hoort))(
-    '$les: de tekst boven het script zegt in woorden wat de markering is',
+  it.each(scripts.filter((s) => s.zin))(
+    '$les: de tekst boven het script zegt in woorden wat de markering is en wat er weg is',
     (script) => {
       const tussen = SCRIPT.exec(readFileSync(script.pad, 'utf8'))?.[2] ?? '';
-      expect(tussen).toContain(ZIN);
+      expect(tussen).toContain(script.zin);
     },
   );
 

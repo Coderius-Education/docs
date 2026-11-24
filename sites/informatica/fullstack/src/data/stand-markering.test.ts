@@ -21,20 +21,29 @@ import sidebars from '../../sidebars';
 // schuift mee.
 
 const require = createRequire(import.meta.url);
-const { nieuwSinds, uitMeta, alsMeta } =
+const { nieuwSinds, wegSinds, uitMeta, alsMeta, zinOverStand, ZIN_OVER_STAND, plekVoorZin } =
   require('../../../../../packages/shared/nieuw-sinds.js') as {
     nieuwSinds: (vorige: string[], nu: string[]) => number[];
+    wegSinds: (vorige: string[], nu: string[]) => number;
     uitMeta: (meta: string) => number[];
     alsMeta: (nummers: number[]) => string;
+    zinOverStand: (nieuw: number[], weg: number) => string;
+    ZIN_OVER_STAND: RegExp;
+    plekVoorZin: (tussen: string) => number;
   };
 
 const DOCS = fileURLToPath(new URL('../../docs', import.meta.url));
 const SCHRIJF = process.env.SCHRIJF_MARKERING === '1';
-const ZIN = 'De gemarkeerde regels zijn nieuw of veranderd in deze les.';
 
 type Item = string | { type: string; label: string; items: Item[] };
 const plat = (items: Item[]): string[] =>
   items.flatMap((i) => (typeof i === 'string' ? [i] : plat(i.items)));
+
+// Een reeks in Veiligheid die op de server van een eerdere reeks voortbouwt:
+// zijn eerste stand vergelijkt de test met de laatste stand van die reeks.
+// Cookies afschermen begint met "de server uit Wie mag wat, met twee nieuwe
+// regels erin"; zonder dit had die stand geen markering.
+const BOUWT_VOORT_OP: Record<string, string> = { 'Cookies afschermen': 'Wie mag wat' };
 
 // Eén project is één reeks standen. De FastAPI-route is één project dat
 // groeit; in Veiligheid begint elke reeks in een eigen map opnieuw.
@@ -60,9 +69,11 @@ interface Stand {
   regels: string[];
   /** Wat de markering hoort te zijn: het verschil met de stand ervoor. */
   hoort: string;
+  /** De zin die erboven hoort: wat de markering betekent en wat er weg is. */
+  zin: string;
 }
 
-function standenVan(lessen: string[]): Stand[] {
+function standenVan(lessen: string[], ervoor?: Stand): Stand[] {
   const uit: Stand[] = [];
   for (const les of lessen) {
     const pad = padVan(les);
@@ -70,34 +81,41 @@ function standenVan(lessen: string[]): Stand[] {
     const m = STAND.exec(readFileSync(pad, 'utf8'));
     if (!m) continue;
     const regels = m[5].replace(/\n$/, '').split('\n');
-    const vorige = uit.at(-1);
+    const vorige = uit.at(-1) ?? ervoor;
+    // De eerste stand van een project heeft niets om mee te vergelijken.
+    const nieuw = vorige ? nieuwSinds(vorige.regels, regels) : [];
     uit.push({
       les,
       pad,
       tussen: m[2],
       meta: m[4].trim(),
       regels,
-      // De eerste stand van een project heeft niets om mee te vergelijken.
-      hoort: vorige ? alsMeta(nieuwSinds(vorige.regels, regels)) : '',
+      hoort: alsMeta(nieuw),
+      zin: zinOverStand(nieuw, vorige ? wegSinds(vorige.regels, regels) : 0),
     });
   }
   return uit;
 }
 
+const perReeks = new Map<string, Stand[]>();
+for (const reeks of reeksen) {
+  const ervoor = perReeks.get(BOUWT_VOORT_OP[reeks.naam] ?? '')?.at(-1);
+  perReeks.set(reeks.naam, standenVan(reeks.lessen, ervoor));
+}
 const standen = reeksen.flatMap((reeks) =>
-  standenVan(reeks.lessen).map((stand) => ({ reeks: reeks.naam, ...stand })),
+  (perReeks.get(reeks.naam) ?? []).map((stand) => ({ reeks: reeks.naam, ...stand })),
 );
 
 if (SCHRIJF) {
   for (const stand of standen) {
     const bron = readFileSync(stand.pad, 'utf8');
     const nieuw = bron.replace(STAND, (_heel, summary, tussen, fence, _meta, code) => {
-      const zonderZin = (tussen as string).replace(`${ZIN}\n\n`, '');
-      // De zin komt als eigen alinea direct na de summary-alinea's, vóór het
-      // label van het bestand en de fence.
-      const plek = zonderZin.search(/<Bestand\b|$/);
-      const metZin = stand.hoort
-        ? `${zonderZin.slice(0, plek)}${ZIN}\n\n${zonderZin.slice(plek)}`
+      const zonderZin = (tussen as string).replace(ZIN_OVER_STAND, '');
+      // De zin komt als eigen alinea na de summary-alinea's, vóór het label
+      // van het bestand en vóór markers, die direct boven hun fence horen.
+      const plek = plekVoorZin(zonderZin);
+      const metZin = stand.zin
+        ? `${zonderZin.slice(0, plek)}${stand.zin}\n\n${zonderZin.slice(plek)}`
         : zonderZin;
       return `${summary}${metZin}${fence}${stand.hoort ? ` ${stand.hoort}` : ''}\n${code}\`\`\``;
     });
@@ -120,13 +138,22 @@ describe('het tabblad main.py markeert wat er in deze les bij kwam', () => {
     },
   );
 
-  it.each(standen.filter((s) => s.hoort))(
-    '$les: de tekst boven het bestand zegt in woorden wat de markering is',
-    ({ pad }) => {
+  it.each(standen.filter((s) => s.zin))(
+    '$les: de tekst boven het bestand zegt in woorden wat de markering is en wat er weg is',
+    ({ pad, zin }) => {
       const tussen = STAND.exec(readFileSync(pad, 'utf8'))?.[2] ?? '';
-      expect(tussen).toContain(ZIN);
+      expect(tussen).toContain(zin);
+      // Een marker in commentaar blijft direct boven zijn fence.
+      expect(tussen.slice(tussen.indexOf(zin))).not.toMatch(
+        /\*\/\}\s*\n\n(?!\s*(?:<Bestand|\{\/\*|$))/,
+      );
     },
   );
+
+  it('een reeks die op een eerdere voortbouwt, begint met een markering', () => {
+    const eerste = standen.find((s) => s.reeks === 'Cookies afschermen');
+    expect(eerste?.hoort).not.toBe('');
+  });
 
   it('een markering wijst alleen regels aan die bestaan en niet leeg zijn', () => {
     const fout = standen.flatMap((s) => {

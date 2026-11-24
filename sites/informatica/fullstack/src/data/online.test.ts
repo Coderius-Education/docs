@@ -49,7 +49,9 @@ const idVan = (pad: string) =>
     .replace(/\.mdx$/, '');
 const lees = (id: string) => readFileSync(join(DOCS, `${id}.mdx`), 'utf8');
 const blokken = (id: string, taal: string) =>
-  [...lees(id).matchAll(new RegExp(`\`\`\`${taal}\\n([\\s\\S]*?)\`\`\``, 'g'))].map((m) => m[1]);
+  [...lees(id).matchAll(new RegExp(`\`\`\`${taal}[^\\n]*\\n([\\s\\S]*?)\`\`\``, 'g'))].map(
+    (m) => m[1],
+  );
 const alleBlokken = (taal: string) => lessen.flatMap((id) => blokken(id, taal));
 
 describe('de route Online zetten', () => {
@@ -531,7 +533,7 @@ describe('wat de leerling typt, werkt in een verse Ubuntu', () => {
       .replace(/<Voorspel[\s\S]*?<\/Voorspel>/g, '');
   };
   const hoofdblokken = (id: string, taal: string) =>
-    [...hoofdtekst(id).matchAll(new RegExp(`\`\`\`${taal}\\n([\\s\\S]*?)\`\`\``, 'g'))].map(
+    [...hoofdtekst(id).matchAll(new RegExp(`\`\`\`${taal}[^\\n]*\\n([\\s\\S]*?)\`\`\``, 'g'))].map(
       (m) => m[1],
     );
 
