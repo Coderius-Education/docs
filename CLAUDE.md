@@ -396,7 +396,11 @@ geen schaduw, want een rand komt ook op papier. `prism-thema.test.tsx` eist dat
 Python die op een gewone regel 4,5:1 haalt dat op een gemarkeerde ook doet,
 dat geen kleur meer dan een tiende verliest, en dat de balk 3:1 haalt. Een
 schermlezer ziet de markering niet: de tekst boven het blok zegt ook in
-woorden welke regel nieuw is (`uitgewerkt.test.ts` van python).
+woorden welke regel nieuw is (`uitgewerkt.test.ts` van python). **Met
+regelnummers draagt het vak met het nummer de balk**: daar is een regel een
+rij van een tabel (`display: table-row`), en een rand op een rij tekent de
+browser niet. In algoritmes, waar elk python-blok nummers heeft, stond de
+markering zo zonder balk (`prism-thema.test.tsx`).
 
 ## Les-tabbladen
 
@@ -1614,11 +1618,15 @@ de lessen zijn anders gebouwd:
   `sites/informatica/python/CLAUDE.md`.
 - **algoritmes**: de bouw-route was al een voorbeeld in stappen, een pagina
   per bouwsteen. Het blok van een bouwsteen markeert wat er nieuw is, en de
-  compleet-pagina eindigt met het tabblad Maak het af: het algoritme op één
-  bouwsteen na, op een ander geval (tien routes; minimax en cfg niet, met de
-  reden in `stappen.test.ts`). Als eigen tabblad heeft Maak het af het icoon
-  van een opdracht (`vormNaarStartcode`); als stap van de uitleg, zoals in
-  python, niet.
+  compleet-pagina begint met het tabblad Maak het af: het algoritme op één
+  bouwsteen na, op een ander geval, vóór Alles samen (zeven routes). Minimax
+  en cfg hebben er geen, en hanoi, knapsack en pagerank ook niet: daar is
+  elke bouwpagina al een Bouw en test van precies de stap die open zou staan,
+  en schreef de leerling dezelfde regels drie keer (de redenen in
+  `stappen.test.ts`). Achteraan, na de Code-oefening waarin de leerling de
+  hele functie al schreef, nam de hulp af en daarna weer toe. Als eigen
+  tabblad heeft Maak het af het icoon van een opdracht (`vormNaarStartcode`);
+  als stap van de uitleg, zoals in python, niet.
 - **web** (js-basics, elf van de zestien lessen): de uitleg in stappen met
   de markering, zonder Maak het af: Opdracht 1 is daar al code die de leerling
   aanpast. Het voorbeeld heeft een eigen onderwerp, want Predict gaat over de
@@ -1646,8 +1654,17 @@ een kleur, en op papier en voor een schermlezer is hij er niet (zie Kleuren
 van code voor de tint en de balk). **De markering is uit te rekenen**:
 `nieuwSinds(vorige, nu)` in `packages/shared/nieuw-sinds.js` geeft de regels
 die er sinds het blok ervoor bij kwamen of veranderden (een langste
-gemeenschappelijke reeks; van gelijke regels telt de bovenste als nieuw, een
-lege regel nooit), `uitMeta` leest een metastring en `alsMeta` schrijft hem.
+gemeenschappelijke reeks, en bij een gelijke stand die met de minste losse
+stukken: een endpoint dat onderaan bij komt en eindigt zoals het endpoint
+erboven, is één stuk; een lege regel is nooit nieuw), `uitMeta` leest een
+metastring en `alsMeta` schrijft hem. Een metastring heeft geen spaties
+(`{2,4-5}`): `uitMeta('{2, 4}')` is leeg. `bouwtVoortOp(vorige, nu)` zegt of
+een blok een markering hoort te hebben: de helft van de regels van het blok
+ervoor staat er weer in, ook als ze nu inspringen, en er kwam iets bij
+(eerst telde een regel die in een loop of functie kwam niet mee, en hoefde
+zo'n blok niets te markeren). In het hele bestand na de les zegt
+`zinOverStand(nieuw, weg)` de zin erboven, met hoeveel regels er weg zijn
+(`wegSinds`): een les die vier regels weghaalt, liet dat eerst nergens zien.
 Elke cursus heeft een test die de markering daarmee vergelijkt
 (`uitgewerkt.test.ts` van python, `stappen.test.ts` van algoritmes en van
 web, `stand-markering.test.ts` van fullstack, `script-markering.test.ts` van
@@ -1660,7 +1677,38 @@ zodra het blok ervoor verandert.
 tests van algoritmes en twee van web lazen de fence met direct een regeleinde,
 en vonden een gemarkeerd blok niet meer, of lazen de tekst tussen twee blokken
 als code. De blokrunners en `packages/shared/codeblokken.js` lazen de
-metastring al mee.
+metastring al mee. Een doorloop als leerling vond er nog vijftien in tests
+die toevallig groen bleven (`projecten`, `lesopbouw`, `turtle-plaatjes` van
+python, vijf van algoritmes, drie van fullstack).
+
+**Wat een doorloop als leerling van de uitrol vond** (november 2026; vijf
+lezers, elk een cursus). Geen enkele bevinding blokkeerde, maar wat de vorm
+beloofde, haalde hij niet overal:
+
+- **Een Maak het af die je zonder het begrip haalt, oefent niets.** In 5a van
+  python gaf `<`, `==` of `>=` op de open plek dezelfde uitvoer als `<=`; nu
+  weegt hij drie koffers, en alleen `<=` geeft de verwachte uitvoer
+  (`uitgewerkt.test.ts` vervangt het teken op elke open plek tegelijk). In
+  algoritmes haalde `max(lijst)` de uitvoer van vind-maximum, en twee lussen
+  die van max-en-min: zo'n variant geeft een andere uitvoer, of de opdracht
+  sluit hem met een zin uit (`FLAUW` in `stappen.test.ts`). Bij de
+  sorteeralgoritmes print het programma de lijst na elke ronde, en dan doet
+  een `sort` het niet.
+- **Een voorbeeld zegt Predict niet voor.** In vier lessen van web gaf de
+  uitleg het antwoord op de vraag over de startcode; die vragen gaan nu over
+  iets wat het voorbeeld niet laat zien (de tweede klik, de console vóór een
+  klik).
+- **Een les gebruikt niets wat pas later komt**: `[]` in 10a (pas in een
+  oplossing van 10b), `or` en `not` in 5c (genoemd, nergens werkend),
+  `:.1f` in 11c en `lijst[i] = …` vóór les 12. Python heeft daarvoor
+  `UITGELEGD` in `lesopbouw.test.ts`, web `js-tekst-plakken` in de leerlijn
+  (`'Aantal: ' + teller` in een opdracht van events).
+- **De eerste opdracht na Maak het af vraagt iets anders**: in 5a, 5b, 8,
+  9a, 9b, 10a, 10b en 11b vroeg hij eerst hetzelfde nog een keer.
+- **Een fout in de les heet zoals het oefenveld hem toont.** Een fout bij het
+  laden van een script heette in web `JavaScript fout: Cannot read …`,
+  zonder de soort, terwijl de les "Uncaught TypeError" citeert
+  (`GEVANGEN_MELDING` in `buildDoc.ts`).
 
 ## Code in MDX-expressies
 
