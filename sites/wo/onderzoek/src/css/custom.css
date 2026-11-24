@@ -222,6 +222,87 @@
 }
 
 /**
+ * Een werkblad op één vel (werkvorm Wetenschapsfilosofie op één vel)
+ * ------------------------------------------------------------------
+ * Twee printbare blokken, het tweede met `nieuwe-pagina`: voor- en
+ * achterkant van één A4. `werkblad-dicht` zet de afdruk op 10 punt met
+ * minder lucht. Voor de vakken: `uitlegtabel` (een tabel met uitleg,
+ * zonder schrijfruimte), `invulschema-middel` (een paar woorden), `ruim`
+ * (2 cm), `wie-smal` (smalle middelste kolom van drie) en `eerste-smal`
+ * (smalle labelkolom in een tabel van drie of meer kolommen).
+ */
+.invulschema-middel {
+  --schrijfruimte: 2.5rem;
+}
+
+/* Een tabel met uitleg op een werkblad: geen schrijfruimte. */
+.uitlegtabel {
+  --schrijfruimte: auto;
+}
+
+.wie-smal thead th:first-child {
+  width: 40%;
+}
+
+.wie-smal thead th:nth-child(2) {
+  width: 16%;
+}
+
+.eerste-smal thead th:first-child {
+  width: 17%;
+}
+
+@media print {
+  .werkblad-dicht {
+    --schrijfruimte: 1.5cm;
+    font-size: 10pt;
+    line-height: 1.3;
+  }
+
+  .werkblad-dicht .invulschema-kort {
+    --schrijfruimte: 1.55cm;
+  }
+
+  .werkblad-dicht .invulschema-middel {
+    --schrijfruimte: 1.1cm;
+  }
+
+  .werkblad-dicht .uitlegtabel {
+    --schrijfruimte: auto;
+  }
+
+  .werkblad-dicht .ruim {
+    --schrijfruimte: 2cm;
+  }
+
+  .werkblad-dicht .wie-smal {
+    --schrijfruimte: 1.5cm;
+  }
+
+  .werkblad-dicht > h2 {
+    margin: 0.5rem 0 0.2rem;
+    font-size: 12pt;
+  }
+
+  .werkblad-dicht > h2:first-child {
+    margin-top: 0;
+  }
+
+  .werkblad-dicht p {
+    margin-bottom: 0.3rem;
+  }
+
+  .werkblad-dicht table {
+    margin-bottom: 0.4rem;
+  }
+
+  .werkblad-dicht th,
+  .werkblad-dicht td {
+    padding: 0.15rem 0.4rem;
+  }
+}
+
+/**
  * Kaartjes om uit te knippen (werkvorm Vragenkaartjes)
  * -----------------------------------------------------
  * Schrijflijnen zijn randen in plaats van achtergronden: browsers printen

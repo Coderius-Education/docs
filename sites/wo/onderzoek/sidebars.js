@@ -230,6 +230,7 @@ const sidebars = {
         'werkvormen/scherp-je-vraag',
         'werkvormen/van-vijftig-naar-drie',
         'werkvormen/methoden-kennisleer',
+        'werkvormen/wetenschapsfilosofie-op-een-vel',
       ],
     },
     'termen',

@@ -36,6 +36,20 @@ Hoort bij het vak wetenschapsoriëntatie en staat op https://wo.coderius.nl/onde
   `invulschema-gelijk` (gelijke kolommen), `nieuwe-pagina` (begin dit blok op een nieuw vel) en `kaartjesvel`/`kaartje` (kaartjes om uit te knippen; schrijflijnen zijn randen, want browsers printen achtergronden standaard niet). De schrijfruimte staat
   in `--schrijfruimte`. Controleer na elke wijziging hoeveel A4 een werkblad beslaat. Een pagina zonder `printbaar`-blok print
   gewoon helemaal.
+- Een werkvorm kan op één vel staan, voor- en achterkant van één A4
+  (`werkvormen/wetenschapsfilosofie-op-een-vel.mdx`): twee blokken `printbaar invulschema
+  werkblad-dicht`, het tweede met `nieuwe-pagina`. Elke stap heeft een korte uitleg, een kleine
+  oefening en vakken "In jouw profielwerkstuk": elk begrip wordt aan het eigen onderzoek gekoppeld.
+  `werkblad-dicht` zet de afdruk op 10 punt; de kolommen en de schrijfruimte regelen
+  `uitlegtabel` (geen schrijfruimte), `invulschema-middel`, `invulschema-kort`, `ruim`, `wie-smal`
+  en `eerste-smal` (zie `src/css/custom.css`). Na elke wijziging
+  print je hem naar PDF (A4, marges van 1 cm) en kijk je of het nog precies twee bladzijden zijn:
+  dat ziet geen test. Een doorloop als leerling (november 2026) vond dat de vakken uitgingen van
+  een verklarend profielwerkstuk met een hypothese: een vak over het eigen werkstuk werkt voor elke
+  functie en voor een ontwerp, of zegt tussen haakjes wat je dan invult. Wat alleen op het scherm
+  staat (de aanwijzingen, Vastgelopen?), noemt het blad zelf op papier, met een regel
+  `alleen-print`. Een uitspraak in een kolom "Van wie?" staat nergens anders op de pagina, en een
+  omschrijving staat niet tussen aanhalingstekens als citaat (`structuur.test.ts`).
 - `src/data/begrippen.js` is de enige bron voor definities: tooltips (`<B t="…"/>`),
   de termen-trainer en de termenlijst worden eruit gegenereerd. Nieuwe begrippen dáár toevoegen.
   Het hoofdstuk van een begrip volgt uit het eerste deel van zijn `url`; een nieuw hoofdstuk
@@ -81,7 +95,9 @@ Hoort bij het vak wetenschapsoriëntatie en staat op https://wo.coderius.nl/onde
 - `src/data/structuur.test.ts` eist dat elk begrip in `<B t="…"/>` bestaat (een onbekend id
   verschijnt stil als vette tekst), dat de url van elk begrip en elke interne `linkUrl` van een
   `<Denker>` een bestaande pagina is, en dat een verbandpagina (titel met "vs.", "naast elkaar"
-  of "combineren") opent met "Het verband in één zin".
+  of "combineren") opent met "Het verband in één zin". Op een werkvorm met een kolom "Van wie?"
+  staat elke uitspraak uit die kolom maar één keer op de pagina: anders verklapt het blad zelf
+  van wie hij is.
 - Twee categorieën met hetzelfde label in de sidebar (Denkers bij Kennisleer en bij
   Wetenschapsfilosofie) krijgen elk een eigen `key`: anders geven ze dezelfde vertaalsleutel
   en stopt de build.
