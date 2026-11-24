@@ -60,6 +60,28 @@ describe('structuur van de onderzoek-site', () => {
     expect(kapot).toEqual([]);
   });
 
+  it('een werkblad verklapt niet van wie een uitspraak is', () => {
+    // Een werkvorm met een kolom "Van wie?" vraagt de leerling bij een
+    // uitspraak de denker te zoeken. Staat dezelfde zin elders op de pagina,
+    // met de naam erbij, dan staat het antwoord er al. De doorloop van
+    // Wetenschapsfilosofie op één vel (november 2026) vond de zin van
+    // Dilthey in de uitleg van stap 4, een halve bladzijde boven de vraag.
+    const verklapt = alle
+      .filter(({ pad }) => pad.startsWith('werkvormen/'))
+      .flatMap(({ pad, tekst }) => {
+        const tabellen = tekst
+          .split(/\n\n/)
+          .filter((blok) => /^\|[^\n]*\|\s*Van wie\?\s*\|/.test(blok));
+        return tabellen.flatMap((tabel) =>
+          [...tabel.matchAll(/^\|\s*"([^"]+)"\s*\|/gm)]
+            .map((m) => m[1])
+            .filter((zin) => tekst.split(zin).length - 1 > 1)
+            .map((zin) => `${pad}: ${zin}`),
+        );
+      });
+    expect(verklapt).toEqual([]);
+  });
+
   it('een verbandpagina opent met "Het verband in één zin"', () => {
     // Een verbandpagina herken je aan haar titel: "… vs. …", "… naast
     // elkaar" of "… combineren" (CLAUDE.md van de site).
