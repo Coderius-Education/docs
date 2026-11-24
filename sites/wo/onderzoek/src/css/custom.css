@@ -222,6 +222,43 @@
 }
 
 /**
+ * Handout van een hoofdstuk (Wetenschapsfilosofie op één vel)
+ * ------------------------------------------------------------
+ * Twee printbare blokken, het tweede met `nieuwe-pagina`: voor- en
+ * achterkant van één A4. Op papier kleiner en dichter dan een werkblad,
+ * want er staat een heel hoofdstuk op.
+ */
+@media print {
+  .handout-vel {
+    font-size: 10pt;
+    line-height: 1.4;
+  }
+
+  .handout-vel > h2 {
+    margin: 0.5rem 0 0.25rem;
+    font-size: 12pt;
+  }
+
+  .handout-vel > h2:first-child {
+    margin-top: 0;
+  }
+
+  .handout-vel > p,
+  .handout-vel > ol {
+    margin-bottom: 0.35rem;
+  }
+
+  .handout-vel table {
+    margin-bottom: 0.4rem;
+  }
+
+  .handout-vel th,
+  .handout-vel td {
+    padding: 0.15rem 0.4rem;
+  }
+}
+
+/**
  * Kaartjes om uit te knippen (werkvorm Vragenkaartjes)
  * -----------------------------------------------------
  * Schrijflijnen zijn randen in plaats van achtergronden: browsers printen

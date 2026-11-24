@@ -58,6 +58,7 @@ const VERWACHT: Record<string, Verwacht> = {
   'wetenschapsfilosofie/empirisch-analytisch.md': { id: 'ikdenk', hoofdstuk: H5 },
   'wetenschapsfilosofie/hermeneutiek.md': { id: 'ikdenk', hoofdstuk: H5 },
   'wetenschapsfilosofie/hermeneutische-cirkel.md': { id: 'ikdenk', hoofdstuk: H5 },
+  'wetenschapsfilosofie/handout.mdx': { id: 'ikdenk', hoofdstuk: H5 },
   'wetenschapsfilosofie/verklaren-vs-begrijpen.mdx': { id: 'ikdenk', hoofdstuk: H5 },
   'wetenschapsfilosofie/denkers.md': { id: 'ikdenk', hoofdstuk: H5 },
   'wetenschapsfilosofie/bacon.md': { id: 'ikdenk', hoofdstuk: H5 },

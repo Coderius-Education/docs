@@ -122,6 +122,7 @@ const sidebars = {
             'wetenschapsfilosofie/popper',
           ],
         },
+        'wetenschapsfilosofie/handout',
       ],
     },
     {

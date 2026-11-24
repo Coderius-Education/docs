@@ -36,6 +36,11 @@ Hoort bij het vak wetenschapsoriëntatie en staat op https://wo.coderius.nl/onde
   `invulschema-gelijk` (gelijke kolommen), `nieuwe-pagina` (begin dit blok op een nieuw vel) en `kaartjesvel`/`kaartje` (kaartjes om uit te knippen; schrijflijnen zijn randen, want browsers printen achtergronden standaard niet). De schrijfruimte staat
   in `--schrijfruimte`. Controleer na elke wijziging hoeveel A4 een werkblad beslaat. Een pagina zonder `printbaar`-blok print
   gewoon helemaal.
+- Een hoofdstuk kan een handout hebben: alles op één A4, voor- en achterkant
+  (`wetenschapsfilosofie/handout.mdx`). Twee blokken `printbaar handout-vel`, het tweede met
+  `nieuwe-pagina`; `handout-vel` zet de afdruk op 10 punt met smalle tabellen. Na elke wijziging
+  print je hem naar PDF (A4, marges van 1 cm) en kijk je of het nog precies twee bladzijden zijn.
+  Hij zegt hetzelfde als de pagina's, met dezelfde vaste definities (zie hieronder).
 - `src/data/begrippen.js` is de enige bron voor definities: tooltips (`<B t="…"/>`),
   de termen-trainer en de termenlijst worden eruit gegenereerd. Nieuwe begrippen dáár toevoegen.
   Het hoofdstuk van een begrip volgt uit het eerste deel van zijn `url`; een nieuw hoofdstuk
