@@ -47,7 +47,7 @@ Het "omdat" is geen versiering: daar laat je zien dat je verwachting uit je [lit
 | **Kan sneuvelen** | Er is een uitkomst denkbaar die hem weerlegt | *Slaap kan soms invloed hebben op concentratie.* |
 | **Onderbouwd** | Hij volgt uit wat je al weet uit bronnen | *…omdat ik dat denk.* |
 
-De derde eis is de strengste. Een hypothese met "kan", "soms" of "misschien" klopt altijd, wat er ook uitkomt — en zegt daardoor niets. De filosoof Karl Popper maakte dit tot kern van de wetenschap: een uitspraak die door geen enkele waarneming weerlegd kan worden, is geen wetenschappelijke uitspraak. Het was zijn antwoord op [het inductieprobleem](site:onderzoek/kennisleer/inductieprobleem): bewijzen dat iets altijd klopt kan niet, maar laten zien dat iets níét klopt wel.
+De derde eis is de strengste. Een hypothese met "kan", "soms" of "misschien" klopt altijd, wat er ook uitkomt — en zegt daardoor niets. De filosoof [Karl Popper](site:onderzoek/wetenschapsfilosofie/popper) maakte dit tot kern van de wetenschap: een uitspraak die door geen enkele waarneming weerlegd kan worden, is geen wetenschappelijke uitspraak. Dat heet [falsificatie](site:onderzoek/wetenschapsfilosofie/falsificatie). Het was zijn antwoord op [het inductieprobleem](site:onderzoek/kennisleer/inductieprobleem): bewijzen dat iets altijd klopt kan niet, maar laten zien dat iets níét klopt wel.
 
 :::caution[Valkuil: achteraf je hypothese aanpassen]
 Het is verleidelijk om na het meten je hypothese zo te herschrijven dat hij bij de uitkomst past. Dat mag niet: dan heb je niets getoetst, alleen iets beschreven wat je al wist. Schrijf je hypothese op vóór je begint, laat hem staan, en rapporteer eerlijk of hij klopte. Dat hoort bij [aanvaardbaar](site:onderzoek/spelregels/aanvaardbaar) en [transparant](site:onderzoek/spelregels/transparant) werken.
@@ -68,3 +68,4 @@ Het is verleidelijk om na het meten je hypothese zo te herschrijven dat hij bij 
 - [Verklarend-toetsend onderzoek](site:onderzoek/opzet/functies/verklarend-toetsend) — de functie die niet zonder hypothese kan
 - [Operationaliseren](site:onderzoek/vragen/operationaliseren) — want om een hypothese te toetsen moet je weten wat je precies meet
 - [Het inductieprobleem](site:onderzoek/kennisleer/inductieprobleem) — waarom weerleggen sterker is dan bevestigen
+- [Falsificatie](site:onderzoek/wetenschapsfilosofie/falsificatie) — het idee van Popper uitgewerkt

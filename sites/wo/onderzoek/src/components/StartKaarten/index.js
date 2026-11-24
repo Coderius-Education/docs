@@ -26,6 +26,12 @@ const kaarten = [
     to: '/kennisleer/hoe-weet-je-iets',
   },
   {
+    titel: 'Wetenschapsfilosofie',
+    tekst:
+      'Inductie, deductie en abductie, falsificatie, en de natuur verklaren tegenover de mens begrijpen.',
+    to: '/wetenschapsfilosofie/hoe-werkt-wetenschap',
+  },
+  {
     titel: 'Onderzoek opzetten',
     tekst: 'Kies per deelvraag een functie, soort en methode met de keuzedriehoek.',
     to: '/opzet/keuzedriehoek',

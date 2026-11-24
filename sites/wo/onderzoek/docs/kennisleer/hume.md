@@ -35,3 +35,5 @@ De tweede: begrens je conclusie. Alles wat je uit je metingen afleidt over een g
 - [De vork van Hume](site:onderzoek/kennisleer/vork-van-hume) — analytisch tegenover synthetisch
 - [Het inductieprobleem](site:onderzoek/kennisleer/inductieprobleem) — de grens van wat waarneming je kan opleveren
 - [Empirisme](site:onderzoek/kennisleer/empirisme) — de stroming die hij tot zijn uiterste consequentie bracht
+- [Immanuel Kant](site:onderzoek/kennisleer/kant) — die door Hume wakker werd geschud
+- [Descriptief vs. normatief](site:onderzoek/wetenschapsfilosofie/descriptief-vs-normatief) — het gat tussen "is" en "moet" dat Hume aanwees

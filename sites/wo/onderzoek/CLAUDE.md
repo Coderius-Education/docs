@@ -48,12 +48,17 @@ Hoort bij het vak wetenschapsoriëntatie en staat op https://wo.coderius.nl/onde
   bron onder `## Bronnen`. Neem begrippen en indelingen over, nooit tekst, figuren of
   opdrachten: de site staat onder CC BY-NC, en die licentie kun je alleen geven op eigen
   werk. Twee bronnen: *Ik denk* (Le Coultre, 2007), hoofdstuk 4 Kennisleer voor
-  `kennisleer/` en de denkers (niet Chomsky), hoofdstuk 5 Wetenschapsfilosofie voor het
-  inductieprobleem, intersubjectieve kennis en de eis van Popper in `vragen/hypothese`; en
+  `kennisleer/` en de denkers (niet Chomsky, wel Kant), hoofdstuk 5 Wetenschapsfilosofie voor
+  het hoofdstuk `wetenschapsfilosofie/` (redeneervormen, falsificatie, descriptief en
+  normatief, de empirisch-analytische methode, hermeneutiek, en Bacon, Popper en Dilthey),
+  het inductieprobleem, intersubjectieve kennis en de eis van Popper in `vragen/hypothese`; en
   *Eureka!* (Wientjes & Veenhoven, 2023), hoofdstuk 2 Wat is goed onderzoek voor
   `spelregels/` (niet auteursrecht), plus de functies (`opzet/functies/`) en de typen
   (`typen/`). `src/data/bronnen.test.ts` houdt per pagina bij welke bron en welk
   hoofdstuk erbij hoort; een nieuwe pagina in die mappen moet daar ook in.
+- Twee categorieën met hetzelfde label in de sidebar (Denkers bij Kennisleer en bij
+  Wetenschapsfilosofie) krijgen elk een eigen `key`: anders geven ze dezelfde vertaalsleutel
+  en stopt de build.
 - Teksten van de zoekplugin staan in het Nederlands in `i18n/nl/code.json`.
 - Kleuren, letters en het merk komen uit de gedeelde huisstijl (`createConfig`);
   `src/css/custom.css` bevat alleen de handout- en printregels en wordt na de

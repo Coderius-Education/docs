@@ -22,6 +22,12 @@ const begrippen = {
     lang: 'Een van de vier spelregels: onderzoek is aanvaardbaar als het ethisch verantwoord is — eerlijk uitgevoerd, met toestemming, met respect voor privacy en zonder iemand te schaden.',
     url: '/spelregels/aanvaardbaar',
   },
+  abductie: {
+    term: 'Abductie',
+    kort: 'Bij een opvallende waarneming de meest waarschijnlijke verklaring zoeken: van gevolg naar mogelijke oorzaak.',
+    lang: 'Een redenering waarbij je bij een opvallende waarneming de meest waarschijnlijke verklaring zoekt. Het resultaat is geen zekerheid maar een goede gok, die je daarna als hypothese toetst.',
+    url: '/wetenschapsfilosofie/abductie',
+  },
   abstract: {
     term: 'Abstract',
     kort: 'De samenvatting bovenaan een wetenschappelijk artikel: doel, methode, resultaten en conclusie in een paar honderd woorden.',
@@ -63,6 +69,12 @@ const begrippen = {
     kort: 'De plek van een naam in de auteurslijst: eerste auteur deed het werk, laatste auteur leidde het — behalve waar alfabetisch geldt.',
     lang: 'De volgorde van de namen boven een artikel. In de meeste vakgebieden deed de eerste auteur het meeste werk en is de laatste auteur de groepsleider; in economie en wiskunde staan namen vaak gewoon alfabetisch.',
     url: '/literatuurstudie/auteurvolgorde',
+  },
+  begrijpen: {
+    term: 'Begrijpen',
+    kort: 'De betekenis van menselijk handelen, teksten of kunst snappen vanuit hun eigen tijd en bedoelingen; het doel van de hermeneutiek.',
+    lang: 'Het doel van de geesteswetenschappen volgens Dilthey (Verstehen): je verplaatst je in iemands wereld en snapt wat iets voor hem betekende, in plaats van een oorzaak of wet te zoeken.',
+    url: '/wetenschapsfilosofie/verklaren-vs-begrijpen',
   },
   begripsrealisme: {
     term: 'Begripsrealisme',
@@ -159,6 +171,12 @@ const begrippen = {
     lang: 'Een open licentie waarmee de maker vooraf toestemming geeft om een werk te gebruiken, onder voorwaarden die met codes worden aangegeven: BY (naamsvermelding), SA (gelijk delen), NC (niet commercieel) en ND (geen bewerkingen). CC0 betekent: geen rechten voorbehouden.',
     url: '/spelregels/auteursrecht',
   },
+  deductie: {
+    term: 'Deductie',
+    kort: 'Uit een algemene uitspraak via een logische redenering een conclusie over een individueel geval trekken.',
+    lang: 'Een redenering van het algemene naar het bijzondere: uit een algemene uitspraak trek je via een logische redenering een conclusie over één geval. Zijn de uitgangspunten waar en is de redenering geldig, dan is de conclusie zeker.',
+    url: '/wetenschapsfilosofie/deductie',
+  },
   deelvraag: {
     term: 'Deelvraag',
     kort: 'Een kleinere vraag die helpt om de hoofdvraag te beantwoorden; per deelvraag kies je functie, soort en methode.',
@@ -170,6 +188,18 @@ const begrippen = {
     kort: 'Een artikel volledig, actief en kritisch lezen, met de tabellen en de methode erbij.',
     lang: 'Het volledig, actief en kritisch lezen van een artikel: elke sectie, met aantekeningen en met de tabellen erbij, zodat je de methode kunt beoordelen en de conclusie zelf kunt controleren. Alleen voor de bronnen waar je een bewering op bouwt.',
     url: '/literatuurstudie/deep-reading',
+  },
+  descriptief: {
+    term: 'Descriptief',
+    kort: 'Beschrijvend: een uitspraak over hoe iets is, die je kunt controleren door te kijken of te meten.',
+    lang: 'Een descriptieve uitspraak beschrijft de werkelijkheid en is waar of onwaar; je controleert haar met waarneming. Het tegenovergestelde is een normatieve uitspraak.',
+    url: '/wetenschapsfilosofie/descriptief-vs-normatief',
+  },
+  'empirisch-analytische-methode': {
+    term: 'Empirisch-analytische methode',
+    kort: 'De methode van de natuurwetenschappen: waarnemen, een hypothese opstellen, die met experimenten toetsen en zo tot een wetmatigheid komen.',
+    lang: 'De methode van de natuurwetenschappen, met als kenmerken de uniformiteit van de natuur, herhaalbaarheid van experimenten, feiten die los van elkaar worden beschreven en een scheiding tussen object en subject. De stappen: waarneming, hypothese, toetsen met experimenten, resultaten afleiden, een wetmatigheid opstellen.',
+    url: '/wetenschapsfilosofie/empirisch-analytisch',
   },
   empirisme: {
     term: 'Empirisme',
@@ -195,6 +225,12 @@ const begrippen = {
     lang: 'De mate waarin je conclusie ook geldt buiten je onderzoek: voor andere mensen, situaties en momenten (ook wel generaliseerbaarheid).',
     url: '/spelregels/externe-validiteit',
   },
+  falsificatie: {
+    term: 'Falsificatie',
+    kort: 'Een theorie of hypothese weerleggen met een waarneming die ermee in strijd is.',
+    lang: 'Het weerleggen van een theorie met een waarneming die ermee in strijd is. Volgens Karl Popper is een uitspraak alleen wetenschappelijk als ze falsifieerbaar is: er moet een waarneming denkbaar zijn die haar onderuit haalt.',
+    url: '/wetenschapsfilosofie/falsificatie',
+  },
   grotallegorie: {
     term: 'Grotallegorie',
     kort: 'Het beeld waarin geketende mensen alleen schaduwen op een wand zien.',
@@ -212,6 +248,30 @@ const begrippen = {
     kort: 'Mensen gedragen zich anders zodra ze weten dat ze bekeken worden.',
     lang: 'Het verschijnsel dat mensen hun gedrag aanpassen zodra ze weten dat ze onderzocht worden. Genoemd naar onderzoek in de Hawthorne-fabriek in de jaren twintig; hoe groot het effect is, staat ter discussie.',
     url: '/opzet/methoden/observatie',
+  },
+  hermeneutiek: {
+    term: 'Hermeneutiek',
+    kort: 'De leer van het interpreteren: de betekenis van teksten, kunst en menselijk handelen begrijpen; de methode van de geesteswetenschappen.',
+    lang: 'De methode van de geesteswetenschappen, gericht op begrijpen in plaats van verklaren. Uitgangspunten: holisme, historiciteit, en object en subject zijn niet gescheiden.',
+    url: '/wetenschapsfilosofie/hermeneutiek',
+  },
+  'hermeneutische-cirkel': {
+    term: 'Hermeneutische cirkel',
+    kort: 'Bij het interpreteren heen en weer gaan tussen deel en geheel: de delen begrijp je vanuit het geheel, en het geheel vanuit de delen.',
+    lang: 'De beweging tussen deel en geheel bij het interpreteren. Bij elke ronde wordt het begrip preciezer, daarom is het geen vicieuze cirkel maar eerder een spiraal.',
+    url: '/wetenschapsfilosofie/hermeneutische-cirkel',
+  },
+  historiciteit: {
+    term: 'Historiciteit',
+    kort: 'Mensen, teksten en gebeurtenissen horen bij hun tijd en plaats, en de onderzoeker die ze uitlegt ook.',
+    lang: 'Een uitgangspunt van de hermeneutiek: wat mensen doen en schrijven, begrijp je alleen vanuit hun historische context, en de onderzoeker kijkt zelf ook vanuit zijn eigen tijd.',
+    url: '/wetenschapsfilosofie/hermeneutiek',
+  },
+  holisme: {
+    term: 'Holisme',
+    kort: 'Een deel begrijp je alleen vanuit het geheel waar het bij hoort.',
+    lang: 'Een uitgangspunt van de hermeneutiek: een zin, een handeling of een gebeurtenis krijgt pas betekenis binnen het geheel waar hij deel van is. Het tegenovergestelde van feiten los van elkaar beschrijven.',
+    url: '/wetenschapsfilosofie/hermeneutiek',
   },
   hoofdvraag: {
     term: 'Hoofdvraag',
@@ -242,6 +302,12 @@ const begrippen = {
     kort: 'Een waarneembaar kenmerk waaraan je een begrip herkent en dat je kunt meten.',
     lang: 'Een waarneembaar en meetbaar kenmerk dat aangeeft hoe het met een begrip staat, zoals het aantal fouten op een aandachtstaak als indicator voor concentratie.',
     url: '/vragen/operationaliseren',
+  },
+  inductie: {
+    term: 'Inductie',
+    kort: 'Uit herhaalde waarnemingen een algemene conclusie trekken.',
+    lang: 'Een redenering van het bijzondere naar het algemene: uit een reeks losse waarnemingen trek je een algemene conclusie. Die is meer of minder waarschijnlijk, maar nooit zeker: zie het inductieprobleem.',
+    url: '/wetenschapsfilosofie/inductie',
   },
   inductieprobleem: {
     term: 'Inductieprobleem',
@@ -326,6 +392,12 @@ const begrippen = {
     kort: 'De essentie bestaat niet los van de dingen; algemene begrippen zijn slechts namen.',
     lang: 'De opvatting dat de essentie niet los van de dingen bestaat: er zijn alleen afzonderlijke dingen, en algemene begrippen zijn de namen die wij daaraan geven.',
     url: '/kennisleer/aristoteles',
+  },
+  normatief: {
+    term: 'Normatief',
+    kort: 'Een uitspraak over hoe iets zou moeten zijn: een oordeel of norm, niet te controleren met alleen een meting.',
+    lang: 'Een normatieve uitspraak zegt wat goed, slecht, wenselijk of verplicht is. Om haar te onderbouwen heb je naast feiten een maatstaf nodig. Het tegenovergestelde is een descriptieve uitspraak.',
+    url: '/wetenschapsfilosofie/descriptief-vs-normatief',
   },
   objectief: {
     term: 'Objectieve kennis',
@@ -507,6 +579,12 @@ const begrippen = {
     lang: 'De sluitredenering in drie stappen die Aristoteles ontwierp: alle mensen zijn sterfelijk; Socrates is een mens; dus Socrates is sterfelijk.',
     url: '/kennisleer/aristoteles',
   },
+  'synthetisch-a-priori': {
+    term: 'Synthetisch a priori',
+    kort: 'Volgens Kant: een uitspraak die iets nieuws over de wereld zegt en toch zeker is zonder te meten, zoals 7 + 5 = 12.',
+    lang: 'Een derde soort uitspraak die Kant toevoegde aan de vork van Hume: synthetisch omdat ze iets nieuws zegt, a priori omdat ze zeker is vóór elke waarneming. Ze is zeker omdat ze voortkomt uit de vormen van ons eigen verstand.',
+    url: '/kennisleer/kant',
+  },
   'synthetische-uitspraak': {
     term: 'Synthetische uitspraak',
     kort: 'Waar op grond van de waarneming; de ontkenning is voorstelbaar.',
@@ -537,6 +615,12 @@ const begrippen = {
     lang: 'Een van de vier spelregels: onderzoek is transparant als een ander precies kan nagaan wat je hebt gedaan — methode beschreven, bronnen vermeld, gegevens zichtbaar.',
     url: '/spelregels/transparant',
   },
+  'uniformiteit-van-de-natuur': {
+    term: 'Uniformiteit van de natuur',
+    kort: 'De aanname dat de natuur zich overal en altijd volgens dezelfde wetten gedraagt.',
+    lang: 'Een kenmerk van de empirisch-analytische methode: zonder de aanname dat de natuur morgen en elders net zo werkt als hier en nu, kun je uit een experiment geen wetmatigheid afleiden.',
+    url: '/wetenschapsfilosofie/empirisch-analytisch',
+  },
   'universele-grammatica': {
     term: 'Universele grammatica',
     kort: 'De aangeboren aanleg voor taalstructuur die volgens Chomsky ieder kind meebrengt.',
@@ -560,6 +644,12 @@ const begrippen = {
     kort: 'Gegevens verzamelen in de echte situatie: observeren, enquêteren, interviewen of meten op locatie.',
     lang: 'Een soort onderzoek waarbij je gegevens verzamelt in de echte situatie, bijvoorbeeld door te observeren, enquêteren, interviewen of meten op locatie.',
     url: '/opzet/soorten/veldonderzoek',
+  },
+  verklaren: {
+    term: 'Verklaren',
+    kort: 'De oorzaak of wetmatigheid achter een verschijnsel vinden; het doel van de natuurwetenschappen.',
+    lang: 'Het doel van de empirisch-analytische methode: een verschijnsel herleiden tot een oorzaak of een wet, zodat je kunt voorspellen wat er de volgende keer gebeurt. Dilthey zette het tegenover begrijpen.',
+    url: '/wetenschapsfilosofie/verklaren-vs-begrijpen',
   },
   'verklarend-explorerend': {
     term: 'Verklarend-explorerend onderzoek',

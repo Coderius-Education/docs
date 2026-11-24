@@ -42,11 +42,27 @@ const VERWACHT: Record<string, Verwacht> = {
   'kennisleer/locke.md': { id: 'ikdenk', hoofdstuk: H4 },
   'kennisleer/berkeley.md': { id: 'ikdenk', hoofdstuk: H4 },
   'kennisleer/hume.md': { id: 'ikdenk', hoofdstuk: H4 },
+  'kennisleer/kant.md': { id: 'ikdenk', hoofdstuk: H4 },
   'kennisleer/chomsky.md': { geen: 'Chomsky staat niet in een inleiding uit 2007' },
   // Ik denk, hoofdstuk 5 Wetenschapsfilosofie
   'kennisleer/inductieprobleem.md': { id: 'ikdenk', hoofdstuk: H5 },
   'kennisleer/intersubjectief.md': { id: 'ikdenk', hoofdstuk: H5 },
   'vragen/hypothese.md': { id: 'ikdenk', hoofdstuk: H5 },
+  'wetenschapsfilosofie/hoe-werkt-wetenschap.mdx': { id: 'ikdenk', hoofdstuk: H5 },
+  'wetenschapsfilosofie/inductie.md': { id: 'ikdenk', hoofdstuk: H5 },
+  'wetenschapsfilosofie/deductie.md': { id: 'ikdenk', hoofdstuk: H5 },
+  'wetenschapsfilosofie/abductie.md': { id: 'ikdenk', hoofdstuk: H5 },
+  'wetenschapsfilosofie/drie-redeneervormen.mdx': { id: 'ikdenk', hoofdstuk: H5 },
+  'wetenschapsfilosofie/falsificatie.md': { id: 'ikdenk', hoofdstuk: H5 },
+  'wetenschapsfilosofie/descriptief-vs-normatief.mdx': { id: 'ikdenk', hoofdstuk: H5 },
+  'wetenschapsfilosofie/empirisch-analytisch.md': { id: 'ikdenk', hoofdstuk: H5 },
+  'wetenschapsfilosofie/hermeneutiek.md': { id: 'ikdenk', hoofdstuk: H5 },
+  'wetenschapsfilosofie/hermeneutische-cirkel.md': { id: 'ikdenk', hoofdstuk: H5 },
+  'wetenschapsfilosofie/verklaren-vs-begrijpen.mdx': { id: 'ikdenk', hoofdstuk: H5 },
+  'wetenschapsfilosofie/denkers.md': { id: 'ikdenk', hoofdstuk: H5 },
+  'wetenschapsfilosofie/bacon.md': { id: 'ikdenk', hoofdstuk: H5 },
+  'wetenschapsfilosofie/popper.md': { id: 'ikdenk', hoofdstuk: H5 },
+  'wetenschapsfilosofie/dilthey.md': { id: 'ikdenk', hoofdstuk: H5 },
   // Eureka!, hoofdstuk 2 Wat is goed onderzoek
   'spelregels/de-vier-spelregels.md': { id: 'eureka', hoofdstuk: H2 },
   'spelregels/betrouwbaar.md': { id: 'eureka', hoofdstuk: H2 },
@@ -71,7 +87,7 @@ const VERWACHT: Record<string, Verwacht> = {
 };
 
 // Elke pagina in deze mappen moet in VERWACHT staan.
-const MAPPEN = ['kennisleer', 'spelregels', 'opzet/functies', 'typen'];
+const MAPPEN = ['kennisleer', 'wetenschapsfilosofie', 'spelregels', 'opzet/functies', 'typen'];
 
 function paginas(map: string): string[] {
   return readdirSync(map).flatMap((naam) => {

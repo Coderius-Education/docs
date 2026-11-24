@@ -76,7 +76,50 @@ const sidebars = {
             'kennisleer/locke',
             'kennisleer/berkeley',
             'kennisleer/hume',
+            'kennisleer/kant',
             'kennisleer/chomsky',
+          ],
+        },
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Wetenschapsfilosofie',
+      items: [
+        'wetenschapsfilosofie/hoe-werkt-wetenschap',
+        {
+          type: 'category',
+          label: 'Redeneren',
+          items: [
+            'wetenschapsfilosofie/inductie',
+            'wetenschapsfilosofie/deductie',
+            'wetenschapsfilosofie/abductie',
+            'wetenschapsfilosofie/drie-redeneervormen',
+          ],
+        },
+        'wetenschapsfilosofie/falsificatie',
+        'wetenschapsfilosofie/descriptief-vs-normatief',
+        {
+          type: 'category',
+          label: 'Twee methoden',
+          items: [
+            'wetenschapsfilosofie/empirisch-analytisch',
+            'wetenschapsfilosofie/hermeneutiek',
+            'wetenschapsfilosofie/hermeneutische-cirkel',
+            'wetenschapsfilosofie/verklaren-vs-begrijpen',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Denkers',
+          // Kennisleer heeft ook een categorie Denkers: zonder eigen key
+          // geven ze dezelfde vertaalsleutel, en dan stopt de build.
+          key: 'denkers-wetenschapsfilosofie',
+          items: [
+            'wetenschapsfilosofie/denkers',
+            'wetenschapsfilosofie/bacon',
+            'wetenschapsfilosofie/popper',
+            'wetenschapsfilosofie/dilthey',
           ],
         },
       ],
