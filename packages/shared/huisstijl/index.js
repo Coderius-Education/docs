@@ -64,6 +64,7 @@ const CURSUSSEN = [
   { id: 'didactiek', label: 'Didactiek', tint: 335, glyph: 'gesprek' },
   { id: 'onderzoek', label: 'Onderzoek', tint: 248, glyph: 'loep' },
   { id: 'hartjespuzzel', label: 'Hartjespuzzel', tint: 350, glyph: 'hart' },
+  { id: 'meesterproef', label: 'Meesterproef', tint: 120, glyph: 'cursor' },
 ];
 
 const CHROMA = 0.14;
