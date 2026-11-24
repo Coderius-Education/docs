@@ -82,7 +82,7 @@ Ronde 2: 30 punten
 
 ### Reken ermee verder
 
-Met een waarde die terugkomt, kun je rekenen, net als met elk ander getal. De gemarkeerde regel is nieuw: een `print` die de twee rondes optelt.
+Met een waarde die terugkomt, kun je rekenen, net als met elk ander getal. Na de twee rondes komt nog een finale van twee vragen, die alleen in het totaal meetelt. De gemarkeerde regel is nieuw: een `print` die de twee rondes en de finale optelt. De finale heeft geen eigen regel op het scherm, dus `punten(2)` staat direct in de som.
 
 ```python {8}
 def punten(goed):
@@ -92,7 +92,7 @@ ronde1 = punten(4)
 ronde2 = punten(3)
 print(f"Ronde 1: {ronde1} punten")
 print(f"Ronde 2: {ronde2} punten")
-print(f"Totaal: {ronde1 + ronde2} punten")
+print(f"Totaal: {ronde1 + ronde2 + punten(2)} punten")
 ```
 
 Uitvoer:
@@ -100,10 +100,10 @@ Uitvoer:
 ```
 Ronde 1: 40 punten
 Ronde 2: 30 punten
-Totaal: 70 punten
+Totaal: 90 punten
 ```
 
-Met de `print` in de functie kon dit niet: `None` plus `None` geeft een foutmelding. Maak je een functie om een waarde te berekenen, dan hoort er een `return` in. Toont de functie alleen iets, dan is `print` genoeg.
+Een aanroep van `punten` levert een getal op, dus hij mag midden in een berekening staan, ook in een f-string. Met de `print` in de functie kon dit niet: `None` plus `None` geeft een foutmelding. Maak je een functie om een waarde te berekenen, dan hoort er een `return` in. Toont de functie alleen iets, dan is `print` genoeg.
 
 ### Voorspel
 
@@ -248,14 +248,22 @@ SyntaxError: 'return' outside function
 
 ## Opdracht 9b.1: Kwadraat
 
-Schrijf een functie `kwadraat(getal)` die `getal * getal` **teruggeeft**. Sla het resultaat op en print het.
+Schrijf een functie `kwadraat(getal)` die `getal * getal` **teruggeeft**. Print daarna het kwadraat van 3, het kwadraat van 4 en de som van die twee. Gebruik geen variabelen voor de uitkomsten: elke waarde komt uit een aanroep in de `print`.
+
+Verwachte uitvoer:
+
+```
+9
+16
+Samen: 25
+```
 
 <CodeExercise>{`# Schrijf hier je code`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-`return getal * getal` binnen de functie. Daarna `resultaat = kwadraat(6)` en `print(resultaat)`.
+In de functie staat `return getal * getal`. Een aanroep levert een getal op, dus je mag hem in een `print` zetten, en ook in een som in een f-string, net als de finale uit de uitleg.
 
 </details>
 
@@ -266,17 +274,17 @@ Schrijf een functie `kwadraat(getal)` die `getal * getal` **teruggeeft**. Sla he
 def kwadraat(getal):
     return getal * getal
 
-resultaat = kwadraat(6)
-print(resultaat)
+print(kwadraat(3))
+print(kwadraat(4))
+print(f"Samen: {kwadraat(3) + kwadraat(4)}")
 ```
-
-Uitvoer: `36`.
 
 <CodeExercise>{`def kwadraat(getal):
     return getal * getal
 
-resultaat = kwadraat(6)
-print(resultaat)`}</CodeExercise>
+print(kwadraat(3))
+print(kwadraat(4))
+print(f"Samen: {kwadraat(3) + kwadraat(4)}")`}</CodeExercise>
 
 </details>
 
@@ -284,7 +292,7 @@ print(resultaat)`}</CodeExercise>
 
 ## Opdracht 9b.2: Max van twee
 
-Schrijf een functie `max_van_twee(a, b)` die het grootste van twee getallen teruggeeft. Gebruik `if`/`else` in de functie.
+Schrijf een functie `max_van_twee(a, b)` die het grootste van twee getallen teruggeeft. Gebruik `if`/`else` in de functie. Print daarna de uitkomst van `max_van_twee(10, 20)`, `max_van_twee(7, 3)` en `max_van_twee(5, 5)`, elk op een eigen regel.
 
 Verwachte uitvoer:
 
@@ -299,7 +307,7 @@ Verwachte uitvoer:
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Als `a > b`, `return a`. Anders `return b`. Bij gelijke getallen maakt het niet uit welke je teruggeeft.
+Als `a > b`, `return a`. Anders `return b`. Bij gelijke getallen maakt het niet uit welke je teruggeeft. Een aanroep mag direct tussen de haakjes van `print` staan.
 
 </details>
 

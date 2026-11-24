@@ -7,31 +7,35 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 # 5c And, or en elif
 
-Met `if`/`else` kies je tussen twee paden. Met `and` en `or` combineer je voorwaarden, en met `elif` maak je meer dan twee takken.
+Met `if`/`else` kies je tussen twee paden. Met `and` en `or` combineer je voorwaarden, met `not` draai je er een om, en met `elif` maak je meer dan twee takken.
 
-## And en or: twee voorwaarden combineren
+## And, or en not
 
-Soms hangt een beslissing van twee dingen af. Bij dit feest kom je alleen binnen als je 14 of ouder bent én een kaartje hebt:
+Bij een feest kom je binnen als je 14 of ouder bent én een kaartje hebt. Met `and` en `or` maak je van twee voorwaarden één, en `not` draait een voorwaarde om. De laatste drie regels gebruiken elk een van die woorden:
 
 ```python
 leeftijd = 16
-heeft_kaartje = True
+heeft_kaartje = False
+op_gastenlijst = True
 
-if leeftijd >= 14 and heeft_kaartje:
-    print("Je mag naar binnen!")
-else:
-    print("Sorry, je mag er niet in.")
+print(leeftijd >= 14 and heeft_kaartje)
+print(heeft_kaartje or op_gastenlijst)
+print(not heeft_kaartje)
 ```
 
-`and` is een van de drie woorden waarmee je voorwaarden combineert:
+Uitvoer:
 
-| Operator | Wanneer `True`? |
-|:--------:|-----------------|
-| `and`    | Als **beide** voorwaarden `True` zijn |
-| `or`     | Als **minstens één** voorwaarde `True` is |
-| `not`    | Als de voorwaarde **niet** `True` is: `not True` is `False` |
+```
+False
+True
+True
+```
 
-Twijfel je tussen `and` en `or`? Vraag je dan af: moet het allebei, of is één genoeg?
+- **`and`** is `True` als beide kanten `True` zijn. Je bent oud genoeg, maar zonder kaartje is het `False`.
+- **`or`** is `True` als minstens één kant `True` is. Zonder kaartje is het toch `True`, want je staat op de gastenlijst.
+- **`not`** maakt van `True` `False`, en andersom. `not heeft_kaartje` vraagt: heeft deze gast géén kaartje?
+
+Zo'n combinatie is een boolean, dus hij past ook achter `if`: `if leeftijd >= 14 and heeft_kaartje:`. Twijfel je tussen `and` en `or`? Vraag je dan af: moet het allebei, of is één genoeg?
 
 ## Meer dan twee takken: elif
 
@@ -106,21 +110,24 @@ Python loopt de voorwaarden **van boven naar beneden** af en stopt bij de eerste
 ### Voorspel
 
 ```python
-score = 90
+uur = 14
+vrij = True
 
-if score >= 55:
-    print("Voldoende")
-elif score >= 80:
-    print("Uitstekend")
+if uur < 12:
+    print("Goedemorgen")
+elif uur < 18 and not vrij:
+    print("Goedemiddag, aan het werk")
+else:
+    print("Goedenavond")
 ```
 
 <Voorspel vraag="Wat zet dit programma op het scherm?">
-  <Keuze goed uitleg="90 is 55 of meer, dus de eerste tak klopt al. Daarna kijkt Python niet verder.">`Voldoende`</Keuze>
-  <Keuze uitleg="90 is wel 80 of meer, maar Python komt nooit bij die tak: de eerste klopte al.">`Uitstekend`</Keuze>
-  <Keuze uitleg="Van een if met elif voert Python hoogstens één tak uit.">`Voldoende` en `Uitstekend`</Keuze>
+  <Keuze uitleg="vrij is True, dus not vrij is False, en dan is de hele and False.">`Goedemiddag, aan het werk`</Keuze>
+  <Keuze goed uitleg="Geen van de voorwaarden is True, dus Python voert de else uit.">`Goedenavond`</Keuze>
+  <Keuze uitleg="Er is een else: die draait als geen voorwaarde erboven True is.">Niets</Keuze>
   <Uitleg>
 
-  Je ziet `Voldoende`, ook al is 90 uitstekend. Zet daarom de strengste voorwaarde bovenaan: eerst `>= 80`, dan `>= 55`.
+  Je ziet `Goedenavond`, om 14 uur. `uur < 12` is `False`, en `uur < 18 and not vrij` ook, want je bent vrij. Dan voert Python de `else` uit. Die kijkt niet naar het uur: hij vangt alles op wat de takken erboven niet vangen, ook een vrije middag. Wil je daar iets anders zeggen, dan krijgt die middag een eigen tak.
 
   </Uitleg>
 </Voorspel>
@@ -255,14 +262,26 @@ Geen foutmelding, maar je krijgt twee antwoorden. De tweede `if` begint een nieu
 
 ## Opdracht 5c.1: Beide tegelijk
 
-Print `True` als zowel `score` minstens `7` is **én** `aanwezig` `True` is.
+Je krijgt een sticker als je `score` minstens `7` is én `aanwezig` `True` is. Maak `score = 8` en `aanwezig = False`, en print met één vergelijking of je de sticker krijgt: de uitkomst is een boolean, dus `True` of `False`.
+
+Verwachte uitvoer (bij `score = 8`, `aanwezig = False`):
+
+```
+Sticker: False
+```
+
+Verwachte uitvoer (bij `score = 8`, `aanwezig = True`):
+
+```
+Sticker: True
+```
 
 <CodeExercise>{`# Schrijf hier je code`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Combineer met `and`: `score >= 7 and aanwezig`. Dat resultaat is meteen een boolean.
+Combineer met `and`: `score >= 7 and aanwezig`. Dat resultaat is meteen een boolean, dus je print het met een komma achter `"Sticker:"`.
 
 </details>
 
@@ -271,15 +290,15 @@ Combineer met `and`: `score >= 7 and aanwezig`. Dat resultaat is meteen een bool
 
 ```python
 score = 8
-aanwezig = True
+aanwezig = False
 
-print(score >= 7 and aanwezig)
+print("Sticker:", score >= 7 and aanwezig)
 ```
 
 <CodeExercise>{`score = 8
-aanwezig = True
+aanwezig = False
 
-print(score >= 7 and aanwezig)`}</CodeExercise>
+print("Sticker:", score >= 7 and aanwezig)`}</CodeExercise>
 
 </details>
 
@@ -287,7 +306,7 @@ print(score >= 7 and aanwezig)`}</CodeExercise>
 
 ## Opdracht 5c.2: Scorebeoordeling
 
-Beoordeel een score van 0 tot 100 met `if`/`elif`/`else`: 80 of hoger → `Uitstekend`, 55 of hoger → `Voldoende`, anders → `Onvoldoende`.
+Beoordeel een score van 0 tot 100 met `if`/`elif`/`else`: 80 of hoger is `Uitstekend`, 55 of hoger `Voldoende`, en anders `Onvoldoende`. Een score onder 0 of boven 100 bestaat niet: dan print je `Ongeldige score`.
 
 Verwachte uitvoer (bij `score = 70`):
 
@@ -295,12 +314,18 @@ Verwachte uitvoer (bij `score = 70`):
 Voldoende
 ```
 
+Verwachte uitvoer (bij `score = 120`):
+
+```
+Ongeldige score
+```
+
 <CodeExercise>{`# Schrijf hier je code`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Eerst de strengste voorwaarde (`>= 80`), daarna `elif score >= 55:`, daarna `else`.
+Python stopt bij de eerste tak die `True` is. Welke tak moet hij dus als eerste bekijken, zodat een score van 120 niet `Uitstekend` wordt? Onder 0 en boven 100 vang je in één voorwaarde.
 
 </details>
 
@@ -308,9 +333,11 @@ Eerst de strengste voorwaarde (`>= 80`), daarna `elif score >= 55:`, daarna `els
 <summary>Klik hier voor de oplossing.</summary>
 
 ```python
-score = 70
+score = 120
 
-if score >= 80:
+if score < 0 or score > 100:
+    print("Ongeldige score")
+elif score >= 80:
     print("Uitstekend")
 elif score >= 55:
     print("Voldoende")
@@ -318,9 +345,13 @@ else:
     print("Onvoldoende")
 ```
 
-<CodeExercise>{`score = 70
+Met de ongeldige score in de laatste tak is 120 `Uitstekend`, want 120 is ook 80 of meer.
 
-if score >= 80:
+<CodeExercise>{`score = 120
+
+if score < 0 or score > 100:
+    print("Ongeldige score")
+elif score >= 80:
     print("Uitstekend")
 elif score >= 55:
     print("Voldoende")
@@ -344,7 +375,7 @@ Sorry Alex, je staat niet op de lijst én je bent te jong.
 Verwachte uitvoer (bij `op_lijst = False`, `leeftijd = 18`):
 
 ```
-Sorry Alex, je staat niet op de gastenlijst.
+Sorry Alex, je staat niet op de lijst.
 ```
 
 Verwachte uitvoer (bij `op_lijst = True`, `leeftijd = 12`):
@@ -384,7 +415,7 @@ op_lijst = False
 if not op_lijst and leeftijd < 14:
     print(f"Sorry {naam}, je staat niet op de lijst én je bent te jong.")
 elif not op_lijst:
-    print(f"Sorry {naam}, je staat niet op de gastenlijst.")
+    print(f"Sorry {naam}, je staat niet op de lijst.")
 elif leeftijd < 14:
     print(f"Sorry {naam}, je bent te jong (minimum: 14).")
 else:
@@ -400,7 +431,7 @@ op_lijst = False
 if not op_lijst and leeftijd < 14:
     print(f"Sorry {naam}, je staat niet op de lijst én je bent te jong.")
 elif not op_lijst:
-    print(f"Sorry {naam}, je staat niet op de gastenlijst.")
+    print(f"Sorry {naam}, je staat niet op de lijst.")
 elif leeftijd < 14:
     print(f"Sorry {naam}, je bent te jong (minimum: 14).")
 else:

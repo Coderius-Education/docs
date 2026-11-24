@@ -243,14 +243,26 @@ Geen foutmelding, maar het programma zegt twee dingen die elkaar tegenspreken. D
 
 ## Opdracht 5b.1: Geslaagd?
 
-Schrijf een `if`/`else` die `"Gefeliciteerd, je bent geslaagd!"` print als `cijfer` minstens `5.5` is, en anders `"Helaas, gezakt."`.
+Maak een variabele `cijfer` met de waarde `5.5`. Schrijf een `if`/`else` die `Gefeliciteerd, je bent geslaagd!` print als `cijfer` minstens `5.5` is, en anders `Helaas, gezakt.`
+
+Verwachte uitvoer (bij `cijfer = 5.5`):
+
+```
+Gefeliciteerd, je bent geslaagd!
+```
+
+Verwachte uitvoer (bij `cijfer = 5.4`):
+
+```
+Helaas, gezakt.
+```
 
 <CodeExercise>{`# Schrijf hier je code`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-`if cijfer >= 5.5:` voor de eerste tak, `else:` voor de tweede. Vergeet de dubbele punt en de inspringing niet.
+`if cijfer >= 5.5:` voor de eerste tak, `else:` voor de tweede. Vergeet de dubbele punt en de inspringing niet. Probeer je programma daarna met `cijfer = 5.4`.
 
 </details>
 
@@ -258,7 +270,7 @@ Schrijf een `if`/`else` die `"Gefeliciteerd, je bent geslaagd!"` print als `cijf
 <summary>Klik hier voor de oplossing.</summary>
 
 ```python
-cijfer = 6.0
+cijfer = 5.5
 
 if cijfer >= 5.5:
     print("Gefeliciteerd, je bent geslaagd!")
@@ -266,7 +278,9 @@ else:
     print("Helaas, gezakt.")
 ```
 
-<CodeExercise>{`cijfer = 6.0
+Met `>` in plaats van `>=` zakt wie precies een 5,5 heeft.
+
+<CodeExercise>{`cijfer = 5.5
 
 if cijfer >= 5.5:
     print("Gefeliciteerd, je bent geslaagd!")
@@ -279,7 +293,7 @@ else:
 
 ## Opdracht 5b.2: Toegangscontrole
 
-Een feestje heeft een minimumleeftijd van 14. Print of de gast welkom is.
+Een feestje heeft een minimumleeftijd van 14. Print of de gast welkom is. Is hij te jong, zeg dan op een tweede regel over hoeveel jaar hij terug kan komen. Dat getal rekent je programma uit.
 
 Verwachte uitvoer (bij `leeftijd = 15`):
 
@@ -287,10 +301,11 @@ Verwachte uitvoer (bij `leeftijd = 15`):
 Welkom op het feestje!
 ```
 
-Verwachte uitvoer (bij `leeftijd = 12`):
+Verwachte uitvoer (bij `leeftijd = 11`):
 
 ```
 Sorry, je bent te jong.
+Kom over 3 jaar terug.
 ```
 
 <CodeExercise>{`# Schrijf hier je code`}</CodeExercise>
@@ -298,7 +313,7 @@ Sorry, je bent te jong.
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-`if leeftijd >= 14:` — de drempel is 14, niet 18.
+Wie precies 14 is, mag erin: kies het teken daarbij. Onder `else` mogen twee regels inspringen. Het aantal jaren is het verschil tussen 14 en `leeftijd`, en dat kun je in een f-string uitrekenen.
 
 </details>
 
@@ -306,20 +321,22 @@ Sorry, je bent te jong.
 <summary>Klik hier voor de oplossing.</summary>
 
 ```python
-leeftijd = 15
+leeftijd = 11
 
 if leeftijd >= 14:
     print("Welkom op het feestje!")
 else:
     print("Sorry, je bent te jong.")
+    print(f"Kom over {14 - leeftijd} jaar terug.")
 ```
 
-<CodeExercise>{`leeftijd = 15
+<CodeExercise>{`leeftijd = 11
 
 if leeftijd >= 14:
     print("Welkom op het feestje!")
 else:
-    print("Sorry, je bent te jong.")`}</CodeExercise>
+    print("Sorry, je bent te jong.")
+    print(f"Kom over {14 - leeftijd} jaar terug.")`}</CodeExercise>
 
 </details>
 

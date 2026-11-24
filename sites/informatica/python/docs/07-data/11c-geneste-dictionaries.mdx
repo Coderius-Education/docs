@@ -36,7 +36,7 @@ Uitvoer:
 
 ### Zoek dieper
 
-Een tweede sleutel staat direct achter de eerste: `klas["Sara"]["cijfers"]` haalt uit de dictionary van Sara de lijst met cijfers. De gemarkeerde regels zijn nieuw of veranderd: ze bewaren die lijst in `cijfers`, rekenen het gemiddelde uit en printen het.
+Een tweede sleutel staat direct achter de eerste: `klas["Sara"]["cijfers"]` haalt uit de dictionary van Sara de lijst met cijfers. De gemarkeerde regels zijn nieuw of veranderd: ze bewaren die lijst in `cijfers`, rekenen het gemiddelde uit met `sum()` en `len()`, en printen het.
 
 ```python {6-8}
 klas = {
@@ -46,7 +46,7 @@ klas = {
 
 cijfers = klas["Sara"]["cijfers"]
 gemiddelde = sum(cijfers) / len(cijfers)
-print(f"Sara: gemiddeld {gemiddelde:.1f}")
+print(f"Sara: gemiddeld {gemiddelde}")
 ```
 
 Uitvoer:
@@ -55,13 +55,38 @@ Uitvoer:
 Sara: gemiddeld 7.0
 ```
 
-Lees `klas["Sara"]["cijfers"]` van links naar rechts: eerst `"Sara"` in `klas`, dan `"cijfers"` in wat daaruit komt. Met een plek erachter, `klas["Sara"]["cijfers"][0]`, krijg je `7`. `:.1f` in de f-string rondt af op één decimaal. Voor Alex zijn dezelfde drie regels nog een keer nodig.
+Lees `klas["Sara"]["cijfers"]` van links naar rechts: eerst `"Sara"` in `klas`, dan `"cijfers"` in wat daaruit komt. Met een plek erachter, `klas["Sara"]["cijfers"][0]`, krijg je `7`. Voor Alex zijn dezelfde drie regels nog een keer nodig.
 
 ### Loop door de klas
 
 Met `.items()` krijgt de loop elke ronde een naam en de dictionary die erbij hoort. De gemarkeerde regels zijn veranderd: de drie regels over Sara staan in de loop, met `naam` in plaats van `"Sara"` en `gegevens` in plaats van `klas["Sara"]`.
 
 ```python {6-9}
+klas = {
+    "Sara": {"leeftijd": 15, "cijfers": [7, 8, 6]},
+    "Alex": {"leeftijd": 14, "cijfers": [9, 5, 8]},
+}
+
+for naam, gegevens in klas.items():
+    cijfers = gegevens["cijfers"]
+    gemiddelde = sum(cijfers) / len(cijfers)
+    print(f"{naam}: gemiddeld {gemiddelde}")
+```
+
+Uitvoer:
+
+```
+Sara: gemiddeld 7.0
+Alex: gemiddeld 7.333333333333333
+```
+
+In de loop is één sleutel genoeg: `gegevens` is al de dictionary van één leerling. Alleen is 22 gedeeld door 3 geen mooi getal: achter het gemiddelde van Alex staan vijftien cijfers.
+
+### Rond af
+
+Eén cijfer achter de punt is genoeg voor een gemiddelde. Wat in een f-string tussen de accolades staat, kan achter een dubbele punt zeggen hoe Python het schrijft. De gemarkeerde regel is veranderd: `:.1f` betekent een kommagetal (`f`, van *float*) met één cijfer achter de punt.
+
+```python {9}
 klas = {
     "Sara": {"leeftijd": 15, "cijfers": [7, 8, 6]},
     "Alex": {"leeftijd": 14, "cijfers": [9, 5, 8]},
@@ -80,7 +105,7 @@ Sara: gemiddeld 7.0
 Alex: gemiddeld 7.3
 ```
 
-In de loop is één sleutel genoeg: `gegevens` is al de dictionary van één leerling. De klas verandert nog: Sara haalt een 9 voor een toets en Noor komt erbij. Dat staat niet in `klas`.
+Python rondt daarbij af: 7.333 wordt 7.3. `gemiddelde` zelf verandert niet, alleen hoe de `print` hem schrijft. De klas verandert nog: Sara haalt een 9 voor een toets en Noor komt erbij. Dat staat niet in `klas`.
 
 ### Pas de klas aan
 
@@ -173,7 +198,7 @@ for kleur, team in teams.items():
     print(f"Team {kleur}: {len(spelers)} spelers")
 ```
 
-In één regel kan het ook, met `{len(team['spelers'])}` in de f-string. De sleutel staat dan tussen enkele aanhalingstekens, omdat de f-string zelf al tussen dubbele staat.
+In één regel kan het ook, met `{len(team['spelers'])}` in de f-string. De sleutel staat dan tussen enkele aanhalingstekens: dat leest makkelijker, en in oudere versies van Python moet het zo.
 
 </details>
 
@@ -233,6 +258,23 @@ TypeError: string indices must be integers, not 'str'
 `naam` is de sleutel, de tekst `"Sara"`, en in een tekst zoek je niets op
 met een sleutel. De dictionary met de leeftijd zit in de tweede naam van
 de loop: `gegevens["leeftijd"]`.
+
+### De dictionary tellen in plaats van de lijst
+
+```python
+team = {"coach": "Lars", "spelers": ["Ali", "Mo", "Lin", "Tess"]}
+print(len(team))
+```
+
+Uitvoer:
+
+```
+2
+```
+
+Geen foutmelding, maar het team heeft vier spelers. `len()` van een
+dictionary telt zijn sleutels, hier `"coach"` en `"spelers"`. Tel de
+lijst: `len(team["spelers"])`.
 
 ---
 
@@ -337,8 +379,8 @@ Koning van Katoren, door Jan Terlouw (224 blz.)
 
 ## Opdracht 11c.3: Wie heeft het hoogste gemiddelde?
 
-Loop door `klas` en print de naam van wie het hoogste
-gemiddelde cijfer heeft.
+Loop door `klas` en print wie het hoogste gemiddelde cijfer heeft,
+en welk gemiddelde dat is.
 
 Verwachte uitvoer:
 

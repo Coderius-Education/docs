@@ -144,7 +144,7 @@ print("Naar huis")`}</CodeExercise>
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Draai het programma eerst: de regels van de bel ontbreken. Een aanroep is een eigen regel die niet inspringt. Tel in de verwachte uitvoer hoe vaak de bel gaat, en na welke uren.
+Draai het programma eerst: de regels van de bel ontbreken. Een aanroep is een eigen regel. Hier doet je programma zelf de aanroep, dus die staat tegen de kantlijn, net als de uren. Tel in de verwachte uitvoer hoe vaak de bel gaat, en na welke uren.
 
 </details>
 
@@ -213,7 +213,7 @@ Uitvoer:
 Klaar
 ```
 
-Geen foutmelding, maar `Hallo!` komt niet op het scherm. `groet()` springt in en hoort dus bij de functie zelf: buiten de functie roept niemand hem aan. Zet de aanroep tegen de kantlijn, zonder spaties ervoor.
+Geen foutmelding, maar `Hallo!` komt niet op het scherm. `groet()` springt in en hoort dus bij de functie zelf: buiten de functie roept niemand hem aan. De aanroep die je programma doet, staat tegen de kantlijn, zonder spaties ervoor. Een aanroep in een andere functie springt wel in, mee met die functie, zoals `trommel()` in `fanfare` uit de voorspelvraag.
 
 ### Aanroepen voordat de functie bestaat
 
@@ -238,14 +238,22 @@ Python leest van boven naar beneden. Op de eerste regel bestaat `groet` nog niet
 
 ## Opdracht 8.1: Welkom-functie
 
-Maak een functie `welkom()` die `"Welkom bij Python!"` print, en roep hem twee keer aan.
+Maak een functie `welkom()` die `Welkom bij Python!` print. Roep hem drie keer aan met een for-loop: dan staat de aanroep maar één keer in je programma.
+
+Verwachte uitvoer:
+
+```
+Welkom bij Python!
+Welkom bij Python!
+Welkom bij Python!
+```
 
 <CodeExercise>{`# Schrijf hier je code`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-`def welkom():` met `print(...)` op de regel eronder (4 spaties inspringen). Daarna twee keer `welkom()`.
+`def welkom():` met `print(...)` op de regel eronder (4 spaties inspringen). Een regel die bij een loop hoort, springt in, ook een aanroep.
 
 </details>
 
@@ -256,15 +264,15 @@ Maak een functie `welkom()` die `"Welkom bij Python!"` print, en roep hem twee k
 def welkom():
     print("Welkom bij Python!")
 
-welkom()
-welkom()
+for i in range(3):
+    welkom()
 ```
 
 <CodeExercise>{`def welkom():
     print("Welkom bij Python!")
 
-welkom()
-welkom()`}</CodeExercise>
+for i in range(3):
+    welkom()`}</CodeExercise>
 
 </details>
 

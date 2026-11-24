@@ -219,14 +219,21 @@ Geen foutmelding, maar Alex krijgt de groet van Sara. De functie heeft een param
 
 ## Opdracht 9a.1: Welkom met naam
 
-Maak een functie `welkom(naam)` die `"Welkom, [naam]!"` print, en roep hem aan met je eigen naam.
+Maak een functie `welkom(naam)` die `Welkom,` en de naam print. Roep hem twee keer aan: met de tekst `"Alex"`, en met de variabele `gast` die al in het veld staat.
 
-<CodeExercise>{`# Schrijf hier je code`}</CodeExercise>
+Verwachte uitvoer:
+
+```
+Welkom, Alex!
+Welkom, Noor!
+```
+
+<CodeExercise>{`gast = "Noor"`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-`def welkom(naam):` met een f-string `f"Welkom, {naam}!"`. Roep aan met `welkom("Alex")`.
+`def welkom(naam):` met een f-string `f"Welkom, {naam}!"`. Tussen de haakjes van een aanroep mag elke waarde staan, ook een variabele. Hoe die variabele heet, maakt niet uit: in de functie heet de waarde `naam`.
 
 </details>
 
@@ -234,16 +241,22 @@ Maak een functie `welkom(naam)` die `"Welkom, [naam]!"` print, en roep hem aan m
 <summary>Klik hier voor de oplossing.</summary>
 
 ```python
+gast = "Noor"
+
 def welkom(naam):
     print(f"Welkom, {naam}!")
 
 welkom("Alex")
+welkom(gast)
 ```
 
-<CodeExercise>{`def welkom(naam):
+<CodeExercise>{`gast = "Noor"
+
+def welkom(naam):
     print(f"Welkom, {naam}!")
 
-welkom("Alex")`}</CodeExercise>
+welkom("Alex")
+welkom(gast)`}</CodeExercise>
 
 </details>
 
@@ -305,7 +318,7 @@ groet("Maria", "es")`}</CodeExercise>
 
 ## Opdracht 9a.3: Vormen tekenen
 
-Maak twee functies: `driehoek(hoogte)` en `vierkant(grootte)`. De driehoek groeit per regel; het vierkant is altijd even breed als hoog. Roep ze beide aan.
+Maak twee functies: `driehoek(hoogte)` en `vierkant(grootte)`. De driehoek groeit per regel; het vierkant is altijd even breed als hoog. Roep ze beide aan, met een lege regel ertussen: `print()` zonder iets tussen de haakjes print een lege regel.
 
 Verwachte uitvoer (bij `driehoek(4)` en `vierkant(4)`):
 

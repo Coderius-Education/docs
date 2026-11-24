@@ -46,7 +46,7 @@ Uitvoer:
 False
 ```
 
-Python rekent eerst de vergelijking uit en bewaart de uitkomst in `mag_erin`. Die uitkomst is `False`, want 140 is niet groter dan 140. Maar op het bordje staat minstens 140 cm: met precies 140 cm mag je erin.
+`mag_erin` is `False`, want 140 is niet groter dan 140. Maar op het bordje staat minstens 140 cm: met precies 140 cm mag je erin.
 
 ### Kies het teken
 
@@ -65,7 +65,7 @@ Uitvoer:
 True
 ```
 
-Met 140 cm mag je erin. Met `lengte = 139` zegt hetzelfde programma `False`: Python rekent het antwoord elke keer opnieuw uit.
+Met 140 cm mag je erin. Maak je van de eerste regel `lengte = 139` en draai je het programma opnieuw, dan staat er `False`.
 
 ### De zes tekens
 
@@ -105,24 +105,32 @@ print(mag_stemmen)
 
 ## Maak het af
 
-Bij het inchecken op het vliegveld mag een koffer hoogstens 23 kilo wegen, en die van jou weegt precies 23 kilo. Het programma print al of hij mee mag, maar het antwoord is met de hand ingevuld en klopt niet. Eén stap is nog open: de vergelijking die `mag_mee` zijn waarde geeft. Doe die zelf, en typ niet zelf `True`: met een koffer van 30 kilo moet hetzelfde programma `False` zeggen.
+Bij het inchecken op het vliegveld mag een koffer hoogstens 23 kilo wegen. Op de band staan drie koffers: van 18, 23 en 27 kilo. Het programma print al per koffer of hij mee mag, maar het antwoord is met de hand ingevuld en klopt niet. Eén stap is nog open: de vergelijking die `mag_mee` bij elke koffer zijn waarde geeft. Doe die zelf, en typ niet zelf `True` of `False`: het programma rekent het uit.
 
 Verwachte uitvoer:
 
 ```
+Koffer van 18 kilo mag mee: True
 Koffer van 23 kilo mag mee: True
+Koffer van 27 kilo mag mee: False
 ```
 
-<CodeExercise>{`koffer = 23
-maximum = 23
+<CodeExercise>{`maximum = 23
 
+koffer = 18
 mag_mee = False
+print(f"Koffer van {koffer} kilo mag mee: {mag_mee}")
+
+koffer = 23
+print(f"Koffer van {koffer} kilo mag mee: {mag_mee}")
+
+koffer = 27
 print(f"Koffer van {koffer} kilo mag mee: {mag_mee}")`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Welke twee variabelen vergelijk je met elkaar? "Hoogstens 23 kilo" betekent dat precies 23 kilo ook goed is. Zoek bij De zes tekens het teken dat daarbij past. Probeer je programma daarna ook met `koffer = 30` en met `koffer = 15`.
+Welke twee variabelen vergelijk je met elkaar? "Hoogstens 23 kilo" betekent dat precies 23 kilo ook goed is: zoek bij De zes tekens het teken dat daarbij past. Denk ook aan de voorspelvraag: Python rekent een vergelijking uit op de regel waar hij staat.
 
 </details>
 
@@ -130,14 +138,22 @@ Welke twee variabelen vergelijk je met elkaar? "Hoogstens 23 kilo" betekent dat 
 <summary>Klik hier voor de oplossing.</summary>
 
 ```python
-koffer = 23
 maximum = 23
 
+koffer = 18
+mag_mee = koffer <= maximum
+print(f"Koffer van {koffer} kilo mag mee: {mag_mee}")
+
+koffer = 23
+mag_mee = koffer <= maximum
+print(f"Koffer van {koffer} kilo mag mee: {mag_mee}")
+
+koffer = 27
 mag_mee = koffer <= maximum
 print(f"Koffer van {koffer} kilo mag mee: {mag_mee}")
 ```
 
-Met `<` zou een koffer van precies 23 kilo niet mee mogen.
+Met `<` mag de koffer van 23 kilo niet mee. En staat de vergelijking alleen bij de eerste koffer, dan houdt `mag_mee` de uitkomst van 18 kilo: dan mag ook de koffer van 27 kilo mee.
 
 </details>
 
@@ -178,11 +194,12 @@ SyntaxError: invalid syntax
 
 Het `=`-teken komt altijd als laatste: `<=` en `>=`. Je zegt het ook zo: kleiner of gelijk.
 
-### Gelijk telt niet mee
+### Het teken de verkeerde kant op
 
 ```python
-leeftijd = 18
-print(leeftijd > 18)
+koffer = 18
+maximum = 23
+print(koffer >= maximum)
 ```
 
 Uitvoer:
@@ -191,7 +208,7 @@ Uitvoer:
 False
 ```
 
-Geen foutmelding, maar iemand van precies 18 krijgt `False`. `>` en `<` tellen gelijk niet mee. Bedoel je 18 of ouder, schrijf dan `>=`.
+Geen foutmelding, maar een koffer van 18 kilo mag niet mee. `koffer >= maximum` vraagt of de koffer minstens 23 kilo weegt. Lees de vergelijking van links naar rechts: "hoogstens 23 kilo" is de koffer kleiner dan of gelijk aan het maximum, `koffer <= maximum`.
 
 ### Tekst vergelijken met een getal
 
@@ -205,14 +222,28 @@ Python geeft geen foutmelding, maar `"10"` is tekst en `10` is een getal, en die
 
 ## Opdracht 5a.1: 18 of ouder
 
-Maak een variabele `leeftijd` met de waarde `16`, en print of die persoon 18 of ouder is.
+Maak een variabele `leeftijd` met de waarde `16`. Print of die persoon 18 of ouder is, en op de regel eronder of hij jonger is dan 18. Bij elke leeftijd staat er precies één keer `True`, ook bij `leeftijd = 18`.
+
+Verwachte uitvoer (bij `leeftijd = 16`):
+
+```
+18 of ouder: False
+Jonger dan 18: True
+```
+
+Verwachte uitvoer (bij `leeftijd = 18`):
+
+```
+18 of ouder: True
+Jonger dan 18: False
+```
 
 <CodeExercise>{`# Schrijf hier je code`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Print de vergelijking `leeftijd >= 18` direct.
+Print met een komma: `print("18 of ouder:", leeftijd >= 18)`. Welk teken is precies het omgekeerde van `>=`? Probeer je programma ook met `leeftijd = 18`.
 
 </details>
 
@@ -222,14 +253,16 @@ Print de vergelijking `leeftijd >= 18` direct.
 ```python
 leeftijd = 16
 
-print(leeftijd >= 18)
+print("18 of ouder:", leeftijd >= 18)
+print("Jonger dan 18:", leeftijd < 18)
 ```
 
-Uitvoer: `False`.
+Met `<=` op de tweede regel staat er bij 18 jaar twee keer `True`.
 
 <CodeExercise>{`leeftijd = 16
 
-print(leeftijd >= 18)`}</CodeExercise>
+print("18 of ouder:", leeftijd >= 18)
+print("Jonger dan 18:", leeftijd < 18)`}</CodeExercise>
 
 </details>
 

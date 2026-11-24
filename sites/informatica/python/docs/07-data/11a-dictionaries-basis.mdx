@@ -124,10 +124,6 @@ print(leerling[0])
   </Uitleg>
 </Voorspel>
 
-:::tip[Eerst op papier]
-Speel dit eerst na zonder computer, met enveloppen als kluisjes: [Kluisjes met naamkaartjes](site:python/docs/projecten/unplugged/kluisjes). Je docent kan de hand-out printen.
-:::
-
 ## Maak het af
 
 Je zet je oude fiets te koop. De advertentie staat in een dictionary, en het programma print hem twee keer: zoals hij was en zoals hij wordt. Niemand reageert, dus de prijs gaat naar 95 euro en je zet de kleur erbij: rood. Nu zijn de twee regels uitvoer nog gelijk. Twee stappen zijn nog open: de prijs wijzigen en de kleur toevoegen. Doe die zelf, zonder de dictionary over te typen.
@@ -225,6 +221,24 @@ Uitvoer:
 
 Geen foutmelding, maar Sara zit nog in 3B. `"Klas"` met een hoofdletter is een andere sleutel dan `"klas"`, dus Python voegt een paar toe in plaats van de waarde te wijzigen. Schrijf de sleutel precies zoals hij in de dictionary staat.
 
+### De waarde wijzigen vóór de print
+
+```python
+held = {"naam": "Mira", "levens": 3}
+held["levens"] = 2
+print(held)
+print(held)
+```
+
+Uitvoer:
+
+```
+{'naam': 'Mira', 'levens': 2}
+{'naam': 'Mira', 'levens': 2}
+```
+
+Geen foutmelding, maar de eerste regel moest Mira laten zien zoals ze was, met 3 levens. Python voert de regels van boven naar beneden uit: bij de eerste `print` was de oude waarde al overschreven. Zet de wijziging tussen de twee `print`-regels.
+
 ---
 
 ## Opdracht 11a.1: Profiel maken
@@ -282,7 +296,7 @@ Score: 9.0
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-In een f-string gebruik je `{film['titel']}`. Let op het verschil tussen de **enkele** aanhalingstekens binnen de f-string en de dubbele aanhalingstekens van de sleutel in de dictionary zelf.
+In een f-string gebruik je `{film['titel']}`, met de sleutel tussen **enkele** aanhalingstekens. Dat leest makkelijker dan dubbele binnen de dubbele van de f-string, en in oudere versies van Python moet het zo.
 
 </details>
 
@@ -349,8 +363,6 @@ klas = [leerling1, leerling2, leerling3]
 for leerling in klas:
     print(f"{leerling['naam']} zit in klas {leerling['klas']}")
 ```
-
-In de [volgende les](site:python/docs/data/11b-itereren-dictionaries) leer je hoe je **door een dictionary loopt** en hoe je veilig controleert of een sleutel bestaat.
 
 <CodeExercise>{`leerling1 = {"naam": "Sara", "klas": "3B"}
 leerling2 = {"naam": "Alex", "klas": "3A"}

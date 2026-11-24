@@ -7,11 +7,12 @@ import { describe, expect, it } from 'vitest';
 
 // Wat er sinds het blok ervoor bij kwam, en de metastring die het markeert:
 // gedeeld met de cursussen die een bestand per les laten groeien.
-const { nieuwSinds, uitMeta } = createRequire(import.meta.url)(
+const { nieuwSinds, uitMeta, bouwtVoortOp } = createRequire(import.meta.url)(
   '../../../../../packages/shared/nieuw-sinds.js',
 ) as {
   nieuwSinds: (vorige: string[], nu: string[]) => number[];
   uitMeta: (meta: string) => number[];
+  bouwtVoortOp: (vorige: string[], nu: string[]) => boolean;
 };
 
 // Een proef in het hoofdstuk Herhalen (november 2026): de uitleg laat het
@@ -98,11 +99,6 @@ function voorbeeld(bron: string): { blok: Blok; vorige: Blok | undefined }[] {
   }));
 }
 
-const gedeeld = (a: string[], b: string[]) => {
-  const over = b.filter((r) => r.trim());
-  return a.filter((r) => r.trim() && over.includes(r)).length;
-};
-
 interface MaakHetAf {
   les: string;
   regel: number;
@@ -136,7 +132,7 @@ function maakHetAf(les: { naam: string; bron: string }): MaakHetAf | undefined {
     tekst,
     verwacht: /^Verwachte uitvoer[^\n]*:\n\n```\n([\s\S]*?)^```$/m.exec(tekst)?.[1],
     startcode: veld ? uitTemplate(veld[1]) : undefined,
-    oplossing: /oplossing\.<\/summary>\n\n```python\n([\s\S]*?)^```$/m.exec(tekst)?.[1],
+    oplossing: /oplossing\.<\/summary>\n\n```python[^\n]*\n([\s\S]*?)^```$/m.exec(tekst)?.[1],
     naVeld: veld ? tekst.slice(veld.index + veld[0].length) : '',
     plek: kop.index,
     bron: les.bron,
@@ -157,6 +153,19 @@ function draai(code: string) {
   return { uitvoer: r.stdout ?? '', fout };
 }
 
+const TEKENS = ['<', '<=', '>', '>=', '==', '!='];
+
+/**
+ * Een Maak het af waarvan de open vergelijking maar één keer draait. Eén
+ * vergelijking geeft één waarheidswaarde, en voor elk paar waarden geven drie
+ * van de zes tekens dezelfde: daar kan geen invoer het teken afdwingen. Dat
+ * doet de opdracht met een geval op de grens en de tekst.
+ */
+const EEN_VERGELIJKING: Record<string, string> = {
+  '03-beslissen/05b-if-else.mdx': 'één if, zonder loop: de les komt vóór Herhalen',
+  '03-beslissen/05c-and-or-elif.mdx': 'één if met elif, zonder loop: de les komt vóór Herhalen',
+};
+
 const inhoud = (code: string | undefined) =>
   (code ?? '')
     .split('\n')
@@ -165,11 +174,11 @@ const inhoud = (code: string | undefined) =>
 
 describe('uitgewerkt voorbeeld: het programma groeit in stappen', () => {
   // Een blok dat op het vorige doorbouwt: het neemt minstens de helft van de
-  // regels ervan over.
+  // regels ervan over, ook als ze nu inspringen (`bouwtVoortOp`), en er kwam
+  // iets bij.
   const bouwtDoor = proef.flatMap((les) =>
     voorbeeld(les.bron).flatMap(({ blok, vorige }) =>
-      vorige &&
-      gedeeld(vorige.regels, blok.regels) * 2 >= vorige.regels.filter((r) => r.trim()).length
+      vorige && bouwtVoortOp(vorige.regels, blok.regels)
         ? [{ les: les.naam, regel: blok.regel, blok }]
         : [],
     ),
@@ -268,6 +277,35 @@ describe('Maak het af: de laatste stap is nog open', () => {
     },
   );
 
+  it.each(afmakers.filter((a) => !(a.les in EEN_VERGELIJKING)))(
+    '$les:$regel een ander vergelijkingsteken in de open stap geeft niet de verwachte uitvoer',
+    ({ verwacht, startcode, oplossing }) => {
+      // In 5a waren koffer en maximum allebei 23, en dan gaf `==` (of `>=`)
+      // ook de verwachte uitvoer: wie het teken van de les niet kiest, zag
+      // geen verschil. Elk ander teken op de plek van een teken in de regels
+      // die de leerling schrijft (overal tegelijk, zoals een leerling die het
+      // verkeerde teken kiest het overal kiest), moet een andere uitvoer of
+      // een fout geven.
+      const start = inhoud(startcode);
+      const regels = (oplossing ?? '').split('\n');
+      const open = regels.map((regel) => !start.includes(regel.trim()));
+      const varianten = TEKENS.flatMap((oud) =>
+        TEKENS.filter((teken) => teken !== oud).flatMap((teken) => {
+          const zoek = new RegExp(`(?<![<>=!])${oud.replace(/[<>=!]/g, '\\$&')}(?![=])`, 'g');
+          const anders = regels.map((regel, i) => (open[i] ? regel.replace(zoek, teken) : regel));
+          return anders.join('\n') === regels.join('\n')
+            ? []
+            : [{ wissel: `${oud} wordt ${teken}`, code: anders.join('\n') }];
+        }),
+      );
+      const ookGoed = varianten.filter(({ code }) => {
+        const { uitvoer, fout } = draai(code);
+        return !fout && uitvoer === verwacht;
+      });
+      expect(ookGoed.map((v) => v.wissel)).toEqual([]);
+    },
+  );
+
   it.each(afmakers)(
     '$les:$regel de startcode draait, stopt vanzelf en is nog niet klaar',
     ({ verwacht, startcode }) => {
@@ -288,7 +326,9 @@ describe('Maak het af: de laatste stap is nog open', () => {
       const klaar = inhoud(oplossing);
       expect(start.length).toBeGreaterThanOrEqual(2);
       expect(start.filter((regel) => !klaar.includes(regel)).length).toBeLessThanOrEqual(1);
-      const ontbreekt = klaar.filter((regel) => !start.includes(regel)).length;
+      // Een regel die de leerling meer keer schrijft (dezelfde vergelijking
+      // voor drie koffers), telt één keer.
+      const ontbreekt = new Set(klaar.filter((regel) => !start.includes(regel))).size;
       expect(ontbreekt).toBeGreaterThanOrEqual(1);
       expect(ontbreekt).toBeLessThanOrEqual(2);
     },

@@ -57,7 +57,7 @@ De volgorde van de twee namen ligt vast: de eerste krijgt de sleutel, de tweede 
 
 {/* foutmelding-van: {"Noor": 12}["Sem"] */}
 
-Sem vraagt hoeveel stemmen hij kreeg, maar hij was geen kandidaat: `stemmen["Sem"]` geeft een `KeyError`. Met **`in`** kijk je eerst of een sleutel in de dictionary zit. De gemarkeerde regels zijn nieuw: de `if` met `in`, en wat het programma in elk van de twee gevallen print.
+Sem vraagt hoeveel stemmen hij kreeg, maar hij was geen kandidaat: `stemmen["Sem"]` geeft een `KeyError`. Met **`in`** kijk je eerst of een sleutel in de dictionary zit, net als bij een lijst. De gemarkeerde regels zijn nieuw: de `if` met `in`, en wat het programma in elk van de twee gevallen print.
 
 ```python {6-9}
 stemmen = {"Noor": 12, "Daan": 8, "Yara": 15}
@@ -100,6 +100,10 @@ print("Sara" in leerling)
 
   </Uitleg>
 </Voorspel>
+
+:::tip[Eerst op papier]
+Speel dit eerst na zonder computer, met enveloppen als kluisjes: [Kluisjes met naamkaartjes](site:python/docs/projecten/unplugged/kluisjes). Je docent kan de hand-out printen.
+:::
 
 ## Maak het af
 
@@ -185,14 +189,22 @@ TypeError: 'builtin_function_or_method' object is not iterable
 
 ## Opdracht 11b.1: Prijzen-loop
 
-Maak een dictionary `prijzen = {"appel": 0.50, "banaan": 0.30}` en loop er met `.items()` doorheen om elke prijs te printen.
+Maak een dictionary `prijzen = {"appel": 0.50, "banaan": 0.30}` en loop er met `.items()` doorheen om elke prijs te printen. Kijk daarna met `in` of de winkel kiwi's heeft: staat `"kiwi"` erin, print dan zijn prijs, en anders `Geen kiwi's.` Print die zin niet zomaar: met een kiwi in de dictionary moet hetzelfde programma zijn prijs geven.
+
+Verwachte uitvoer:
+
+```
+appel: € 0.5
+banaan: € 0.3
+Geen kiwi's.
+```
 
 <CodeExercise>{`# Schrijf hier je code`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-`for product, prijs in prijzen.items():` — gebruik beide in een f-string.
+`for product, prijs in prijzen.items():`, en gebruik beide in een f-string. Na de loop komt een `if` met `"kiwi" in prijzen`, en een `else`.
 
 </details>
 
@@ -204,12 +216,22 @@ prijzen = {"appel": 0.50, "banaan": 0.30}
 
 for product, prijs in prijzen.items():
     print(f"{product}: € {prijs}")
+
+if "kiwi" in prijzen:
+    print(f"kiwi: € {prijzen['kiwi']}")
+else:
+    print("Geen kiwi's.")
 ```
 
 <CodeExercise>{`prijzen = {"appel": 0.50, "banaan": 0.30}
 
 for product, prijs in prijzen.items():
-    print(f"{product}: € {prijs}")`}</CodeExercise>
+    print(f"{product}: € {prijs}")
+
+if "kiwi" in prijzen:
+    print(f"kiwi: € {prijzen['kiwi']}")
+else:
+    print("Geen kiwi's.")`}</CodeExercise>
 
 </details>
 
@@ -219,7 +241,7 @@ for product, prijs in prijzen.items():
 
 Maak een dictionary `profiel` met minstens 5 sleutels over jezelf. Loop met `.items()` over de dictionary en print elke regel netjes met een kop en een afsluiting.
 
-Verwachte uitvoer:
+Verwachte uitvoer (voorbeeld):
 
 ```
 === Mijn Profiel ===
@@ -373,10 +395,6 @@ print(f"Totaal: {bereken_totaal(winkel, mandje)} euro")`}</CodeExercise>
 :::tip[Herhaal het op papier]
 Variabelen, beslissen, herhalen, functies, lijsten en dictionaries: test jezelf met [Waar of niet waar?](site:python/docs/projecten/unplugged/waar-of-niet-waar), zestien stellingen op één hand-out.
 :::
-
-## En nu?
-
-In de [volgende les](site:python/docs/data/11c-geneste-dictionaries) zet je dictionaries en lijsten in elkaar. Het paar dat `.items()` elke ronde teruggeeft heeft ook een naam: een tuple. Daarover gaat [les 12](site:python/docs/data/tuples).
 
 :::info[Waar kom je dit later weer tegen?]
 Bij [dijkstra](site:algorithms/docs/dijkstra/bouwen/07-kies-volgende) loopt `kies_volgende` met `.items()` langs alle knopen om de dichtstbijzijnde onbezochte te vinden.

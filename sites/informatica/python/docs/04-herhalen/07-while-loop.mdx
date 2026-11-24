@@ -87,23 +87,23 @@ Vergeet je die update? Dan blijft `bladzijden` voor altijd `120`, blijft `bladzi
 
 ### Maak het af
 
-Een auto heeft 50 liter in de tank, en elke rit kost 8 liter. Eén rit staat er al uitgeschreven. Twee stappen zijn nog open: herhaal de rit zolang er genoeg in de tank zit voor nog een rit, en print daarna één keer `Tanken.` Doe die zelf.
+Een auto heeft 48 liter in de tank, en elke rit kost 8 liter. Eén rit staat er al uitgeschreven. Twee stappen zijn nog open: herhaal de rit zolang er genoeg in de tank zit voor nog een rit, en print daarna één keer `Tanken.` Doe die zelf.
 
 Druk eerst op Stap voor stap, niet op Uitvoeren: springt de update niet in, dan stopt je loop nooit en loopt het tabblad vast.
 
 Verwachte uitvoer:
 
 ```
-Nog 50 liter
-Nog 42 liter
-Nog 34 liter
-Nog 26 liter
-Nog 18 liter
-Nog 10 liter
+Nog 48 liter
+Nog 40 liter
+Nog 32 liter
+Nog 24 liter
+Nog 16 liter
+Nog 8 liter
 Tanken.
 ```
 
-<CodeExercise>{`tank = 50
+<CodeExercise>{`tank = 48
 
 print(f"Nog {tank} liter")
 tank -= 8`}</CodeExercise>
@@ -119,7 +119,7 @@ Welke regels horen bij één rit? Die springen allebei in onder `while`. Voor no
 <summary>Klik hier voor de oplossing.</summary>
 
 ```python
-tank = 50
+tank = 48
 
 while tank >= 8:
     print(f"Nog {tank} liter")
@@ -128,7 +128,7 @@ while tank >= 8:
 print("Tanken.")
 ```
 
-Na de zesde rit zit er nog 2 liter in de tank. Dat is te weinig voor een rit, dus de loop stopt.
+Bij 8 liter kan er nog precies één rit bij: `>=` en niet `>`. Na die rit is de tank leeg, en de loop stopt.
 
 </details>
 
