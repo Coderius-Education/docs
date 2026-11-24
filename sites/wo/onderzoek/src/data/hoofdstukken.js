@@ -6,6 +6,11 @@ export const hoofdstukken = [
   { id: 'vragen', naam: 'Onderzoeksvragen', mappen: ['vragen'] },
   { id: 'spelregels', naam: 'De spelregels', mappen: ['spelregels'] },
   { id: 'kennisleer', naam: 'Kennisleer', mappen: ['kennisleer'] },
+  {
+    id: 'wetenschapsfilosofie',
+    naam: 'Wetenschapsfilosofie',
+    mappen: ['wetenschapsfilosofie'],
+  },
   { id: 'opzet', naam: 'Onderzoek opzetten', mappen: ['opzet', 'gegevens'] },
   { id: 'literatuurstudie', naam: 'Literatuurstudie', mappen: ['literatuurstudie'] },
   { id: 'academie', naam: 'De academische wereld', mappen: ['academie'] },

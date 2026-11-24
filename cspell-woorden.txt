@@ -76,12 +76,15 @@ Delphy
 deobfusceren
 dezélfde
 dijkstra
+Dilthey
 doelvak
 doorscrollen
 doorstreeptaak
 Doorstreeptaak
 doortelt
+driehonderd
 drieëntwintigste
+Droysen
 Dvwa
 DVWA
 dwarsas
@@ -92,6 +95,7 @@ eindcel
 Eindcel
 eindprint
 erbóven
+erklären
 escapet
 exiftool
 extensiecheck
@@ -100,9 +104,11 @@ figsize
 Fleischmann
 flexboxen
 forcen
+Forschung
 Fritzing
 FTDI
 fóút
+Gadamer
 gamedevelopment
 gastenboekformulier
 gastenboekveld
@@ -110,6 +116,7 @@ GCHQ
 gdquest
 gecommit
 gecommitte
+gecorroboreerde
 gefixt
 gemerged
 gemergede
@@ -146,6 +153,8 @@ healthcheck
 helpuitvoer
 Hergebruikbare
 herlaadknop
+hermeneuein
+hermeneuticus
 Higgs
 hitbox
 Hitbox
@@ -168,6 +177,7 @@ informationeel
 inspringniveau
 instantieert
 instantiëren
+ipsa
 jokerteken
 jokertekens
 journalctl
@@ -190,9 +200,11 @@ Koli
 Kortingschecker
 kortingschecker
 Krathwohl
+Kritik
 kuifmakaak
 kuifmakaken
 kénnen
+Königsberg
 Labbeperking
 labtafel
 Laravel
@@ -215,6 +227,7 @@ linestyle
 linkerbatje
 linkertak
 linkset
+Logik
 loopen
 Loopen
 losgeknipte
@@ -274,6 +287,7 @@ onvervalsbare
 opengameart
 openingstag
 Openverse
+Organum
 padnaam
 pagerank
 pastebin
@@ -306,6 +320,7 @@ plekhouder
 Pololu
 Pomodoro
 postprint
+potestas
 prefixcheck
 preprintserver
 prescaler
@@ -341,6 +356,7 @@ Rechtsklikmenu
 rechtsklikt
 redist
 Referers
+reinen
 remstap
 Rendert
 rendert
@@ -365,17 +381,21 @@ schaakengine
 Schermtijdinstellingen
 schermvullende
 schildpadstraat
+Schleiermacher
+scientia
 screenreader
 screenreaders
 Screenreaders
 scrollt
 secondenvertraging
+Seelenleben
 semanticscholar
 Semmelweis
 sensorstand
 Sergey
 serverpad
 sessiecookie
+sich
 Simkin
 simuleerbaar
 skimresultaten
@@ -466,9 +486,12 @@ valregel
 vastgeprogrammeerd
 Veni
 vercijferingen
+Vernunft
 versmaller
 Reactieheaders
 verdieper
+verstehen
+Verstehen
 Verzoekheaders
 Vici
 Vidi
@@ -484,6 +507,7 @@ vooruitrekenen
 vulkleur
 Vwani
 vórige
+waaromvraag
 WASD
 Wayback
 webeditor

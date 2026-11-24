@@ -48,12 +48,43 @@ Hoort bij het vak wetenschapsoriëntatie en staat op https://wo.coderius.nl/onde
   bron onder `## Bronnen`. Neem begrippen en indelingen over, nooit tekst, figuren of
   opdrachten: de site staat onder CC BY-NC, en die licentie kun je alleen geven op eigen
   werk. Twee bronnen: *Ik denk* (Le Coultre, 2007), hoofdstuk 4 Kennisleer voor
-  `kennisleer/` en de denkers (niet Chomsky), hoofdstuk 5 Wetenschapsfilosofie voor het
-  inductieprobleem, intersubjectieve kennis en de eis van Popper in `vragen/hypothese`; en
+  `kennisleer/` en de denkers (niet Chomsky, wel Kant), hoofdstuk 5 Wetenschapsfilosofie voor
+  het hoofdstuk `wetenschapsfilosofie/` (redeneervormen, falsificatie, descriptief en
+  normatief, de empirisch-analytische methode, hermeneutiek, en Bacon, Popper en Dilthey),
+  het inductieprobleem, intersubjectieve kennis en de eis van Popper in `vragen/hypothese`; en
   *Eureka!* (Wientjes & Veenhoven, 2023), hoofdstuk 2 Wat is goed onderzoek voor
   `spelregels/` (niet auteursrecht), plus de functies (`opzet/functies/`) en de typen
   (`typen/`). `src/data/bronnen.test.ts` houdt per pagina bij welke bron en welk
   hoofdstuk erbij hoort; een nieuwe pagina in die mappen moet daar ook in.
+- **Een woord dat elders op de site al een andere betekenis heeft, krijgt die uitleg bij de eerste keer.**
+  Een review van het hoofdstuk Wetenschapsfilosofie (november 2026) vond vier botsingen:
+  *verklaren* is in de wetenschapsfilosofie een oorzaak of wet zoeken, bij de functies van
+  onderzoek elke waaromvraag beantwoorden (een `:::note` op `verklaren-vs-begrijpen`, en de
+  begrippen zeggen het); *bevestigen* kan volgens Popper niet, dus een hypothese "houdt stand";
+  een hypothese komt uit een verklaring (abductie of literatuur) en is zelf de voorspelling die
+  je met deductie afleidt, geen gok; en de soort gegevens (kwalitatief, kwantitatief) is een ander
+  onderscheid dan de methode (verklaren, begrijpen). Waar filosofen het oneens zijn (rust
+  wetenschap op inductie?), zegt de pagina wie wat vindt; een norm van Popper staat er als norm,
+  niet als beschrijving. Een denker krijgt alleen wat van hem is: de vooroordelen als
+  vertrekpunt van de hermeneutische cirkel zijn van Gadamer, het Socrates-syllogisme is een later
+  schoolvoorbeeld in de vorm van Aristoteles. Geen test ziet dit; lees een nieuwe pagina naast de
+  pagina's waar ze naar linkt.
+- **Wat elke pagina hetzelfde zegt.** Een doorloop als leerling (november 2026) vond dat
+  pagina's die elk klopten, elkaar tegenspraken. Houd daarom deze vast. *Valide*: je meet wat je
+  wilt weten (de spelregel), niet "wat je hoopte". *Object en subject gescheiden*: de onderzoeker
+  staat buiten wat hij onderzoekt; bij de hermeneutiek staat hij er niet buiten. *Deductie*: de
+  conclusie is zeker als de redenering geldig is én de uitgangspunten waar zijn; een fout
+  uitgangspunt maakt haar onzeker, niet altijd onwaar, en een hypothese volgt alleen zeker als
+  ook je andere aannames kloppen. In de vijf stappen hoort de deductie bij stap 2 (de hypothese),
+  niet nog eens bij stap 3. *Oorzaak* zie je volgens Hume niet; volgens Kant voegt je verstand
+  hem toe. Of Popper het inductieprobleem oploste, is een meningsverschil, geen feit.
+- `src/data/structuur.test.ts` eist dat elk begrip in `<B t="…"/>` bestaat (een onbekend id
+  verschijnt stil als vette tekst), dat de url van elk begrip en elke interne `linkUrl` van een
+  `<Denker>` een bestaande pagina is, en dat een verbandpagina (titel met "vs.", "naast elkaar"
+  of "combineren") opent met "Het verband in één zin".
+- Twee categorieën met hetzelfde label in de sidebar (Denkers bij Kennisleer en bij
+  Wetenschapsfilosofie) krijgen elk een eigen `key`: anders geven ze dezelfde vertaalsleutel
+  en stopt de build.
 - Teksten van de zoekplugin staan in het Nederlands in `i18n/nl/code.json`.
 - Kleuren, letters en het merk komen uit de gedeelde huisstijl (`createConfig`);
   `src/css/custom.css` bevat alleen de handout- en printregels en wordt na de

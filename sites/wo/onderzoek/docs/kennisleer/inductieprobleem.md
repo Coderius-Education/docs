@@ -8,7 +8,7 @@ title: Het inductieprobleem
 
 <Definitie gewoneTaal="uit 'tot nu toe altijd' volgt nooit 'dus altijd'.">
 
-Het **inductieprobleem** is de vaststelling dat je uit nog zoveel losse waarnemingen nooit met zekerheid een algemene regel kunt afleiden. **Inductie** — de stap van een reeks gevallen naar een algemene uitspraak — levert waarschijnlijkheid op, geen bewijs.
+Het **inductieprobleem** is de vaststelling dat je uit nog zoveel losse waarnemingen nooit met zekerheid een algemene regel kunt afleiden. [**Inductie**](site:onderzoek/wetenschapsfilosofie/inductie) — de stap van een reeks gevallen naar een algemene uitspraak — levert waarschijnlijkheid op, geen bewijs.
 
 </Definitie>
 
@@ -36,7 +36,7 @@ Dat betekent niet dat onderzoek zinloos is. Het betekent dat je:
 - **[representatief](site:onderzoek/spelregels/externe-validiteit) werkt**, want hoe eenzijdiger je groep, hoe wankeler de sprong.
 
 :::caution[Geen reden om op te geven]
-Het inductieprobleem is geen excuus om maar niets meer te meten. Alle natuurwetenschap rust op inductie en levert intussen bruggen op die blijven staan. De les is bescheidenheid in je formulering, niet stilstand in je werk — precies waarom [de vier spelregels](site:onderzoek/spelregels/de-vier-spelregels) bestaan.
+Het inductieprobleem is geen excuus om maar niets meer te meten. Veel natuurwetenschap rust op inductie (al vond Popper van niet, zie [falsificatie](site:onderzoek/wetenschapsfilosofie/falsificatie)) en levert intussen bruggen op die blijven staan. De les is bescheidenheid in je formulering, niet stilstand in je werk — precies waarom [de vier spelregels](site:onderzoek/spelregels/de-vier-spelregels) bestaan.
 :::
 
 <WelNiet
@@ -50,3 +50,4 @@ Het inductieprobleem is geen excuus om maar niets meer te meten. Alle natuurwete
 - [Empirisme](site:onderzoek/kennisleer/empirisme) — de stroming waarvan dit de zwakke plek is
 - [Scepticisme](site:onderzoek/kennisleer/scepticisme) — waarom volledige zekerheid buiten bereik blijft
 - [A posteriori](site:onderzoek/kennisleer/a-posteriori) — het soort kennis dat hierdoor altijd voorlopig blijft
+- [Falsificatie](site:onderzoek/wetenschapsfilosofie/falsificatie) — het antwoord van Popper: niet bevestigen, maar proberen te weerleggen

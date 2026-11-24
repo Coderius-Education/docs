@@ -6,7 +6,7 @@ title: Denkers op een rij
 
 <Bron id="ikdenk" hoofdstuk="4, Kennisleer" over="De keuze van de denkers op deze pagina" />
 
-De kennisleer is voor een groot deel één lang gesprek tussen twee kampen: komt kennis uit het **denken** of uit de **zintuigen**? Hieronder staan de acht denkers uit dit hoofdstuk op volgorde van tijd. Elke naam leidt naar een eigen pagina.
+De kennisleer is voor een groot deel één lang gesprek tussen twee kampen: komt kennis uit het **denken** of uit de **zintuigen**? Hieronder staan de negen denkers uit dit hoofdstuk op volgorde van tijd. Elke naam leidt naar een eigen pagina.
 
 | Denker | Tijd | Kernidee | Kamp |
 |---|---|---|---|
@@ -17,11 +17,12 @@ De kennisleer is voor een groot deel één lang gesprek tussen twee kampen: komt
 | [**Locke**](site:onderzoek/kennisleer/locke) | 1632–1704 | Geen aangeboren ideeën; de geest begint als onbeschreven blad | [Empirisme](site:onderzoek/kennisleer/empirisme) |
 | [**Berkeley**](site:onderzoek/kennisleer/berkeley) | 1685–1753 | Ook vorm en omvang bestaan niet buiten de waarneming: zijn is waargenomen worden | [Empirisme](site:onderzoek/kennisleer/empirisme) |
 | [**Hume**](site:onderzoek/kennisleer/hume) | 1711–1776 | Elke zinvolle uitspraak gaat over begrippen of over feiten; inductie is niet te rechtvaardigen | [Empirisme](site:onderzoek/kennisleer/empirisme) |
+| [**Kant**](site:onderzoek/kennisleer/kant) | 1724–1804 | Alle kennis begint met ervaring, maar het verstand brengt de vormen mee waarin we haar ordenen | Verzoent beide |
 | [**Chomsky**](site:onderzoek/kennisleer/chomsky) | geb. 1928 | Kinderen leren te snel taal om alles uit ervaring te halen: een deel is aangeboren | [Rationalisme](site:onderzoek/kennisleer/rationalisme) |
 
 ## De slinger
 
-Zet je ze op een rij, dan zie je een slinger heen en weer gaan. Plato kiest voor het denken, zijn leerling Aristoteles voor de waarneming. Tweeduizend jaar later begint Descartes opnieuw bij het denken, waarna Locke, Berkeley en Hume de empiristische kant zo ver doortrekken dat er van zekere kennis bijna niets overblijft. Kort daarna probeert de Duitse filosoof Immanuel Kant (1724–1804) de twee kampen te verzoenen: alle kennis begint met ervaring, schrijft hij, maar ons verstand brengt zelf de vormen mee waarin we die ervaring ordenen. En in de twintigste eeuw brengt Chomsky het aangeboren weten terug — nu onderbouwd met taalonderzoek.
+Zet je ze op een rij, dan zie je een slinger heen en weer gaan. Plato kiest voor het denken, zijn leerling Aristoteles voor de waarneming. Tweeduizend jaar later begint Descartes opnieuw bij het denken, waarna Locke, Berkeley en Hume de empiristische kant zo ver doortrekken dat er van zekere kennis bijna niets overblijft. Kort daarna probeert [Immanuel Kant](site:onderzoek/kennisleer/kant) de twee kampen te verzoenen: alle kennis begint met ervaring, schrijft hij, maar ons verstand brengt zelf de vormen mee waarin we die ervaring ordenen. En in de twintigste eeuw brengt Chomsky het aangeboren weten terug — nu onderbouwd met taalonderzoek.
 
 Dat patroon is zelf leerzaam: geen van beide kampen heeft ooit definitief gewonnen. In je eigen onderzoek gebruik je ze dan ook allebei — je [redeneert](site:onderzoek/kennisleer/rationalisme) je vraagstelling scherp en je gaat vervolgens [kijken](site:onderzoek/kennisleer/empirisme).
 
@@ -36,9 +37,11 @@ Dat patroon is zelf leerzaam: geen van beide kampen heeft ooit definitief gewonn
 | [Tabula rasa, primaire en secundaire eigenschappen](site:onderzoek/kennisleer/locke) | Locke |
 | [Idealisme](site:onderzoek/kennisleer/berkeley) | Berkeley |
 | [Vork van Hume, inductieprobleem](site:onderzoek/kennisleer/hume) | Hume |
+| [Copernicaanse wending, synthetisch a priori](site:onderzoek/kennisleer/kant) | Kant |
 | [Universele grammatica](site:onderzoek/kennisleer/chomsky) | Chomsky |
 
 ## Hangt samen met
 
 - [Hoe kom je aan kennis?](site:onderzoek/kennisleer/hoe-weet-je-iets) — het overzicht van de drie posities
 - [Rationalisme](site:onderzoek/kennisleer/rationalisme) en [empirisme](site:onderzoek/kennisleer/empirisme) — de twee kampen
+- [Denkers in de wetenschapsfilosofie](site:onderzoek/wetenschapsfilosofie/denkers) — Bacon, Popper en Dilthey

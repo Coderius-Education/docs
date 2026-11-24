@@ -16,7 +16,7 @@ Waar Plato de Ideeën in een aparte werkelijkheid plaatst, houdt Aristoteles vol
 
 Het gevolg is een heel ander onderzoeksprogramma. Wie de wereld wil kennen, moet niet in zichzelf keren maar naar buiten: waarnemen, verzamelen, vergelijken en ordenen. Aristoteles deed dat op grote schaal — hij beschreef honderden diersoorten en verzamelde de grondwetten van ruim 150 Griekse stadstaten.
 
-Om betrouwbaar te redeneren met wat hij vond, ontwierp hij de **syllogistiek**: de sluitrede in drie stappen.
+Om betrouwbaar te redeneren met wat hij vond, ontwierp hij de **syllogistiek**: de sluitrede in drie stappen. Het bekendste voorbeeld is van later, maar heeft precies zijn vorm:
 
 > Alle mensen zijn sterfelijk. · Socrates is een mens. · Dus Socrates is sterfelijk.
 
