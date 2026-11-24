@@ -56,6 +56,23 @@ Hoort bij het vak wetenschapsoriëntatie en staat op https://wo.coderius.nl/onde
   `spelregels/` (niet auteursrecht), plus de functies (`opzet/functies/`) en de typen
   (`typen/`). `src/data/bronnen.test.ts` houdt per pagina bij welke bron en welk
   hoofdstuk erbij hoort; een nieuwe pagina in die mappen moet daar ook in.
+- **Een woord dat elders op de site al een andere betekenis heeft, krijgt die uitleg bij de eerste keer.**
+  Een review van het hoofdstuk Wetenschapsfilosofie (november 2026) vond vier botsingen:
+  *verklaren* is in de wetenschapsfilosofie een oorzaak of wet zoeken, bij de functies van
+  onderzoek elke waaromvraag beantwoorden (een `:::note` op `verklaren-vs-begrijpen`, en de
+  begrippen zeggen het); *bevestigen* kan volgens Popper niet, dus een hypothese "houdt stand";
+  een hypothese komt uit een verklaring (abductie of literatuur) en is zelf de voorspelling die
+  je met deductie afleidt, geen gok; en de soort gegevens (kwalitatief, kwantitatief) is een ander
+  onderscheid dan de methode (verklaren, begrijpen). Waar filosofen het oneens zijn (rust
+  wetenschap op inductie?), zegt de pagina wie wat vindt; een norm van Popper staat er als norm,
+  niet als beschrijving. Een denker krijgt alleen wat van hem is: de vooroordelen als
+  vertrekpunt van de hermeneutische cirkel zijn van Gadamer, het Socrates-syllogisme is een later
+  schoolvoorbeeld in de vorm van Aristoteles. Geen test ziet dit; lees een nieuwe pagina naast de
+  pagina's waar ze naar linkt.
+- `src/data/structuur.test.ts` eist dat elk begrip in `<B t="…"/>` bestaat (een onbekend id
+  verschijnt stil als vette tekst), dat de url van elk begrip en elke interne `linkUrl` van een
+  `<Denker>` een bestaande pagina is, en dat een verbandpagina (titel met "vs.", "naast elkaar"
+  of "combineren") opent met "Het verband in één zin".
 - Twee categorieën met hetzelfde label in de sidebar (Denkers bij Kennisleer en bij
   Wetenschapsfilosofie) krijgen elk een eigen `key`: anders geven ze dezelfde vertaalsleutel
   en stopt de build.

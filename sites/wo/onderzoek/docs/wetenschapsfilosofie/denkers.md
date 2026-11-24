@@ -16,11 +16,11 @@ De wetenschapsfilosofie gaat over twee vragen: hoe kom je tot betrouwbare kennis
 
 ## Van Bacon naar Popper
 
-Bacon zette de nieuwe natuurwetenschap op inductie: verzamel waarnemingen en de wetten volgen vanzelf. Een eeuw later liet [Hume](site:onderzoek/kennisleer/hume) zien dat die sprong van waarnemingen naar wetten nooit waterdicht is, en [Kant](site:onderzoek/kennisleer/kant) probeerde te redden wat er te redden viel. Popper draaide de zaak in de twintigste eeuw om: wetenschap verzamelt geen bevestigingen, maar probeert haar eigen ideeën onderuit te halen.
+Bacon zette de nieuwe natuurwetenschap op inductie: verzamel geduldig waarnemingen, zoek ook naar de gevallen die niet passen, en trek pas dan een voorzichtige conclusie. Een eeuw later liet [Hume](site:onderzoek/kennisleer/hume) zien dat die sprong van waarnemingen naar wetten nooit waterdicht is, en [Kant](site:onderzoek/kennisleer/kant) probeerde te redden wat er te redden viel. Popper draaide de zaak in de twintigste eeuw om: wetenschap hoort volgens hem geen bevestigingen te verzamelen, maar haar eigen ideeën onderuit te proberen te halen.
 
 Dilthey staat apart. Hem ging het niet om de vraag hoe natuurwetenschap werkt, maar om de vraag of die methode ook voor de mens geldt. Zijn antwoord: nee, de mens vraagt om een eigen methode.
 
 ## Hangt samen met
 
 - [Hoe werkt wetenschap?](site:onderzoek/wetenschapsfilosofie/hoe-werkt-wetenschap) — het overzicht van dit hoofdstuk
-- [Denkers in de kennisleer](site:onderzoek/kennisleer/denkers) — de denkers uit het vorige hoofdstuk, van Plato tot Kant
+- [Denkers in de kennisleer](site:onderzoek/kennisleer/denkers) — de denkers uit het vorige hoofdstuk, van Plato tot Chomsky

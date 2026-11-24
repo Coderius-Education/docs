@@ -14,15 +14,15 @@ title: Hermeneutiek
 
 ## Waar het woord vandaan komt
 
-Het woord komt van het Griekse *hermeneuein*, uitleggen of vertalen. Eeuwenlang ging het om het uitleggen van moeilijke teksten, zoals de Bijbel of oude wetten. In de negentiende eeuw maakte [Wilhelm Dilthey](site:onderzoek/wetenschapsfilosofie/dilthey) er de methode van alle wetenschappen over de mens van.
+Het woord komt van het Griekse *hermeneuein*, uitleggen of vertalen. Eeuwenlang ging het om het uitleggen van moeilijke teksten, zoals de Bijbel of oude wetten. Begin negentiende eeuw maakte Friedrich Schleiermacher er een algemene leer van het begrijpen van. Rond 1900 maakte [Wilhelm Dilthey](site:onderzoek/wetenschapsfilosofie/dilthey) er de methode van alle wetenschappen over de mens van.
 
 ## Drie uitgangspunten
 
 | Uitgangspunt | Betekent | Voorbeeld |
 |---|---|---|
 | **Holisme** | Je begrijpt een deel alleen vanuit het geheel waar het bij hoort | Een zin in een brief betekent iets anders als je weet dat de hele brief ironisch is |
-| **Historiciteit** | Mensen, teksten en gebeurtenissen horen bij hun tijd en plaats, en zo ook de onderzoeker die ze uitlegt | "Vrijheid" betekende voor een slaaf in 1850 iets anders dan voor een scholier nu |
-| **Object en subject zijn niet gescheiden** | De onderzoeker is zelf een mens met een eigen achtergrond, en die kleurt zijn uitleg | Een historicus uit 2025 leest een dagboek uit 1943 anders dan een tijdgenoot |
+| **Historiciteit** | Mensen, teksten en gebeurtenissen horen bij hun tijd en plaats | "Vrijheid" betekende voor een slaaf in 1850 iets anders dan voor een scholier nu |
+| **Object en subject zijn niet gescheiden** | De onderzoeker is zelf een mens met een eigen achtergrond, en die kleurt zijn uitleg | Een leraar en een leerling lezen hetzelfde interview over huiswerk elk op hun eigen manier |
 
 Leg deze drie naast de kenmerken van [de empirisch-analytische methode](site:onderzoek/wetenschapsfilosofie/empirisch-analytisch) en je ziet het tegendeel: geen losse feiten maar een geheel, geen tijdloze wetten maar een historische context, en geen onderzoeker die erbuiten staat.
 
@@ -37,7 +37,7 @@ Dat je eigen achtergrond meetelt, betekent niet dat elke uitleg even goed is. Ee
 :::
 
 <WelNiet
-  wel="‘In vier van de zes interviews noemen leerlingen de mentor als reden om te blijven. Gezien hun verhalen over de eerste weken lees ik dat als: zich gezien voelen, niet de lessen van de mentor zelf.’"
+  wel="‘In vier van de zes interviews over waarom ze op deze school blijven, noemen leerlingen de mentor. Gezien hun verhalen over de eerste weken lees ik dat als: zich gezien voelen, niet de lessen van de mentor zelf.’"
   niet="‘De leerlingen bedoelen eigenlijk dat de school te groot is.’ — een uitleg zonder steun in wat ze zeiden."
 />
 

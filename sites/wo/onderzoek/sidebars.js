@@ -118,8 +118,8 @@ const sidebars = {
           items: [
             'wetenschapsfilosofie/denkers',
             'wetenschapsfilosofie/bacon',
-            'wetenschapsfilosofie/popper',
             'wetenschapsfilosofie/dilthey',
+            'wetenschapsfilosofie/popper',
           ],
         },
       ],

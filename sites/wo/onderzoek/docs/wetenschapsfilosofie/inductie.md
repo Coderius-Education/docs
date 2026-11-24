@@ -20,11 +20,15 @@ Zo werkt een groot deel van de wetenschap. Een bioloog die bij honderd muizen zi
 
 ## Sterk en zwak
 
-Een inductieve conclusie is nooit zeker, maar wel meer of minder sterk. Hij is sterker naarmate:
+Een inductieve conclusie is nooit zeker. Wie op inductie bouwt, zegt dat ze wel meer of minder sterk is: sterker naarmate
 
 - je **meer gevallen** hebt gezien;
 - de gevallen **meer van elkaar verschillen** (honderd muizen uit één nest zeggen minder dan honderd muizen uit tien laboratoria);
 - je **geen tegenvoorbeeld** bent tegengekomen, terwijl je er wel naar zocht.
+
+## Rust wetenschap op inductie?
+
+Daarover zijn filosofen het niet eens. Bacon en veel onderzoekers na hem zeggen ja: wetten vind je door waarnemingen te verzamelen, en hoe meer gevallen, hoe sterker. [Karl Popper](site:onderzoek/wetenschapsfilosofie/popper) zei nee: een theorie wordt niet sterker door nog een geval dat er toch al bij paste, maar alleen door een test die ze had kunnen verliezen. Dat is [falsificatie](site:onderzoek/wetenschapsfilosofie/falsificatie). Voor je eigen onderzoek maakt het weinig uit: je conclusie over een groep is een inductieve stap, en je begrenst haar.
 
 :::caution[Valkuil: van "tot nu toe" naar "altijd"]
 Hoeveel gevallen je ook verzamelt, één tegenvoorbeeld kan je regel onderuit halen. Dat is [het inductieprobleem](site:onderzoek/kennisleer/inductieprobleem): de stap van "tot nu toe altijd" naar "dus altijd" is nooit waterdicht. Schrijf in je conclusie daarom op over welke groep je het hebt, en hoe ver je denkt te kunnen generaliseren.
@@ -37,8 +41,8 @@ Maakte van inductie de methode van de nieuwe natuurwetenschap: verzamel eerst ge
 </Denker>
 
 <WelNiet
-  wel="‘Bij alle 80 ondervraagde bovenbouwleerlingen van onze school was de gemiddelde schermtijd hoger op zondag dan op woensdag. Dat wijst erop dat dit voor bovenbouwleerlingen op onze school vaker zo is.’"
-  niet="‘Drie vrienden van me slapen slecht na gamen, dus gamen maakt slapeloos.’ — drie gevallen uit één vriendengroep dragen zo'n algemene conclusie niet."
+  wel="‘Van de 80 ondervraagde bovenbouwleerlingen van onze school hadden er 70 op zondag meer schermtijd dan op woensdag. Dat wijst erop dat dit voor de meeste bovenbouwleerlingen op onze school geldt.’"
+  niet="‘Drie vrienden van me gamen elke avond, dus alle scholieren gamen elke avond.’ — drie gevallen uit één vriendengroep dragen zo'n algemene regel niet."
 />
 
 ## Hangt samen met

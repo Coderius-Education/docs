@@ -25,7 +25,7 @@ const begrippen = {
   abductie: {
     term: 'Abductie',
     kort: 'Bij een opvallende waarneming de meest waarschijnlijke verklaring zoeken: van gevolg naar mogelijke oorzaak.',
-    lang: 'Een redenering waarbij je bij een opvallende waarneming de meest waarschijnlijke verklaring zoekt. Het resultaat is geen zekerheid maar een goede gok, die je daarna als hypothese toetst.',
+    lang: 'Een redenering waarbij je bij een opvallende waarneming de meest waarschijnlijke verklaring zoekt. Het resultaat is geen zekerheid maar een mogelijke verklaring, waaruit je daarna een hypothese afleidt en die toetst.',
     url: '/wetenschapsfilosofie/abductie',
   },
   abstract: {
@@ -72,7 +72,7 @@ const begrippen = {
   },
   begrijpen: {
     term: 'Begrijpen',
-    kort: 'De betekenis van menselijk handelen, teksten of kunst snappen vanuit hun eigen tijd en bedoelingen; het doel van de hermeneutiek.',
+    kort: 'In de wetenschapsfilosofie: de redenen en de betekenis van menselijk handelen, teksten of kunst snappen vanuit hun eigen tijd; het doel van de hermeneutiek.',
     lang: 'Het doel van de geesteswetenschappen volgens Dilthey (Verstehen): je verplaatst je in iemands wereld en snapt wat iets voor hem betekende, in plaats van een oorzaak of wet te zoeken.',
     url: '/wetenschapsfilosofie/verklaren-vs-begrijpen',
   },
@@ -174,7 +174,7 @@ const begrippen = {
   deductie: {
     term: 'Deductie',
     kort: 'Uit een algemene uitspraak via een logische redenering een conclusie over een individueel geval trekken.',
-    lang: 'Een redenering van het algemene naar het bijzondere: uit een algemene uitspraak trek je via een logische redenering een conclusie over één geval. Zijn de uitgangspunten waar en is de redenering geldig, dan is de conclusie zeker.',
+    lang: 'Een redenering van het algemene naar het bijzondere: uit een algemene uitspraak trek je via een logische redenering een conclusie over één geval. Zijn de uitgangspunten waar en is de redenering geldig, dan volgt de conclusie er noodzakelijk uit; ze kan ook over een groep gaan.',
     url: '/wetenschapsfilosofie/deductie',
   },
   deelvraag: {
@@ -263,8 +263,8 @@ const begrippen = {
   },
   historiciteit: {
     term: 'Historiciteit',
-    kort: 'Mensen, teksten en gebeurtenissen horen bij hun tijd en plaats, en de onderzoeker die ze uitlegt ook.',
-    lang: 'Een uitgangspunt van de hermeneutiek: wat mensen doen en schrijven, begrijp je alleen vanuit hun historische context, en de onderzoeker kijkt zelf ook vanuit zijn eigen tijd.',
+    kort: 'Mensen, teksten en gebeurtenissen horen bij hun tijd en plaats.',
+    lang: 'Een uitgangspunt van de hermeneutiek: wat mensen doen en schrijven, begrijp je alleen vanuit hun historische context.',
     url: '/wetenschapsfilosofie/hermeneutiek',
   },
   holisme: {
@@ -396,7 +396,7 @@ const begrippen = {
   normatief: {
     term: 'Normatief',
     kort: 'Een uitspraak over hoe iets zou moeten zijn: een oordeel of norm, niet te controleren met alleen een meting.',
-    lang: 'Een normatieve uitspraak zegt wat goed, slecht, wenselijk of verplicht is. Om haar te onderbouwen heb je naast feiten een maatstaf nodig. Het tegenovergestelde is een descriptieve uitspraak.',
+    lang: 'Een normatieve uitspraak zegt wat goed, slecht, wenselijk of verplicht is. Om haar te onderbouwen heb je naast feiten een maatstaf nodig, die je erbij zet en verantwoordt. Het tegenovergestelde is een descriptieve uitspraak.',
     url: '/wetenschapsfilosofie/descriptief-vs-normatief',
   },
   objectief: {
@@ -582,7 +582,7 @@ const begrippen = {
   'synthetisch-a-priori': {
     term: 'Synthetisch a priori',
     kort: 'Volgens Kant: een uitspraak die iets nieuws over de wereld zegt en toch zeker is zonder te meten, zoals 7 + 5 = 12.',
-    lang: 'Een derde soort uitspraak die Kant toevoegde aan de vork van Hume: synthetisch omdat ze iets nieuws zegt, a priori omdat ze zeker is vóór elke waarneming. Ze is zeker omdat ze voortkomt uit de vormen van ons eigen verstand.',
+    lang: 'Een soort uitspraak die bij de vork van Hume niet bestond: synthetisch omdat ze iets nieuws zegt, a priori omdat ze zeker is vóór elke waarneming. Volgens Kant hoort de wiskunde hierbij, en is ze zeker omdat ze voortkomt uit de vormen waarmee we waarnemen (ruimte en tijd) en ordenen (begrippen als oorzaak).',
     url: '/kennisleer/kant',
   },
   'synthetische-uitspraak': {
@@ -647,8 +647,8 @@ const begrippen = {
   },
   verklaren: {
     term: 'Verklaren',
-    kort: 'De oorzaak of wetmatigheid achter een verschijnsel vinden; het doel van de natuurwetenschappen.',
-    lang: 'Het doel van de empirisch-analytische methode: een verschijnsel herleiden tot een oorzaak of een wet, zodat je kunt voorspellen wat er de volgende keer gebeurt. Dilthey zette het tegenover begrijpen.',
+    kort: 'In de wetenschapsfilosofie: de oorzaak of wetmatigheid achter een verschijnsel vinden; het doel van de natuurwetenschappen.',
+    lang: 'Het doel van de empirisch-analytische methode: een verschijnsel herleiden tot een oorzaak of een wet, zodat je kunt voorspellen wat er de volgende keer gebeurt. Dilthey zette het tegenover begrijpen. Niet te verwarren met verklarend onderzoek bij de functies, waar verklaren betekent: een waaromvraag beantwoorden.',
     url: '/wetenschapsfilosofie/verklaren-vs-begrijpen',
   },
   'verklarend-explorerend': {

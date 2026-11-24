@@ -84,6 +84,7 @@ Doorstreeptaak
 doortelt
 driehonderd
 drieëntwintigste
+Droysen
 Dvwa
 DVWA
 dwarsas
@@ -107,6 +108,7 @@ Forschung
 Fritzing
 FTDI
 fóút
+Gadamer
 gamedevelopment
 gastenboekformulier
 gastenboekveld
@@ -379,6 +381,7 @@ schaakengine
 Schermtijdinstellingen
 schermvullende
 schildpadstraat
+Schleiermacher
 scientia
 screenreader
 screenreaders
@@ -504,6 +507,7 @@ vooruitrekenen
 vulkleur
 Vwani
 vórige
+waaromvraag
 WASD
 Wayback
 webeditor

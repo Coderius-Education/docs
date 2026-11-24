@@ -14,13 +14,13 @@ title: Falsificatie
 
 ## Bevestigen kan niet, weerleggen wel
 
-Duizend witte zwanen bewijzen niet dat alle zwanen wit zijn: dat is [het inductieprobleem](site:onderzoek/kennisleer/inductieprobleem). Maar één zwarte zwaan bewijst wel dat niet alle zwanen wit zijn. Popper zag in die ongelijkheid de sleutel tot wetenschap. Je kunt een theorie nooit definitief bewijzen, maar je kunt wel proberen haar te weerleggen.
+Duizend witte zwanen bewijzen niet dat alle zwanen wit zijn: dat is [het inductieprobleem](site:onderzoek/kennisleer/inductieprobleem). Maar één zwarte zwaan bewijst wel dat niet alle zwanen wit zijn, als je tenminste zeker weet dat het een zwaan was en dat hij echt zwart was. Daarom herhaal je een test voordat je een theorie afschrijft. Popper zag in die ongelijkheid de sleutel tot wetenschap. Je kunt een theorie nooit definitief bewijzen, maar je kunt wel proberen haar te weerleggen.
 
-Een wetenschapper zoekt dus niet naar bevestiging, maar naar het experiment dat zijn theorie het hardst op de proef stelt. Overleeft de theorie die test, dan is ze niet bewezen, wel sterker geworden. Popper noemde dat een **gecorroboreerde** theorie: voorlopig de beste die we hebben.
+Een wetenschapper hoort dus volgens Popper niet naar bevestiging te zoeken, maar naar het experiment dat zijn theorie het hardst op de proef stelt. Dat is een norm, geen beschrijving: de wetenschapshistoricus Thomas Kuhn liet zien dat onderzoekers hun theorie in de praktijk vaak juist beschermen, en pas na veel tegenvallers loslaten. Overleeft de theorie die test, dan is ze niet bewezen, wel sterker geworden: voorlopig de beste die we hebben. In je verslag schrijf je daarom niet "mijn hypothese is bewezen", maar "mijn hypothese houdt stand" of "de resultaten ondersteunen mijn hypothese".
 
 ## Het criterium: kan het misgaan?
 
-Popper gebruikte falsificatie ook als grens tussen wetenschap en niet-wetenschap.
+Popper gebruikte **falsifieerbaarheid** ook als grens tussen wetenschap en niet-wetenschap. Het criterium gaat over theorieën en hypotheses, niet over elke losse zin.
 
 - "Water kookt bij zeeniveau op 100 °C" is falsifieerbaar. Kookt het bij 90 °C, dan klopt de uitspraak niet.
 - "Morgen regent het, of niet" is niet falsifieerbaar. Wat er ook gebeurt, het klopt. Daarom zegt de uitspraak niets.
@@ -34,7 +34,7 @@ Een theorie die alles kan verklaren, verklaart dus niets. Hoe meer een theorie v
   linkUrl="https://nl.wikipedia.org/wiki/Zonsverduistering_van_29_mei_1919"
   linkTekst="Wikipedia: Zonsverduistering van 29 mei 1919">
 
-De algemene relativiteitstheorie van Einstein voorspelde iets wat niemand ooit had gezien: licht van een ster buigt af als het langs de zon scheert, met een precieze hoek. Tijdens de zonsverduistering van 29 mei 1919 maten Britse sterrenkundigen de posities van sterren vlak naast de verduisterde zon. Hadden de sterren op hun gewone plek gestaan, dan was de theorie weerlegd. Ze stonden verschoven, ongeveer zoals Einstein had voorspeld. Popper noemde dit later het schoolvoorbeeld van een gewaagde voorspelling: de theorie had kunnen sneuvelen, en deed dat niet.
+Volgens de algemene relativiteitstheorie van Einstein buigt licht van een ster af als het langs de zon scheert, en wel twee keer zo sterk als je met de natuurkunde van Newton zou uitrekenen. Tijdens de zonsverduistering van 29 mei 1919 maten Britse sterrenkundigen de posities van sterren vlak naast de verduisterde zon. Hadden de sterren op hun gewone plek gestaan, of maar half zo ver verschoven als Newton voorspelde, dan was de theorie weerlegd. Ze stonden verschoven, ongeveer zoals Einstein had voorspeld. De metingen waren grof, en of ze echt overtuigend waren, is later nog lang betwist; latere metingen bevestigden Einstein wel. Popper noemde dit later het schoolvoorbeeld van een gewaagde voorspelling: de theorie had kunnen sneuvelen, en deed dat niet.
 
 **Wat je hiervan leert:** een theorie wordt sterk door een test die ze had kunnen verliezen, niet door nog een voorbeeld dat er toch al bij paste.
 
@@ -51,7 +51,7 @@ Draaide de vraag om: niet "hoe bewijs ik mijn theorie?", maar "wat zou haar weer
 :::
 
 <WelNiet
-  wel="‘Ik verwacht dat leerlingen die drie keer per week sporten gemiddeld hoger scoren op de wiskundetoets. Scoren ze gelijk of lager, dan klopt mijn hypothese niet.’"
+  wel="‘Ik verwacht dat leerlingen die drie keer per week sporten gemiddeld hoger scoren op de wiskundetoets dan leerlingen die niet sporten. Scoren ze gelijk of lager, dan klopt mijn hypothese niet.’"
   niet="‘Ik verwacht dat sporten op de een of andere manier samenhangt met schoolprestaties.’"
 />
 

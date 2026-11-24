@@ -8,30 +8,34 @@ title: Immanuel Kant
 
 **1724–1804 · verzoening van rationalisme en empirisme**
 
-Kant woonde zijn hele leven in Königsberg, een havenstad in Oost-Pruisen, en reisde nauwelijks. Hij was er hoogleraar logica en metafysica. Volgens het verhaal maakte hij elke middag op precies hetzelfde uur zijn wandeling. Toch zette hij de filosofie op zijn kop. Hij zei zelf dat Hume hem had wakker geschud uit zijn "dogmatische sluimer".
+Kant woonde vrijwel zijn hele leven in en rond Königsberg, een havenstad in Oost-Pruisen. Hij was er hoogleraar logica en metafysica. Volgens het verhaal maakte hij elke middag op precies hetzelfde uur zijn wandeling. Toch zette hij de filosofie op zijn kop. Hij schreef zelf dat Hume hem had wakker geschud uit zijn "dogmatische sluimer".
 
 ## Kernidee 1: de twee kampen hebben allebei gelijk, en allebei ongelijk
 
 Na Hume leek het empirisme in een doodlopende straat te zitten: als alle kennis uit waarneming komt, en waarneming nooit zekerheid geeft, wordt zekere kennis onmogelijk. Het [rationalisme](site:onderzoek/kennisleer/rationalisme) had het omgekeerde probleem: denken zonder waarneming gaat nergens over.
 
-Kant combineerde ze in zijn *Kritik der reinen Vernunft* (1781). Alle kennis **begint** met ervaring, schreef hij, maar dat wil niet zeggen dat alle kennis **uit** ervaring komt. Zijn beroemde formule: gedachten zonder inhoud zijn leeg, waarnemingen zonder begrippen zijn blind. Je hebt beide nodig.
+Kant combineerde ze in zijn *Kritik der reinen Vernunft* (1781). In de tweede druk (1787) zette hij het zo neer: alle kennis **begint** met ervaring, maar dat wil niet zeggen dat alle kennis **uit** ervaring komt. Zijn beroemde formule: gedachten zonder inhoud zijn leeg, waarnemingen zonder begrippen zijn blind. Je hebt allebei nodig: zintuigen die iets aanleveren, en een verstand dat het ordent.
 
-## Kernidee 2: het verstand ordent wat je waarneemt
+## Kernidee 2: we ordenen zelf wat we waarnemen
 
-Kant draaide de vraag om. Iedereen ging ervan uit dat ons kennen zich richt naar de dingen. Kant stelde voor dat de dingen, zoals wij ze leren kennen, zich richten naar ons kennen. Hij vergeleek dat zelf met Copernicus, die de zon in plaats van de aarde in het midden zette; daarom heet het de **Copernicaanse wending**.
+Je zintuigen leveren alles aan in **ruimte en tijd**: je kunt je geen ding voorstellen dat nergens is, of een gebeurtenis die op geen enkel moment plaatsvindt. Je verstand ordent dat vervolgens met begrippen als **oorzaak en gevolg**: je ziet een bal een ruit raken, en je ziet niet alleen twee dingen na elkaar, maar ook dat het een het ander veroorzaakte.
 
-Ons verstand brengt de vormen mee waarin we alles waarnemen: ruimte, tijd en oorzaak en gevolg. Je kunt je geen ding voorstellen dat nergens is, of een gebeurtenis zonder oorzaak. Dat ligt niet aan de wereld, maar aan de bril waardoor we haar zien. Hoe de dingen zijn los van die bril, het *Ding an sich*, kunnen we volgens Kant nooit weten.
+Volgens Kant komen die vormen niet uit de wereld, maar uit ons. Iedereen heeft ze, en niemand kan ze afzetten. Hoe de dingen zijn los van die vormen, kunnen we dus nooit weten. Kant vergeleek die omslag met Copernicus. Die kwam pas verder toen hij niet langer alles om de waarnemer op aarde liet draaien, maar inzag dat de waarnemer zelf bewoog. Zo zocht Kant de verklaring voor de vorm van onze kennis niet in de dingen, maar in degene die kijkt.
 
-## Kernidee 3: synthetisch a priori
+## Kernidee 3: zeker, en toch nieuw
 
-Hume kende twee soorten uitspraken: analytische, waar door de betekenis van de woorden, en synthetische, waar door waarneming. De namen gaf Kant er later aan, zie [de vork van Hume](site:onderzoek/kennisleer/vork-van-hume). Kant voegde een derde soort toe: **synthetisch a priori**. Zulke uitspraken zeggen iets nieuws over de wereld, en zijn toch zeker zonder dat je hoeft te meten. Zijn voorbeelden: 7 + 5 = 12, en "elke gebeurtenis heeft een oorzaak". Ze zijn zeker, omdat ze voortkomen uit de vormen van ons eigen verstand.
+Bij Hume vielen twee vragen samen. Volgt een uitspraak uit de betekenis van de woorden, of zegt ze iets nieuws? En weet je haar vóór of pas ná waarneming? Hume rekende de wiskunde tot het eerste vak: waar door de betekenis, en dus vooraf te weten (zie [de vork van Hume](site:onderzoek/kennisleer/vork-van-hume)).
+
+Kant hield de twee vragen uit elkaar, en zette de wiskunde in een vak dat bij Hume niet bestond: **synthetisch a priori**. Dat 7 + 5 = 12, weet je zonder knikkers te tellen. Toch zit "twaalf" volgens Kant niet al in de woorden "zeven", "vijf" en "optellen": de uitspraak zegt iets nieuws. Ze is zeker omdat ze voortkomt uit de vormen waarmee we alles waarnemen en ordenen.
+
+Op de pagina [Rationalisme](site:onderzoek/kennisleer/rationalisme) staat dat 7 + 5 = 12 "volgt uit wat de getallen betekenen". Daar waren Hume en Kant het dus niet over eens, en filosofen zijn het er nog steeds niet over eens.
 
 ## Wat je hieraan hebt bij je eigen onderzoek
 
-Kant herinnert je eraan dat je nooit met een lege blik meet. Wat je waarneemt, hangt mede af van de begrippen waarmee je kijkt. Daarom is [operationaliseren](site:onderzoek/vragen/operationaliseren) zo belangrijk: je legt vast door welke bril je kijkt, zodat een ander dezelfde bril kan opzetten.
+Kant herinnert je eraan dat waarnemen nooit kaal is: wat je ziet, is al geordend voordat je erover nadenkt. Die vormen van Kant heeft iedereen, en je kiest ze niet. In je eigen onderzoek komt er een ordening bij die je wél kiest: de begrippen waarmee je meet. Daarom leg je bij [operationaliseren](site:onderzoek/vragen/operationaliseren) vast wat je precies telt als "stress" of "schermtijd", zodat een ander op dezelfde manier kan meten.
 
 ## Hangt samen met
 
 - [Rationalisme](site:onderzoek/kennisleer/rationalisme) en [empirisme](site:onderzoek/kennisleer/empirisme) — de twee kampen die hij wilde verzoenen
-- [De vork van Hume](site:onderzoek/kennisleer/vork-van-hume) — de indeling die hij aanvulde met het synthetisch a priori
+- [De vork van Hume](site:onderzoek/kennisleer/vork-van-hume) — de indeling die hij uit elkaar haalde
 - [David Hume](site:onderzoek/kennisleer/hume) — de denker die hem wakker schudde

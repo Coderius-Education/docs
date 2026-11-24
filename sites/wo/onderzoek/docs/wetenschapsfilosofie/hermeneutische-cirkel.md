@@ -20,7 +20,7 @@ Dat is een cirkel, maar geen vicieuze cirkel. Je komt niet steeds terug waar je 
 
 ## De vooroordelen van de lezer horen er ook bij
 
-Je begint nooit met een lege blik. Je hebt al een verwachting van wat een tekst betekent: door de titel, door wat je eerder las, door je eigen tijd. Volgens de hermeneutiek is dat geen fout die je moet uitschakelen, want dat kan niet. Het is het vertrekpunt van de cirkel. Wat wel moet: je verwachting bijstellen zodra de tekst haar tegenspreekt.
+Je begint nooit met een lege blik. Je hebt al een verwachting van wat een tekst betekent: door de titel, door wat je eerder las, door je eigen tijd. Dilthey wilde zulke vooroordelen zo goed mogelijk uitschakelen. De Duitse filosoof Hans-Georg Gadamer (1900–2002) zag het anders: uitschakelen kan niet, en je verwachting is juist het vertrekpunt van de cirkel. Wat wel moet: je verwachting bijstellen zodra de tekst haar tegenspreekt.
 
 ## In je eigen onderzoek
 
@@ -34,7 +34,7 @@ Werk je met interviews, dan doorloop je deze cirkel vanzelf.
 Stop als een nieuwe ronde je beeld niet meer verandert.
 
 :::caution[Valkuil: alleen de citaten kiezen die passen]
-Wie na de eerste ronde stopt, leest de rest alleen nog om zijn eerste indruk te bevestigen. Zoek in elke ronde juist de fragmenten die niet passen. Daar zit de volgende draai van de cirkel.
+Wie na de eerste ronde ophoudt met bijstellen, leest de rest alleen nog om zijn eerste indruk te bevestigen. Zoek in elke ronde juist de fragmenten die niet passen. Daar zit de volgende draai van de cirkel.
 :::
 
 ## Hangt samen met

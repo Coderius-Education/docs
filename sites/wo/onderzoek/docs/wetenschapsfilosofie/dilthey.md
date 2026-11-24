@@ -12,7 +12,7 @@ Dilthey was een Duitse filosoof en historicus, hoogleraar in Berlijn. Hij leefde
 
 ## Kernidee 1: verklaren en begrijpen
 
-In 1894 vatte hij het verschil samen in één zin: **"De natuur verklaren we, de geest begrijpen we."** (*Die Natur erklären wir, das Seelenleben verstehen wir.*)
+In 1894 vatte hij het verschil samen in één zin: **"De natuur verklaren we, de geest begrijpen we."** In het Duits: *Die Natur erklären wir, das Seelenleben verstehen wir*. *Seelenleben* is letterlijk het zielenleven, het innerlijk van mensen.
 
 Bij de natuur zoek je oorzaken en wetten. Een planeet volgt een baan omdat de zwaartekracht werkt; de planeet zelf wil niets. Bij mensen gaat het anders. Een mens heeft bedoelingen, gevoelens en een geschiedenis. Wie wil weten waarom iemand een gedicht schreef of een oorlog begon, moet zich verplaatsen in diens wereld en de betekenis ervan **begrijpen**. Dat noemde Dilthey *Verstehen*.
 
@@ -35,7 +35,7 @@ Een mens begrijp je alleen vanuit zijn tijd en zijn leven als geheel. Een brief,
 
 ## Wat je hieraan hebt bij je eigen onderzoek
 
-Vraagt je deelvraag naar het *waarom* achter wat mensen doen, dan heb je aan meten alleen niet genoeg. Interviews, open vragen en analyse van teksten passen dan beter. Dilthey helpt je in je verslag uitleggen waarom je die keuze maakte, en waarom de uitkomst een interpretatie is en geen natuurwet.
+Vraagt je deelvraag naar de redenen achter wat mensen doen, dan heb je aan meten alleen niet genoeg. Interviews, open vragen en analyse van teksten passen dan beter. Dilthey helpt je in je verslag uitleggen waarom je die keuze maakte, en waarom de uitkomst een interpretatie is en geen natuurwet.
 
 ## Hangt samen met
 

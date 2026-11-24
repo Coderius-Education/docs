@@ -16,16 +16,16 @@ title: Abductie
 
 Je komt thuis en het gras is nat. Het kan geregend hebben, de sproeier kan aan hebben gestaan, of de buren hebben hun auto gewassen. De straat is ook nat, en de auto van de buren is stoffig. Je concludeert: het heeft geregend. Dat is abductie. Je kiest uit de mogelijke verklaringen de verklaring die het best past bij alles wat je ziet.
 
-Een arts doet niets anders. Koorts, hoesten en spierpijn in januari: waarschijnlijk griep. Een detective ook. Sherlock Holmes zegt dat hij deduceert, maar wat hij doet is meestal abductie: uit een gebruind gezicht met lichte polsen en een militaire houding leidt hij af dat Watson net als legerarts uit een warm land terug is. Het is de best passende verklaring, niet de enige mogelijke.
+Een arts doet hetzelfde. Koorts, hoesten en spierpijn in januari: waarschijnlijk griep. Een detective ook. Sherlock Holmes zegt dat hij deduceert, maar wat hij doet is meestal abductie: uit een gebruind gezicht met lichte polsen en een militaire houding leidt hij af dat Watson als legerarts in Afghanistan heeft gediend. Het is de best passende verklaring, niet de enige mogelijke.
 
 ## Waarom het geen bewijs is
 
 Abductie redeneert van het gevolg naar de oorzaak, en daar zit het risico. "Als het geregend heeft, is het gras nat" is waar; "het gras is nat, dus het heeft geregend" is niet zeker. Er zijn altijd andere verklaringen denkbaar, ook als je ze nog niet hebt bedacht.
 
-De Amerikaanse filosoof Charles Sanders Peirce (1839–1914), die het woord bedacht, zag abductie daarom als het begin van onderzoek, niet als het eind. Het levert de **hypothese** op. Met [deductie](site:onderzoek/wetenschapsfilosofie/deductie) leid je af wat je zou moeten zien als die hypothese klopt, en met nieuwe waarnemingen toets je of dat zo is.
+De Amerikaanse filosoof Charles Sanders Peirce (1839–1914), die het oude woord abductie een nieuwe betekenis gaf, zag abductie daarom als het begin van onderzoek, niet als het eind. Het levert een mogelijke verklaring op. Met [deductie](site:onderzoek/wetenschapsfilosofie/deductie) leid je daaruit af wat je zou moeten zien als ze klopt: dat is je [hypothese](site:onderzoek/vragen/hypothese). Met nieuwe waarnemingen toets je of het zo is.
 
 :::caution[Valkuil: je eerste verklaring is je conclusie]
-Je ziet dat leerlingen in de pauze minder op hun telefoon zitten sinds er een tafeltennistafel in de aula staat, en je schrijft op: "de tafeltennistafel zorgt voor minder telefoongebruik". Dat is een abductie, en het kan best kloppen. Maar misschien kwam er in dezelfde week een telefoonverbod. Noem een verklaring die uit je waarneming volgt een verklaring die je *vermoedt*, en zoek naar wat haar zou kunnen weerleggen.
+Je ziet dat leerlingen in de pauze minder op hun telefoon zitten sinds er een tafeltennistafel in de aula staat, en je schrijft op: "de tafeltennistafel zorgt voor minder telefoongebruik". Dat is een abductie, en het kan best kloppen. Maar misschien kwam er in dezelfde week een telefoonverbod. Schrijf zo'n verklaring op als een vermoeden, en zoek naar wat haar zou kunnen weerleggen.
 :::
 
 <WelNiet
@@ -36,5 +36,5 @@ Je ziet dat leerlingen in de pauze minder op hun telefoon zitten sinds er een ta
 ## Hangt samen met
 
 - [Drie redeneervormen naast elkaar](site:onderzoek/wetenschapsfilosofie/drie-redeneervormen) — inductie, deductie en abductie vergeleken
-- [Hypothese](site:onderzoek/vragen/hypothese) — wat een abductie in je onderzoek oplevert
+- [Hypothese](site:onderzoek/vragen/hypothese) — wat je uit een abductie afleidt en toetst
 - [Verklarend-explorerend onderzoek](site:onderzoek/opzet/functies/verklarend-explorerend) — de functie waarin je verklaringen zoekt

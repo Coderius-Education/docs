@@ -12,13 +12,13 @@ Popper groeide op in Wenen. Als jonge man zag hij daar twee soorten theorieën d
 
 ## Kernidee 1: falsificatie in plaats van bevestiging
 
-Popper nam [het inductieprobleem](site:onderzoek/kennisleer/inductieprobleem) van Hume serieus: uit hoeveel bevestigingen ook volgt nooit dat een theorie waar is. Maar één tegenvoorbeeld bewijst wel dat ze onwaar is. Dus moet wetenschap niet zoeken naar bevestiging, maar proberen haar eigen theorieën te weerleggen. Dat heet [falsificatie](site:onderzoek/wetenschapsfilosofie/falsificatie).
+Popper nam [het inductieprobleem](site:onderzoek/kennisleer/inductieprobleem) van Hume serieus: hoeveel bevestigingen je ook verzamelt, daaruit volgt nooit dat een theorie waar is. Maar één tegenvoorbeeld bewijst wel dat ze onwaar is. Dus moet wetenschap niet zoeken naar bevestiging, maar proberen haar eigen theorieën te weerleggen. Dat heet [falsificatie](site:onderzoek/wetenschapsfilosofie/falsificatie).
 
 Een theorie die vele pogingen tot weerlegging overleeft, is daarmee niet bewezen, maar wel de beste die we op dat moment hebben. Wetenschap is volgens Popper geen verzameling zekerheden, maar een reeks steeds betere vermoedens.
 
 ## Kernidee 2: het demarcatiecriterium
 
-Popper zocht een grens tussen wetenschap en wat zich als wetenschap voordoet. Zijn criterium: een uitspraak is wetenschappelijk als ze falsifieerbaar is, als er een waarneming denkbaar is die haar weerlegt.
+Popper zocht een grens tussen wetenschap en wat zich als wetenschap voordoet. Zijn criterium: een theorie is wetenschappelijk als ze falsifieerbaar is, als er een waarneming denkbaar is die haar weerlegt. Hij bedoelde dat als norm: zo hoort wetenschap te werken, ook als onderzoekers in de praktijk vaak aan hun theorie vasthouden.
 
 - De relativiteitstheorie van Einstein voorspelde precies hoe ver sterrenlicht langs de zon zou afbuigen. Dat had fout kunnen gaan. Wetenschappelijk.
 - Een theorie die elk gedrag achteraf kan verklaren, wat iemand ook doet, kan nooit fout gaan. Niet wetenschappelijk, hoe overtuigend ze ook klinkt.
