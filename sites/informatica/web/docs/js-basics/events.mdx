@@ -105,7 +105,7 @@ Een klik op de knop doet niets: zonder `onclick` roept niets de functie `zegHoi`
 
 ### Koppel het event
 
-`addEventListener` zet een luisteraar op een element. De gemarkeerde regel is nieuw: hij koppelt de functie aan een klik op de knop.
+`addEventListener` zet een luisteraar op een element, hier de knop met `id="knop"`. De gemarkeerde regel is nieuw: hij koppelt de functie aan een klik op die knop.
 
 ```js {5}
 function zegHoi() {
@@ -119,7 +119,7 @@ document.getElementById('knop').addEventListener('click', zegHoi);
 - `'click'`: de naam van het event waarop je reageert
 - `zegHoi`: de functie die draait zodra het event plaatsvindt
 
-Na een klik staat er `Geklikt.` in de `<p>`.
+Na een klik staat er `Geklikt.` in de `<p id="status">`.
 
 ### Let op de haakjes
 
@@ -223,7 +223,7 @@ De muis-listeners blijven ook werken: elke listener reageert op zijn eigen event
 
 ## Opdracht 2: Klik-teller
 
-Schrijf een functie `telKlik` die de klikken telt: bij elke klik komt er 1 bij, en de `<p id="teller">` toont "Aantal klikken: " met het aantal. Koppel hem aan het `'click'`-event van de knop.
+Schrijf een functie `telKlik` die de klikken telt: bij elke klik komt er 1 bij, en de `<p id="teller">` toont "Aantal klikken: " met het aantal. Met `+` plak je een tekst en een getal aan elkaar: `'Aantal klikken: ' + 2` wordt `Aantal klikken: 2`. Koppel de functie aan het `'click'`-event van de knop.
 
 <CodeEditor
   initialHtml={startHtml}

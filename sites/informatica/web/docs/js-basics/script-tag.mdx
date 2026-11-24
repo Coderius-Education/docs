@@ -40,10 +40,6 @@ button {
 
 export const onderzoek = [
   {
-    vraag: "Klik op Run en daarna twee keer op de knop. Verandert er na de eerste klik nog iets? Waarom wel of niet?",
-    antwoord: "Na de eerste klik staat er `Geklikt.` in groen, en bij de tweede klik verandert er niets meer. De functie zet de tekst en de kleur opnieuw op precies dezelfde waarden.",
-  },
-  {
     vraag: "Hernoem de functie in de `<script>`-tag naar `veranderTekst`, maar laat de `onclick` staan. Welke foutmelding geeft de console als je klikt?",
     antwoord: "`JavaScript fout: Uncaught ReferenceError: verander is not defined`. De knop roept nog steeds `verander()` aan, maar een functie met die naam bestaat niet meer, dus de tekst op de pagina verandert niet.",
   },
@@ -84,9 +80,19 @@ export const makeCss = `/* Schrijf hier je stijl */
 
 Tot nu toe schreef je code direct in `onclick`. Dat werkt voor één regel, maar in [Opdracht 2 van Inline stijl](site:web/docs/js-basics/inline-stijl) zag je al hoe onleesbaar het wordt zodra er meer bij komt. De oplossing is een **functie**: een blok code met een naam.
 
+### Begin in onclick
+
+Een wekker verandert de tekst van een alinea en kleurt hem oranje: twee regels code. In een `onclick` staan ze samen in één attribuut, en dat leest lastig:
+
+```html
+<button onclick="document.getElementById('wekker').textContent =
+  'Goedemorgen.'; document.getElementById('wekker').style.color =
+  'orange';">Wek mij</button>
+```
+
 ### Schrijf de functie
 
-Een wekker verandert de tekst van een alinea en kleurt hem oranje: twee regels code. In een functie staan ze bij elkaar, onder één naam:
+In een functie staan de twee regels van de wekker onder elkaar, met één naam erboven:
 
 ```js
 function wekMij() {
@@ -102,7 +108,7 @@ function wekMij() {
 
 De functie hoort nog bij geen pagina: er is geen alinea om te veranderen en geen knop om op te klikken.
 
-### Zet hem in script
+### Zet hem in `<script>`
 
 De functie `wekMij` komt in een `<script>`-tag, **onderaan** de `<body>`: zo bestaan alle HTML-elementen al op het moment dat de code laadt. Erboven staan de alinea en de knop:
 
@@ -159,9 +165,9 @@ Dit is de startcode van het oefenveld. Beantwoord de vraag **voordat** je op de 
 ```
 
 <details>
-<summary>Hoeveel dingen veranderen er tegelijk als je op de knop klikt?</summary>
+<summary>Je klikt twee keer op de knop. Wat verandert er bij de tweede klik?</summary>
 
-Twee: de tekst én de kleur van de `<p>`. De functie voert bij een aanroep alle regels binnen de accolades uit, hoeveel het er ook zijn.
+Niets. De eerste klik zet de tekst op `Geklikt.` en de kleur op groen. Bij de tweede klik voert de functie dezelfde twee regels opnieuw uit, met dezelfde waarden: de tekst en de kleur staan er dan al.
 
 </details>
 

@@ -109,7 +109,7 @@ if (batterij < 20) {
 }
 ```
 
-Tussen de haakjes staat een **voorwaarde**: een expressie die `true` of `false` oplevert, zoals in [Vergelijken](site:web/docs/js-basics/vergelijken). Is de voorwaarde `true`, dan voert JavaScript de regels tussen `{ ... }` uit: de console logt `Zoek een oplader.` Anders slaat hij het blok over. Bij een batterij van 80 blijft de console leeg, en zie je niet of de code wel draaide.
+Tussen de haakjes staat een **voorwaarde**: een expressie die `true` of `false` oplevert, zoals in [Vergelijken](site:web/docs/js-basics/vergelijken). Is de voorwaarde `true`, dan voert JavaScript de regels tussen `{ ... }` uit: de console logt `Zoek een oplader.` Anders slaat hij het blok over. Bij een batterij van 80 blijft de console daarom leeg: voor een volle batterij heeft de code geen bericht.
 
 ### Voeg else toe
 
@@ -143,11 +143,11 @@ if (batterij < 20) {
 }
 ```
 
-De console logt `Laad straks op.` JavaScript probeert de voorwaarden van boven naar beneden en stopt bij de eerste die `true` is. Elke tak heeft een eigen `console.log`: moet het bericht naar de pagina, dan verander je drie regels.
+De console logt `Laad straks op.` JavaScript probeert de voorwaarden van boven naar beneden en stopt bij de eerste die `true` is. Elke tak heeft een eigen `console.log`. Moet het bericht op de pagina komen, dan verander je alle drie die regels.
 
 ### Bewaar de uitkomst
 
-`let advies;` maakt een variabele aan zonder waarde; één van de takken vult hem. De gemarkeerde regels zijn nieuw of veranderd: elke tak bewaart zijn tekst in `advies`, en de laatste regel logt hem.
+`let advies;` maakt een variabele aan zonder waarde; één van de takken vult hem. Op de pagina staat een `<p id="melding">`. De gemarkeerde regels zijn nieuw of veranderd: elke tak bewaart zijn tekst in `advies`, en de laatste regel zet hem in de alinea.
 
 ```js {2,5,7,9,11}
 const batterij = 25;
@@ -160,10 +160,10 @@ if (batterij < 20) {
 } else {
   advies = 'Genoeg stroom.';
 }
-console.log(advies);
+document.getElementById('melding').textContent = advies;
 ```
 
-De console logt nog steeds `Laad straks op.` Het bericht naar de pagina sturen kost nu één regel.
+Op de pagina staat nu `Laad straks op.` Welke tak ook draait, die ene regel onderaan zet zijn bericht op de pagina.
 
 ## Predict
 

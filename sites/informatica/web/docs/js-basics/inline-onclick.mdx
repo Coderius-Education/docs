@@ -127,9 +127,9 @@ Dit is de startcode van het oefenveld. Beantwoord de vraag **voordat** je de cod
 ```
 
 <details>
-<summary>Wat verandert er als je op de knop klikt, en wat verandert er niet?</summary>
+<summary>Op de knop staat `Klik mij`. Staat daar na een klik nog steeds `Klik mij`? Waarom wel of niet?</summary>
 
-De tekst in de `<p>` verandert van "Nog niet geklikt." naar "Je hebt geklikt.". De knop zelf verandert niet: die voert alleen de code in `onclick` uit.
+Ja. De code in `onclick` zoekt met `getElementById('bericht')` het element met `id="bericht"`, en dat is de `<p>`. Alleen de tekst in de `<p>` verandert, in `Je hebt geklikt.` De knop heeft geen `id` en wordt nergens aangewezen: hij voert de code alleen uit.
 
 </details>
 

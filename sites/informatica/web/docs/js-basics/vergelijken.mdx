@@ -110,7 +110,23 @@ const magErin = langGenoeg && leeftijd >= 12;
 console.log(magErin);
 ```
 
-De console logt `false`: lang genoeg, maar te jong. Met **`||`** (of) is één kant al genoeg: `langGenoeg || leeftijd >= 12` is hier `true`. Met **`!`** (niet) draai je een boolean om: `!magErin` is `true`.
+De console logt `false`: lang genoeg, maar te jong. Met `&&` zie je of beide regels kloppen. Of er minstens één regel níet klopt, vraag je met een ander teken.
+
+### Eén is genoeg
+
+Met **`||`** (of) is het geheel `true` als minstens één kant waar is. De gemarkeerde regels zijn nieuw: `weigeren` is `true` als je te klein bent of te jong, en de console logt hem.
+
+```js {6-7}
+const lengte = 150;
+const leeftijd = 11;
+const langGenoeg = lengte >= 140;
+const magErin = langGenoeg && leeftijd >= 12;
+console.log(magErin);
+const weigeren = lengte < 140 || leeftijd < 12;
+console.log(weigeren);
+```
+
+De console logt `false` en daarna `true`: `lengte < 140` is niet waar, maar `leeftijd < 12` wel, en dat is genoeg. Met **`!`** (niet) draai je een boolean om: `!magErin` is ook `true`. `weigeren` en `!magErin` zeggen hier op twee manieren hetzelfde.
 
 ## Vergelijkingsoperatoren
 

@@ -64,12 +64,12 @@ export const onderzoek = [
     antwoord: "`Hoi . Over 10 jaar ben je 10 jaar.` Een leeg veld geeft een lege string, dus de naam ontbreekt. `Number('')` is `0`, en 0 plus 10 is 10.",
   },
   {
-    vraag: "Haal `Number(...)` rond de leeftijd weg, zodat er alleen `document.getElementById('leeftijd').value` staat. Typ `5` en klik. Welke leeftijd belooft de zin je nu, en waarom?",
-    antwoord: "`510` jaar. Zonder `Number()` is de leeftijd de string `'5'`, en `+` plakt `'5'` en `10` aan elkaar in plaats van ze op te tellen.",
+    vraag: "Zet ook om het uitlezen van de naam `Number(...)`, net als bij de leeftijd. Vul `Sam` en `15` in en klik. Wat staat er nu op de plek van de naam?",
+    antwoord: "`Hoi NaN. Over 10 jaar ben je 25 jaar.` `Sam` is geen getal, en dan geeft `Number()` de waarde `NaN`: not a number, geen getal. `Number()` hoort alleen om invoer waarmee je rekent.",
   },
   {
-    vraag: "Zet `Number(...)` terug en haal de haakjes om `(leeftijd + 10)` weg. Typ weer `5`. Wat verandert er aan de uitkomst?",
-    antwoord: "Er staat weer `510` jaar, ook al is `leeftijd` nu een getal. JavaScript werkt de `+`-tekens van links naar rechts af: eerst plakt hij de 5 achter de tekst, daarna de 10. De haakjes laten hem eerst rekenen.",
+    vraag: "Haal `Number(...)` om de naam weer weg, en haal de haakjes om `(leeftijd + 10)` weg. Vul bij de leeftijd `5` in. Wat belooft de zin je nu?",
+    antwoord: "`510` jaar, ook al is `leeftijd` een getal. JavaScript werkt de `+`-tekens van links naar rechts af: eerst plakt hij de 5 achter de tekst, daarna de 10. De haakjes laten hem eerst rekenen.",
   },
 ];
 
@@ -124,7 +124,7 @@ function telStoelen() {
 
 ### Tel erbij op
 
-De gemarkeerde regel is veranderd: de functie telt 1 bij het aantal gasten op, voor jezelf.
+Wie het feest geeft, zit zelf ook aan tafel. De gemarkeerde regel is veranderd: de functie telt 1 bij het aantal gasten op, voor die ene stoel extra.
 
 ```js {3}
 function telStoelen() {

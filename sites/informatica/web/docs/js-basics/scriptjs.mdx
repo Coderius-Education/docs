@@ -79,7 +79,7 @@ In de vorige les stond je JavaScript in een `<script>`-tag onderaan de body. Bij
 
 ### Koppel het bestand
 
-Een pagina met een wekker: een alinea en een knop. De JavaScript komt in een eigen bestand, `script.js`, en de HTML koppelt dat bestand in de `<head>` met het `defer`-attribuut:
+De wekker uit [De script-tag](site:web/docs/js-basics/script-tag), zonder de oranje kleur: een alinea en een knop. De JavaScript komt in een eigen bestand, `script.js`, en de HTML koppelt dat bestand in de `<head>` met het `defer`-attribuut:
 
 ```html
 <head>
@@ -103,11 +103,11 @@ function wekMij() {
 }
 ```
 
-Na een klik staat er `Goedemorgen.` op de pagina. In het oefenveld van deze les staat de JavaScript ook in **script.js**, naast index.html en style.css. Of de functie draaide, zie je alleen aan de pagina: verandert daar niets, dan weet je niet of de klik aankwam.
+Na een klik staat er `Goedemorgen.` op de pagina. In het oefenveld van deze les staat de JavaScript ook in **script.js**, naast index.html en style.css. De console blijft leeg: daar zette tot nu toe alleen de browser iets in, als er een fout was.
 
 ### Log een bericht
 
-**`console.log()`** toont een bericht in de **console**: een paneel dat bezoekers niet zien, maar jij als programmeur wel. De gemarkeerde regel is nieuw: de functie meldt in de console dat hij draait.
+Met **`console.log()`** zet je zelf een bericht in de **console**: een paneel dat bezoekers niet zien, maar jij als programmeur wel. De gemarkeerde regel is nieuw: de functie meldt in de console dat hij draait.
 
 ```js {3}
 function wekMij() {
@@ -116,7 +116,22 @@ function wekMij() {
 }
 ```
 
-Na een klik staat `De wekker ging af.` in de console. In het oefenveld staat de console onder het voorbeeld; in een gewone browser open je hem met **F12** → tabblad "Console". Je gebruikt `console.log` vooral om te **debuggen** (fouten opsporen): zet hem op een paar plekken in je code, en je ziet welke regels draaien.
+Na een klik staat `De wekker ging af.` in de console. In het oefenveld staat de console onder het voorbeeld; in een gewone browser open je hem met **F12** → tabblad "Console". Met `console.log` spoor je fouten op (**debuggen**): een bericht op een paar plekken in je code laat zien welke regels draaien. Welke tekst er nu in de alinea staat, zegt dit bericht niet.
+
+### Log een waarde
+
+Na de tekst kan `console.log` met een komma een **waarde** krijgen, en die zet hij erachter. De gemarkeerde regels zijn nieuw: ze loggen de tekst die nu in de alinea staat.
+
+```js {4-5}
+function wekMij() {
+  document.getElementById('wekker').textContent = 'Goedemorgen.';
+  console.log('De wekker ging af.');
+  console.log('In de alinea:',
+    document.getElementById('wekker').textContent);
+}
+```
+
+Na een klik staat er onder `De wekker ging af.` een tweede regel: `In de alinea: Goedemorgen.` Zo zie je niet alleen dat een regel draait, maar ook met welke waarde.
 
 ## Predict
 
@@ -135,9 +150,9 @@ function verander() {
 ```
 
 <details>
-<summary>Wat verschijnt er in de console na één klik op de knop?</summary>
+<summary>Je klikt op Run, maar nog niet op de knop. Staat er dan al iets in de console?</summary>
 
-Eén regel: `De knop is geklikt.` De functie doet twee dingen — de paginatekst veranderen (zichtbaar in het voorbeeld) en een bericht loggen (zichtbaar in de console).
+Nee, de console is leeg. De `console.log` staat binnen de functie `verander`, en die draait pas als de knop hem aanroept. Na een klik staat er `De knop is geklikt.` in de console en `Geklikt via script.js.` op de pagina.
 
 </details>
 
@@ -278,4 +293,6 @@ function sluitWinkel() {
 ```
 
 Zonder `defer` voert de browser `script.js` uit zodra hij de tag tegenkomt — de `<body>` bestaat dan nog niet. Code die dan al een element opzoekt, krijgt `null` terug, met een foutmelding in de console. Gebruik altijd `defer` als je een extern script in de `<head>` koppelt.
+
+In het oefenveld zie je deze fout niet: het zet script.js altijd onderaan de body, ook zonder `defer`. In een eigen bestand op je computer krijg je hem wel.
 

@@ -89,16 +89,29 @@ const HEIGHT_REPORTER = (veld: string) => `<script>
 })();
 <\/script>`;
 
+/**
+ * De melding van een fout die de `try` om het script vangt, in dezelfde vorm
+ * als die van het `error`-event: "Uncaught TypeError: …". Chromium zet de
+ * soort en "Uncaught" in `e.message` van dat event, maar niet in de
+ * `message` van een gevangen fout. Een fout bij het laden heette zo
+ * "JavaScript fout: Cannot read properties of null", terwijl de lessen
+ * zeggen dat na "Uncaught" altijd de soort fout staat (inline-onclick), en
+ * arrays en modern-dom citeren hem met de soort.
+ */
+export const GEVANGEN_MELDING =
+  "'JavaScript fout: Uncaught ' + (e && e.name ? e.name + ': ' + e.message : String(e))";
+
 const JS_WRAPPER = (js: string, veld: string) => `
 <script>
 try {
 ${js}
 } catch (e) {
+  const melding = ${GEVANGEN_MELDING};
   const pre = document.createElement('pre');
   pre.style.cssText = 'color:red;background:#fff3f3;padding:8px;border:1px solid red;border-radius:4px;margin:0';
-  pre.textContent = 'JavaScript fout: ' + e.message;
+  pre.textContent = melding;
   document.body.prepend(pre);
-  window.parent.postMessage({ source: 'code-editor', veld: ${JSON.stringify(veld)}, type: 'console', level: 'error', text: 'JavaScript fout: ' + e.message }, '*');
+  window.parent.postMessage({ source: 'code-editor', veld: ${JSON.stringify(veld)}, type: 'console', level: 'error', text: melding }, '*');
 }
 <\/script>`;
 
