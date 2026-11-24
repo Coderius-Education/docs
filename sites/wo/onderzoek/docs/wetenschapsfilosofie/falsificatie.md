@@ -20,7 +20,7 @@ Een wetenschapper hoort dus volgens Popper niet naar bevestiging te zoeken, maar
 
 ## Het criterium: kan het misgaan?
 
-Popper gebruikte **falsifieerbaarheid** ook als grens tussen wetenschap en niet-wetenschap. Het criterium gaat over theorieën en hypotheses, niet over elke losse zin.
+Popper gebruikte **falsifieerbaarheid** ook als grens tussen wetenschap en niet-wetenschap. Hij bedoelde het criterium voor theorieën en hypotheses, maar je ziet het idee al aan losse uitspraken:
 
 - "Water kookt bij zeeniveau op 100 °C" is falsifieerbaar. Kookt het bij 90 °C, dan klopt de uitspraak niet.
 - "Morgen regent het, of niet" is niet falsifieerbaar. Wat er ook gebeurt, het klopt. Daarom zegt de uitspraak niets.

@@ -12,7 +12,7 @@ Popper groeide op in Wenen. Als jonge man zag hij daar twee soorten theorieën d
 
 ## Kernidee 1: falsificatie in plaats van bevestiging
 
-Popper nam [het inductieprobleem](site:onderzoek/kennisleer/inductieprobleem) van Hume serieus: hoeveel bevestigingen je ook verzamelt, daaruit volgt nooit dat een theorie waar is. Maar één tegenvoorbeeld bewijst wel dat ze onwaar is. Dus moet wetenschap niet zoeken naar bevestiging, maar proberen haar eigen theorieën te weerleggen. Dat heet [falsificatie](site:onderzoek/wetenschapsfilosofie/falsificatie).
+Popper nam [het inductieprobleem](site:onderzoek/kennisleer/inductieprobleem) van Hume serieus: hoeveel bevestigingen je ook verzamelt, daaruit volgt nooit dat een theorie waar is. Maar één tegenvoorbeeld kan wel laten zien dat ze onwaar is. Dus moet wetenschap volgens hem niet zoeken naar bevestiging, maar proberen haar eigen theorieën te weerleggen. Dat heet [falsificatie](site:onderzoek/wetenschapsfilosofie/falsificatie).
 
 Een theorie die vele pogingen tot weerlegging overleeft, is daarmee niet bewezen, maar wel de beste die we op dat moment hebben. Wetenschap is volgens Popper geen verzameling zekerheden, maar een reeks steeds betere vermoedens.
 
@@ -34,6 +34,6 @@ De eis dat je [hypothese](site:onderzoek/vragen/hypothese) kan sneuvelen, komt v
 ## Hangt samen met
 
 - [Falsificatie](site:onderzoek/wetenschapsfilosofie/falsificatie) — zijn kernbegrip
-- [Het inductieprobleem](site:onderzoek/kennisleer/inductieprobleem) — het probleem dat hij oploste door het te omzeilen
+- [Het inductieprobleem](site:onderzoek/kennisleer/inductieprobleem) — het probleem waar hij een uitweg voor zocht; of die uitweg werkt, daarover zijn filosofen het niet eens
 - [Hypothese](site:onderzoek/vragen/hypothese) — waar zijn eis in je eigen onderzoek terugkomt
 - [David Hume](site:onderzoek/kennisleer/hume) — van wie hij het inductieprobleem overnam

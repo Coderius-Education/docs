@@ -14,7 +14,11 @@ Bacon was een Engelse jurist en staatsman, die het onder koning James I tot lord
 
 De uitspraak "kennis is macht" wordt aan Bacon toegeschreven. Letterlijk schreef hij in 1597 *ipsa scientia potestas est*, kennis zelf is macht, maar daar ging het over de kennis van God. Het praktische idee werkte hij uit in zijn hoofdwerk *Novum Organum* (1620): menselijke kennis en menselijke macht vallen samen. Wie weet hoe de natuur werkt, kan haar gebruiken: betere oogsten, geneesmiddelen, machines.
 
-Daarmee gaf hij de wetenschap een nieuw doel. Het doel van de wetenschap is de natuur te leren kennen, waardoor we haar kunnen beheersen. Kennis was voor hem geen beschouwing om de beschouwing, maar een middel om het leven van mensen te verbeteren. Wel met een voorwaarde, die ook in het *Novum Organum* staat: de natuur overwin je alleen door haar te gehoorzamen. Wie haar wetten niet kent, kan haar ook niet sturen.
+Daarmee gaf hij de wetenschap een nieuw doel, dat vaak zo wordt samengevat:
+
+> Het doel van de wetenschap is de natuur te leren kennen, waardoor we haar kunnen beheersen.
+
+Kennis was voor hem geen beschouwing om de beschouwing, maar een middel om het leven van mensen te verbeteren. Wel met een voorwaarde, die ook in het *Novum Organum* staat: de natuur overwin je alleen door haar te gehoorzamen. Wie haar wetten niet kent, kan haar ook niet sturen.
 
 ## Kernidee 2: eerst waarnemen, dan pas concluderen
 
@@ -33,7 +37,7 @@ Bacon zag ook dat waarnemen lastiger is dan het lijkt. Hij noemde vier soorten v
 
 ## Wat je hieraan hebt bij je eigen onderzoek
 
-Bacon geeft je een checklist voor eerlijk waarnemen. Zoek niet alleen bevestiging, maar ook de gevallen die niet passen. En loop je eigen vooroordelen langs met de vier idolen voordat je je conclusie opschrijft. Zo voorkom je dat je meet wat je hoopte te meten in plaats van wat er is: dat is [valide](site:onderzoek/spelregels/valide) en [transparant](site:onderzoek/spelregels/transparant) werken.
+Bacon geeft je een checklist voor eerlijk waarnemen. Zoek niet alleen bevestiging, maar ook de gevallen die niet passen. En loop je eigen vooroordelen langs met de vier idolen voordat je je conclusie opschrijft. Zo voorkom je dat je vindt wat je hoopte te vinden in plaats van wat er is. Dan meet je echt wat je wilt weten, en dat is [valide](site:onderzoek/spelregels/valide) werken. Schrijf je ook op welke vooroordelen je tegenkwam, dan werk je [transparant](site:onderzoek/spelregels/transparant).
 
 ## Hangt samen met
 

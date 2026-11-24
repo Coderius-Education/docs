@@ -22,9 +22,9 @@ Het woord komt van het Griekse *hermeneuein*, uitleggen of vertalen. Eeuwenlang 
 |---|---|---|
 | **Holisme** | Je begrijpt een deel alleen vanuit het geheel waar het bij hoort | Een zin in een brief betekent iets anders als je weet dat de hele brief ironisch is |
 | **Historiciteit** | Mensen, teksten en gebeurtenissen horen bij hun tijd en plaats | "Vrijheid" betekende voor een slaaf in 1850 iets anders dan voor een scholier nu |
-| **Object en subject zijn niet gescheiden** | De onderzoeker is zelf een mens met een eigen achtergrond, en die kleurt zijn uitleg | Een leraar en een leerling lezen hetzelfde interview over huiswerk elk op hun eigen manier |
+| **Object en subject zijn niet gescheiden** | De onderzoeker (het subject) staat niet buiten wat hij onderzoekt (het object): hij is zelf een mens met een eigen achtergrond, en die kleurt zijn uitleg | Een leraar en een leerling lezen hetzelfde interview over huiswerk elk op hun eigen manier |
 
-Leg deze drie naast de kenmerken van [de empirisch-analytische methode](site:onderzoek/wetenschapsfilosofie/empirisch-analytisch) en je ziet het tegendeel: geen losse feiten maar een geheel, geen tijdloze wetten maar een historische context, en geen onderzoeker die erbuiten staat.
+Leg deze drie naast de vier kenmerken van [de empirisch-analytische methode](site:onderzoek/wetenschapsfilosofie/empirisch-analytisch) en je ziet bij drie ervan het tegendeel: geen losse feiten maar een geheel, geen tijdloze wetten maar een historische context, en geen onderzoeker die erbuiten staat. Herhaalbaarheid heeft geen tegenhanger: een interpretatie herhaal je niet zoals een proef, al moet een ander je redenering wel kunnen volgen.
 
 ## Hoe het werkt
 

@@ -31,7 +31,7 @@ Daarmee gaf Dilthey de geesteswetenschappen een eigen plek. Ze zijn geen mindere
 
 ## Kernidee 3: begrijpen in een context
 
-Een mens begrijp je alleen vanuit zijn tijd en zijn leven als geheel. Een brief, een besluit of een gedicht krijgt pas betekenis binnen het leven en de wereld waar het uit voortkwam. Dat zijn de uitgangspunten **historiciteit** en **holisme**, en de beweging tussen deel en geheel die je nodig hebt om te begrijpen, is [de hermeneutische cirkel](site:onderzoek/wetenschapsfilosofie/hermeneutische-cirkel).
+Een mens begrijp je alleen vanuit zijn tijd en zijn leven als geheel. Een brief, een besluit of een gedicht krijgt pas betekenis binnen het leven en de wereld waar het uit voortkwam. Dat zijn de uitgangspunten [historiciteit en holisme](site:onderzoek/wetenschapsfilosofie/hermeneutiek#drie-uitgangspunten), en de beweging tussen deel en geheel die je nodig hebt om te begrijpen, is [de hermeneutische cirkel](site:onderzoek/wetenschapsfilosofie/hermeneutische-cirkel).
 
 ## Wat je hieraan hebt bij je eigen onderzoek
 

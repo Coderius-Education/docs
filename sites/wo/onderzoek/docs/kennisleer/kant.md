@@ -18,13 +18,13 @@ Kant combineerde ze in zijn *Kritik der reinen Vernunft* (1781). In de tweede dr
 
 ## Kernidee 2: we ordenen zelf wat we waarnemen
 
-Je zintuigen leveren alles aan in **ruimte en tijd**: je kunt je geen ding voorstellen dat nergens is, of een gebeurtenis die op geen enkel moment plaatsvindt. Je verstand ordent dat vervolgens met begrippen als **oorzaak en gevolg**: je ziet een bal een ruit raken, en je ziet niet alleen twee dingen na elkaar, maar ook dat het een het ander veroorzaakte.
+Je zintuigen leveren alles aan in **ruimte en tijd**: je kunt je geen ding voorstellen dat nergens is, of een gebeurtenis die op geen enkel moment plaatsvindt. Je verstand ordent dat vervolgens met begrippen als **oorzaak en gevolg**. Een bal raakt een ruit, en de ruit breekt. Volgens Hume zie je alleen twee dingen na elkaar. Volgens Kant maakt je verstand er vanzelf oorzaak en gevolg van, en kun je niet anders.
 
 Volgens Kant komen die vormen niet uit de wereld, maar uit ons. Iedereen heeft ze, en niemand kan ze afzetten. Hoe de dingen zijn los van die vormen, kunnen we dus nooit weten. Kant vergeleek die omslag met Copernicus. Die kwam pas verder toen hij niet langer alles om de waarnemer op aarde liet draaien, maar inzag dat de waarnemer zelf bewoog. Zo zocht Kant de verklaring voor de vorm van onze kennis niet in de dingen, maar in degene die kijkt.
 
 ## Kernidee 3: zeker, en toch nieuw
 
-Bij Hume vielen twee vragen samen. Volgt een uitspraak uit de betekenis van de woorden, of zegt ze iets nieuws? En weet je haar vóór of pas ná waarneming? Hume rekende de wiskunde tot het eerste vak: waar door de betekenis, en dus vooraf te weten (zie [de vork van Hume](site:onderzoek/kennisleer/vork-van-hume)).
+Bij Hume vielen twee vragen samen. Is een uitspraak analytisch (waar door de betekenis van de woorden) of synthetisch (zegt ze iets nieuws over de wereld)? En weet je haar [a priori](site:onderzoek/kennisleer/a-priori), vóór waarneming, of [a posteriori](site:onderzoek/kennisleer/a-posteriori), pas erna? Bij Hume was analytisch altijd a priori en synthetisch altijd a posteriori. De wiskunde rekende hij tot het eerste vak: waar door de betekenis, en dus vooraf te weten (zie [de vork van Hume](site:onderzoek/kennisleer/vork-van-hume)).
 
 Kant hield de twee vragen uit elkaar, en zette de wiskunde in een vak dat bij Hume niet bestond: **synthetisch a priori**. Dat 7 + 5 = 12, weet je zonder knikkers te tellen. Toch zit "twaalf" volgens Kant niet al in de woorden "zeven", "vijf" en "optellen": de uitspraak zegt iets nieuws. Ze is zeker omdat ze voortkomt uit de vormen waarmee we alles waarnemen en ordenen.
 

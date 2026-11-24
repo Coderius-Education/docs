@@ -20,7 +20,7 @@ Zo werkt een groot deel van de wetenschap. Een bioloog die bij honderd muizen zi
 
 ## Sterk en zwak
 
-Een inductieve conclusie is nooit zeker. Wie op inductie bouwt, zegt dat ze wel meer of minder sterk is: sterker naarmate
+Een inductieve conclusie is nooit zeker. Wie op inductie vertrouwt, noemt haar wel sterker naarmate
 
 - je **meer gevallen** hebt gezien;
 - de gevallen **meer van elkaar verschillen** (honderd muizen uit één nest zeggen minder dan honderd muizen uit tien laboratoria);

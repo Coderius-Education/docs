@@ -69,6 +69,15 @@ Hoort bij het vak wetenschapsoriëntatie en staat op https://wo.coderius.nl/onde
   vertrekpunt van de hermeneutische cirkel zijn van Gadamer, het Socrates-syllogisme is een later
   schoolvoorbeeld in de vorm van Aristoteles. Geen test ziet dit; lees een nieuwe pagina naast de
   pagina's waar ze naar linkt.
+- **Wat elke pagina hetzelfde zegt.** Een doorloop als leerling (november 2026) vond dat
+  pagina's die elk klopten, elkaar tegenspraken. Houd daarom deze vast. *Valide*: je meet wat je
+  wilt weten (de spelregel), niet "wat je hoopte". *Object en subject gescheiden*: de onderzoeker
+  staat buiten wat hij onderzoekt; bij de hermeneutiek staat hij er niet buiten. *Deductie*: de
+  conclusie is zeker als de redenering geldig is én de uitgangspunten waar zijn; een fout
+  uitgangspunt maakt haar onzeker, niet altijd onwaar, en een hypothese volgt alleen zeker als
+  ook je andere aannames kloppen. In de vijf stappen hoort de deductie bij stap 2 (de hypothese),
+  niet nog eens bij stap 3. *Oorzaak* zie je volgens Hume niet; volgens Kant voegt je verstand
+  hem toe. Of Popper het inductieprobleem oploste, is een meningsverschil, geen feit.
 - `src/data/structuur.test.ts` eist dat elk begrip in `<B t="…"/>` bestaat (een onbekend id
   verschijnt stil als vette tekst), dat de url van elk begrip en elke interne `linkUrl` van een
   `<Denker>` een bestaande pagina is, en dat een verbandpagina (titel met "vs.", "naast elkaar"
