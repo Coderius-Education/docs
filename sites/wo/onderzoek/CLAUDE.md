@@ -38,10 +38,13 @@ Hoort bij het vak wetenschapsoriëntatie en staat op https://wo.coderius.nl/onde
   gewoon helemaal.
 - Een werkvorm kan op één vel staan, voor- en achterkant van één A4
   (`werkvormen/wetenschapsfilosofie-op-een-vel.mdx`): twee blokken `printbaar invulschema
-  werkblad-dicht`, het tweede met `nieuwe-pagina`. `werkblad-dicht` zet de afdruk op 10 punt met
-  vakken van 1,5 cm; `invulschema-woord` (een woord of halve zin), `smal-antwoord` en
-  `eerste-smal` regelen de kolommen. Na elke wijziging print je hem naar PDF (A4, marges van
-  1 cm) en kijk je of het nog precies twee bladzijden zijn: dat ziet geen test.
+  werkblad-dicht`, het tweede met `nieuwe-pagina`. Elke stap heeft een korte uitleg, een kleine
+  oefening en vakken "In jouw profielwerkstuk": elk begrip wordt aan het eigen onderzoek gekoppeld.
+  `werkblad-dicht` zet de afdruk op 10 punt; de kolommen en de schrijfruimte regelen
+  `uitlegtabel` (geen schrijfruimte), `invulschema-middel`, `invulschema-kort`, `ruim`, `wie-smal`
+  en `eerste-smal` (zie `src/css/custom.css`). Na elke wijziging
+  print je hem naar PDF (A4, marges van 1 cm) en kijk je of het nog precies twee bladzijden zijn:
+  dat ziet geen test.
 - `src/data/begrippen.js` is de enige bron voor definities: tooltips (`<B t="…"/>`),
   de termen-trainer en de termenlijst worden eruit gegenereerd. Nieuwe begrippen dáár toevoegen.
   Het hoofdstuk van een begrip volgt uit het eerste deel van zijn `url`; een nieuw hoofdstuk

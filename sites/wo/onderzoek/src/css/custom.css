@@ -226,22 +226,18 @@
  * ------------------------------------------------------------------
  * Twee printbare blokken, het tweede met `nieuwe-pagina`: voor- en
  * achterkant van één A4. `werkblad-dicht` zet de afdruk op 10 punt met
- * minder lucht; `invulschema-woord` is een vak voor een woord of een
- * halve zin, `invulschema-middel` een vak van een paar woorden,
- * `smal-antwoord` maakt het laatste vak smal, `wie-smal` het middelste van drie, en `eerste-smal` geeft
- * de kolom met de labels minder ruimte in een tabel van drie of vier
- * kolommen.
+ * minder lucht. Voor de vakken: `uitlegtabel` (een tabel met uitleg,
+ * zonder schrijfruimte), `invulschema-middel` (een paar woorden), `ruim`
+ * (2 cm), `wie-smal` (smalle middelste kolom van drie) en `eerste-smal`
+ * (smalle labelkolom in een tabel van drie of meer kolommen).
  */
-.invulschema-woord {
-  --schrijfruimte: 2rem;
-}
-
 .invulschema-middel {
   --schrijfruimte: 2.5rem;
 }
 
-.smal-antwoord thead th:last-child {
-  width: 20%;
+/* Een tabel met uitleg op een werkblad: geen schrijfruimte. */
+.uitlegtabel {
+  --schrijfruimte: auto;
 }
 
 .wie-smal thead th:first-child {
@@ -271,12 +267,16 @@
     --schrijfruimte: 1.1cm;
   }
 
-  .werkblad-dicht .wie-smal {
-    --schrijfruimte: 1.3cm;
+  .werkblad-dicht .uitlegtabel {
+    --schrijfruimte: auto;
   }
 
-  .werkblad-dicht .invulschema-woord {
-    --schrijfruimte: 0.8cm;
+  .werkblad-dicht .ruim {
+    --schrijfruimte: 2cm;
+  }
+
+  .werkblad-dicht .wie-smal {
+    --schrijfruimte: 1.5cm;
   }
 
   .werkblad-dicht > h2 {
