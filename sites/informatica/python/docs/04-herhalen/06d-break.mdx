@@ -7,29 +7,141 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 # 6d Stoppen met break
 
+Soms is een loop eerder klaar dan je van tevoren dacht. Met `break` stap je er middenin uit.
+
+## Sparen in de zomervakantie
+
+### Schrijf de loop
+
+De zomervakantie duurt zes weken en je verdient dertig euro per week met een bijbaan. Je spaart voor een koptelefoon van honderd euro. Eerst de loop die zes weken spaart en elke week het saldo laat zien:
+
 ```python
 saldo = 0
 
-for week in range(1, 11):
-    saldo = saldo + 3
+for week in range(1, 7):
+    saldo = saldo + 30
     print(f"Week {week}: {saldo} euro")
-    if saldo >= 20:
+```
+
+Uitvoer:
+
+```
+Week 1: 30 euro
+Week 2: 60 euro
+Week 3: 90 euro
+Week 4: 120 euro
+Week 5: 150 euro
+Week 6: 180 euro
+```
+
+`saldo = saldo + 30` telt dertig op bij wat er al in `saldo` zat: Python rekent eerst de rechterkant uit en bewaart de uitkomst weer in `saldo`. Na zes weken heb je 180 euro, maar na week 4 had je al genoeg.
+
+### Herken het moment
+
+Een `if` in de loop kijkt elke week of het saldo de honderd euro heeft bereikt. De gemarkeerde regels zijn nieuw: de `if` en de `print` in het `if`-blok.
+
+```python {6-7}
+saldo = 0
+
+for week in range(1, 7):
+    saldo = saldo + 30
+    print(f"Week {week}: {saldo} euro")
+    if saldo >= 100:
+        print("Genoeg gespaard.")
+```
+
+Uitvoer:
+
+```
+Week 1: 30 euro
+Week 2: 60 euro
+Week 3: 90 euro
+Week 4: 120 euro
+Genoeg gespaard.
+Week 5: 150 euro
+Genoeg gespaard.
+Week 6: 180 euro
+Genoeg gespaard.
+```
+
+Het programma ziet in week 4 dat het genoeg is, en werkt toch door tot week 6.
+
+### Stop de loop
+
+**`break`** stopt de loop op de plek waar hij staat. De gemarkeerde regel is nieuw: `break` staat onderaan in het `if`-blok, op acht spaties. Zo komt de melding nog op het scherm, en de weken erna niet meer.
+
+```python {8}
+saldo = 0
+
+for week in range(1, 7):
+    saldo = saldo + 30
+    print(f"Week {week}: {saldo} euro")
+    if saldo >= 100:
         print("Genoeg gespaard.")
         break
 ```
 
-<CodeExercise>{`saldo = 0
+Uitvoer:
 
-for week in range(1, 11):
-    saldo = saldo + 3
-    print(f"Week {week}: {saldo} euro")
-    if saldo >= 20:
-        print("Genoeg gespaard.")
-        break`}</CodeExercise>
+```
+Week 1: 30 euro
+Week 2: 60 euro
+Week 3: 90 euro
+Week 4: 120 euro
+Genoeg gespaard.
+```
 
-De loop staat op tien weken, maar hij haalt er zeven. Zodra `saldo` de 20 bereikt, stapt **`break`** uit de loop en gaat het programma verder onder de loop.
+De loop staat op zes weken, maar hij haalt er vier.
 
-## Wat break precies stopt
+## Maak het af
+
+Een quiz heeft acht vragen van drie punten. Met vijftien punten ben je geslaagd, en dan hoeft de rest niet meer. De loop en de `if` staan er al, maar het programma stelt nog alle acht vragen. Eén stap is nog open: `break` op de goede plek. Doe die zelf, en laat de `range` staan: de quiz heeft acht vragen.
+
+Verwachte uitvoer:
+
+```
+Vraag 1: 3 punten
+Vraag 2: 6 punten
+Vraag 3: 9 punten
+Vraag 4: 12 punten
+Vraag 5: 15 punten
+Geslaagd.
+```
+
+<CodeExercise>{`punten = 0
+
+for vraag in range(1, 9):
+    punten = punten + 3
+    print(f"Vraag {vraag}: {punten} punten")
+    if punten >= 15:
+        print("Geslaagd.")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Draai het programma eerst: vanaf vraag 5 staat er na elke vraag `Geslaagd.` `break` hoort bij de `if`. Kijk hoeveel spaties de `print` in het `if`-blok inspringt.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+punten = 0
+
+for vraag in range(1, 9):
+    punten = punten + 3
+    print(f"Vraag {vraag}: {punten} punten")
+    if punten >= 15:
+        print("Geslaagd.")
+        break
+```
+
+Staat `break` op vier spaties, dan hoort hij niet meer bij de `if` en stopt de loop al na vraag 1.
+
+</details>
+
+## Wat break stopt
 
 ```python
 for getal in range(1, 6):
@@ -51,16 +163,7 @@ print("Klaar")
   </Uitleg>
 </Voorspel>
 
-### Probeer het zelf
-
-<CodeExercise>{`for getal in range(1, 6):
-    if getal == 3:
-        break
-    print(getal)
-
-print("Klaar")`}</CodeExercise>
-
-## break versus continue
+## break of continue
 
 Je kent `continue` al uit [6c](site:python/docs/herhalen/06c-continue). De twee lijken op elkaar en doen iets heel anders:
 
@@ -91,6 +194,8 @@ De `if` staat boven de `print` van het doorlopen. Zo kijkt Python op elke verdie
 
 ## Er gaat iets mis
 
+### break buiten de loop
+
 {/* foutmelding-van: fout-helft */}
 ```
 SyntaxError: 'break' outside loop
@@ -98,20 +203,43 @@ SyntaxError: 'break' outside loop
 
 **Oorzaak:** je `break` staat niet in een loop. Meestal is hij te ver naar links ingesprongen en hoort hij bij de `if` binnen de loop.
 
-**Oplossing:** zet `break` binnen het ingesprongen blok van de `for` of `while`.
+**Oplossing:** zet `break` in het `if`-blok, op acht spaties.
 
 {/* niet-compileren: toont bewust break buiten een lus */}
 ```python
 # FOUT
 for getal in range(5):
-    print(getal)
+    if getal == 3:
+        print("Gevonden")
 break
 
 # GOED
 for getal in range(5):
-    print(getal)
-    break
+    if getal == 3:
+        print("Gevonden")
+        break
 ```
+
+### break buiten het if-blok
+
+```python
+for getal in range(1, 6):
+    print(getal)
+    if getal == 3:
+        print("Gevonden")
+    break
+
+print("Klaar")
+```
+
+Uitvoer:
+
+```
+1
+Klaar
+```
+
+Geen foutmelding, maar de loop stopt al na de eerste ronde. `break` staat op vier spaties en hoort dus bij de loop, niet bij de `if`. Zet hem op acht spaties, in het `if`-blok.
 
 ---
 

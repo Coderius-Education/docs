@@ -1,17 +1,17 @@
 ---
 sidebar_position: 2
-description: Gebruik range(start, stop) en range(start, stop, step) om met een begin-getal en stapgrootte te tellen.
+description: Gebruik range(start, stop) en range(start, stop, step) om met een begin en een stap te tellen.
 ---
 
 import CodeExercise from '@site/src/components/CodeExercise';
 
 # 6b Range met start en stappen
 
-Met `range(n)` herhaal je n keer, en je begint altijd bij `0`. Geef je `range` een **begin-getal** en een **stapgrootte** mee, dan kies je zelf waar je begint en hoe groot de stappen zijn.
+Met `range(n)` herhaal je n keer, en je begint altijd bij `0`. Geef je `range` een **begin** en een **stap** mee, dan kies je zelf waar je begint en hoe groot de stappen zijn.
 
 ## range(start, stop)
 
-`range()` kan een begin- én eindgetal krijgen:
+Je wilt de getallen 1 tot en met 5. `range` kan een begin én een eind krijgen. Het begin is `1`. Het eind doet zelf niet mee: het is het eerste getal dat je níet meer wilt zien, dus `6`.
 
 ```python
 for i in range(1, 6):
@@ -28,54 +28,123 @@ Uitvoer:
 5
 ```
 
-`range(1, 6)` begint bij **1** en stopt vóór **6**. Het einde doet zelf nooit mee, en daar trapt bijna iedereen een keer in.
+`range(1, 6)` begint bij **1** en stopt vóór **6**.
 
-## range(start, stop, step)
+## Aftellen in stappen
 
-Met een derde argument bepaal je de **stapgrootte**:
+### Kies begin en eind
+
+Je wilt aftellen met sprongen van twee: `10`, `8`, `6`, `4`, `2`. Het begin is `10`. Het eind is het eerste getal dat je niet meer wilt zien: `0`.
 
 ```python
-for i in range(0, 11, 2):
+for i in range(10, 0):
+    print(i)
+```
+
+Er komt niets op het scherm, en ook geen foutmelding. `range` telt omhoog, en van 10 omhoog kom je nooit bij 0. De loop draait dus geen enkele ronde.
+
+### Kies de richting
+
+Met een derde getal, de **stap**, zeg je hoeveel er elke ronde bij komt. Een stap van `-1` telt achteruit. In de gemarkeerde regel staat die stap er nu bij:
+
+```python {1}
+for i in range(10, 0, -1):
     print(i)
 ```
 
 Uitvoer:
 
 ```
-0
-2
-4
-6
-8
 10
+9
+8
+7
+6
+5
+4
+3
+2
+1
 ```
 
-Met stappen van 2 krijg je de even getallen. Een **negatieve** stap telt achteruit:
+De richting klopt, en het eind `0` doet ook achteruit niet mee. Alleen de sprongen van twee ontbreken nog.
 
-```python
-for i in range(10, 0, -1):
+### Kies de stap
+
+Een stap van `-2` slaat steeds één getal over. In de gemarkeerde regel is `-1` nu `-2`:
+
+```python {1}
+for i in range(10, 0, -2):
     print(i)
 ```
 
-Dit print `10, 9, 8, ..., 1`. De stopwaarde `0` doet ook hier niet mee.
+Uitvoer:
+
+```
+10
+8
+6
+4
+2
+```
+
+Begin en eind zijn sinds de eerste stap niet veranderd. Vooruit werkt een stap net zo: `range(5, 21, 5)` geeft `5`, `10`, `15` en `20`.
 
 ### Voorspel
 
 ```python
-for i in range(5, 0):
+for i in range(10, 4, -3):
     print(i)
 ```
 
 <Voorspel vraag="Welke getallen zet dit programma op het scherm?">
-  <Keuze uitleg="Om achteruit te tellen heeft range een stap van -1 nodig. Die staat er niet.">`5`, `4`, `3`, `2` en `1`</Keuze>
-  <Keuze uitleg="Ook achteruit doet de stopwaarde niet mee. En zonder -1 telt range niet achteruit.">`5`, `4`, `3`, `2`, `1` en `0`</Keuze>
-  <Keuze goed uitleg="Zonder stap telt range omhoog, en van 5 omhoog kom je nooit bij 0.">Niets</Keuze>
+  <Keuze uitleg="Het eind doet niet mee, ook niet als de stappen er precies op uitkomen.">`10`, `7` en `4`</Keuze>
+  <Keuze goed uitleg="Na 7 zou 4 komen. Dat is het eind, en daar stopt range vóór.">`10` en `7`</Keuze>
+  <Keuze uitleg="De stap is -3, dus range slaat steeds twee getallen over.">`10`, `9`, `8`, `7`, `6` en `5`</Keuze>
   <Uitleg>
 
-  Je ziet niets, en ook geen foutmelding. Zonder derde getal telt `range` met stappen van 1 omhoog. Van 5 naar 0 omhoog tellen kan niet, dus de loop draait geen enkele ronde. Achteruit tellen doe je met `range(5, 0, -1)`.
+  Je ziet `10` en `7`. Elke ronde gaat er 3 af, dus na 7 komt 4. Maar 4 is het eind, en dat doet niet mee. Wil je de 4 er wel bij, dan schuif je het eind op: `range(10, 3, -3)`.
 
   </Uitleg>
 </Voorspel>
+
+## Maak het af
+
+Deze klok telt af van `30` naar `1`. Hij moet sprongen van vijf maken, en de `0` moet er ook bij. Begin en richting staan er al. Twee stappen zijn nog open: de stap, en een eind waarbij de `0` meedoet. Doe die zelf.
+
+Verwachte uitvoer:
+
+```
+30
+25
+20
+15
+10
+5
+0
+```
+
+<CodeExercise>{`for seconden in range(30, 0, -1):
+    print(seconden)`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+De stap staat op de derde plek. Het eind doet niet mee: welk getal komt er ná de `0` als je met vijf tegelijk aftelt?
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+for seconden in range(30, -5, -5):
+    print(seconden)
+```
+
+Na `0` zou `-5` komen, en daar stopt `range` vóór. Elk eind van `-1` tot en met `-5` geeft dezelfde uitvoer.
+
+</details>
 
 ## Er gaat iets mis
 
@@ -86,7 +155,7 @@ for i in range(1, 10):
     print(i)
 ```
 
-Je wilde 1 tot en met 10, maar de 10 komt niet op het scherm. De stopwaarde doet niet mee, dus voor 1 tot en met 10 schrijf je `range(1, 11)`.
+Je wilde 1 tot en met 10, maar de 10 komt niet op het scherm. Het eind doet niet mee, dus voor 1 tot en met 10 schrijf je `range(1, 11)`.
 
 ### Delen met /
 

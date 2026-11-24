@@ -73,7 +73,9 @@ De dubbele punt in `var direction :=` laat Godot zelf het type van je variabele 
 
 ## Je script tot nu toe
 
-```gdscript
+De gemarkeerde regels zijn nieuw of veranderd in deze les.
+
+```gdscript {3,9-10}
 extends CharacterBody2D
 
 const SPEED = 300.0

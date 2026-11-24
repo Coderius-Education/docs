@@ -185,7 +185,7 @@ const BOUWSTENEN: Bouwsteen[] = [
 
 function codeVan(tekst: string): string {
   const stukken = [
-    ...[...tekst.matchAll(/```python\n([\s\S]*?)```/g)].map((m) => m[1]),
+    ...[...tekst.matchAll(/```python[^\n]*\n([\s\S]*?)```/g)].map((m) => m[1]),
     ...[...tekst.matchAll(/initialCode=\{`([\s\S]*?)`\}/g)].map((m) => m[1]),
   ];
   return stukken.join('\n');

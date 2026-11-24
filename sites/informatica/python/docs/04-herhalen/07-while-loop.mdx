@@ -9,38 +9,128 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 Met een `for`-loop weet je van tevoren hoe vaak je herhaalt, bijvoorbeeld 5 keer met `range(5)`. Soms weet je dat niet, alleen wanneer je klaar bent. Dan gebruik je een `while`-loop: die herhaalt **zolang een voorwaarde `True` is**.
 
+### Schrijf één ronde
+
+Je leest een boek van 120 bladzijden, elke dag 35. Hoeveel dagen dat duurt, weet je niet uit je hoofd. Eén dag is: print hoeveel bladzijden je nog moet, en haal er 35 af.
+
 ```python
-getal = 5
+bladzijden = 120
 
-while getal > 0:
-    print(getal)
-    getal -= 1
-
-print("Start!")
+print(f"Nog {bladzijden} bladzijden")
+bladzijden -= 35
 ```
 
 Uitvoer:
 
 ```
-5
-4
-3
-2
-1
-Start!
+Nog 120 bladzijden
 ```
 
-`getal -= 1` is een korte schrijfwijze voor `getal = getal - 1`. Hetzelfde geldt voor `+=`, `*=` en `/=`.
+`bladzijden -= 35` is een korte schrijfwijze voor `bladzijden = bladzijden - 35`. Hetzelfde geldt voor `+=`, `*=` en `/=`. Na deze ronde is `bladzijden` 85, maar dat zie je nog niet.
+
+### Herhaal de ronde
+
+De ronde moet terugkomen zolang er iets te lezen valt: zolang `bladzijden` groter is dan 0. De gemarkeerde regels zijn veranderd: de voorwaarde staat achter `while`, en de twee regels van de ronde springen in.
+
+```python {3-5}
+bladzijden = 120
+
+while bladzijden > 0:
+    print(f"Nog {bladzijden} bladzijden")
+    bladzijden -= 35
+```
+
+Uitvoer:
+
+```
+Nog 120 bladzijden
+Nog 85 bladzijden
+Nog 50 bladzijden
+Nog 15 bladzijden
+```
+
+Vóór elke ronde kijkt Python of `bladzijden > 0` nog `True` is. Na de vierde ronde is `bladzijden` -20, en dan stopt de loop. Vier dagen dus, en dat aantal staat nergens in de code.
+
+### Sluit af
+
+Wat ná het lezen komt, hoort niet bij de loop. De gemarkeerde regel is nieuw: een `print` die niet inspringt en dus één keer komt, als de loop klaar is.
+
+```python {7}
+bladzijden = 120
+
+while bladzijden > 0:
+    print(f"Nog {bladzijden} bladzijden")
+    bladzijden -= 35
+
+print("Boek uit.")
+```
+
+Uitvoer:
+
+```
+Nog 120 bladzijden
+Nog 85 bladzijden
+Nog 50 bladzijden
+Nog 15 bladzijden
+Boek uit.
+```
 
 ### Drie ingrediënten
 
-Drie ingrediënten die je altijd nodig hebt:
+Een `while`-loop heeft altijd drie ingrediënten, en het programma over het boek heeft ze alle drie:
 
-1. Een variabele met een startwaarde (`getal = 5`).
-2. Een voorwaarde achter `while` (`getal > 0`).
-3. Een **update**-stap binnen de loop (`getal -= 1`).
+1. Een variabele met een startwaarde (`bladzijden = 120`).
+2. Een voorwaarde achter `while` (`bladzijden > 0`).
+3. Een **update**-stap binnen de loop (`bladzijden -= 35`).
 
-Vergeet je die update? Dan blijft `getal` voor altijd `5`, blijft `getal > 0` voor altijd `True`, en stopt de loop nooit. Dat heet een **oneindige loop**. De speeltuin heeft geen stopknop, dus het tabblad loopt vast: herlaad de pagina, en je code is weg. Twijfel je of een loop stopt, druk dan eerst op Stap voor stap. Die neemt hoogstens 1000 stappen op, en dan zie je in de opname waar je loop blijft rondgaan.
+Vergeet je die update? Dan blijft `bladzijden` voor altijd `120`, blijft `bladzijden > 0` voor altijd `True`, en stopt de loop nooit. Dat heet een **oneindige loop**. De speeltuin heeft geen stopknop, dus het tabblad loopt vast. Herlaad dan de pagina: je code staat er daarna weer, behalve wat je vlak voor het uitvoeren typte. Twijfel je of een loop stopt, druk dan eerst op Stap voor stap. Die neemt hoogstens 1000 stappen op, en dan zie je in de opname waar je loop blijft rondgaan.
+
+### Maak het af
+
+Een auto heeft 48 liter in de tank, en elke rit kost 8 liter. Eén rit staat er al uitgeschreven. Twee stappen zijn nog open: herhaal de rit zolang er genoeg in de tank zit voor nog een rit, en print daarna één keer `Tanken.` Doe die zelf.
+
+Druk eerst op Stap voor stap, niet op Uitvoeren: springt de update niet in, dan stopt je loop nooit en loopt het tabblad vast.
+
+Verwachte uitvoer:
+
+```
+Nog 48 liter
+Nog 40 liter
+Nog 32 liter
+Nog 24 liter
+Nog 16 liter
+Nog 8 liter
+Tanken.
+```
+
+<CodeExercise>{`tank = 48
+
+print(f"Nog {tank} liter")
+tank -= 8`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Welke regels horen bij één rit? Die springen allebei in onder `while`. Voor nog een rit heb je minstens 8 liter nodig.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+tank = 48
+
+while tank >= 8:
+    print(f"Nog {tank} liter")
+    tank -= 8
+
+print("Tanken.")
+```
+
+Bij 8 liter kan er nog precies één rit bij: `>=` en niet `>`. Na die rit is de tank leeg, en de loop stopt.
+
+</details>
 
 ### Voorspel
 
@@ -89,34 +179,48 @@ Dit zijn de drie ingrediënten uit de uitleg: de startwaarde vóór de loop, de 
 {/* niet-draaien: deze loop stopt nooit */}
 
 ```python
-getal = 5
+bladzijden = 120
 
-while getal > 0:
-    print(getal)
-    getal - 1
+while bladzijden > 0:
+    print(f"Nog {bladzijden} bladzijden")
+    bladzijden - 35
 ```
 
-`getal - 1` rekent wel iets uit, maar bewaart het nergens. `getal` blijft 5 en de loop stopt nooit: het tabblad loopt vast. Schrijf `getal -= 1`, of `getal = getal - 1`.
+`bladzijden - 35` rekent wel iets uit, maar bewaart het nergens. `bladzijden` blijft 120 en de loop stopt nooit: het tabblad loopt vast. Schrijf `bladzijden -= 35`, of `bladzijden = bladzijden - 35`.
+
+### De update buiten de loop
+
+{/* niet-draaien: deze loop stopt nooit */}
+
+```python
+bladzijden = 120
+
+while bladzijden > 0:
+    print(f"Nog {bladzijden} bladzijden")
+bladzijden -= 35
+```
+
+De update springt niet in en hoort dus niet bij de loop. Python komt er nooit aan toe: de loop print eindeloos `Nog 120 bladzijden` en het tabblad loopt vast. Laat de update inspringen, net als de `print`.
 
 ### De voorwaarde andersom
 
 ```python
-getal = 5
+bladzijden = 120
 
-while getal < 0:
-    print(getal)
-    getal -= 1
+while bladzijden < 0:
+    print(f"Nog {bladzijden} bladzijden")
+    bladzijden -= 35
 
-print("Start!")
+print("Boek uit.")
 ```
 
 Uitvoer:
 
 ```
-Start!
+Boek uit.
 ```
 
-Er komt geen enkel getal op het scherm. 5 is niet kleiner dan 0, dus de voorwaarde is meteen `False` en de loop draait geen ronde. Lees je voorwaarde hardop: "zolang getal groter is dan 0".
+Er komt geen enkele regel over bladzijden op het scherm. 120 is niet kleiner dan 0, dus de voorwaarde is meteen `False` en de loop draait geen ronde. Lees je voorwaarde hardop: "zolang bladzijden groter is dan 0".
 
 ---
 

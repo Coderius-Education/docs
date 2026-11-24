@@ -33,16 +33,17 @@ aanpak A.
 
 </details>
 
-**Stelling 3.** *"Beide accumulators moeten dezelfde startwaarde hebben."*
+**Stelling 3.** *"Beginnen `klein` en `groot` op dezelfde waarde, dan blijven ze ook gelijk."*
 
 <details>
 <summary>Antwoord</summary>
 
-**Juist.** Allebei beginnen op `lijst[0]`. Hierdoor weten we zeker dat
-beide startwaardes echt voorkomen in de lijst — geen negatieve-getal-bug.
+**Onjuist.** Ze beginnen allebei op `lijst[0]`, maar daarna heeft elk zijn
+eigen vergelijking: `klein` zakt bij een kleiner getal, `groot` stijgt bij
+een groter. Bij `[5, 2, 8]` beginnen ze op 5 en 5, en eindigen ze op 2 en 8.
 
-Bij `klein = lijst[0]` en `groot = lijst[0]` zijn de eerste paar
-vergelijkingen meteen geldig.
+Dat ze op `lijst[0]` beginnen, is juist de bedoeling: dan staan beide
+startwaardes zeker in de lijst, ook als alle getallen negatief zijn.
 
 </details>
 

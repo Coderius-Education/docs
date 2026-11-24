@@ -23,7 +23,7 @@ const eersteUitbreiding = zijbalk.findIndex(
 const basis = plat(zijbalk.slice(0, eersteUitbreiding));
 
 const htmlBlokken = (tekst: string) =>
-  [...tekst.matchAll(/```html\n([\s\S]*?)```/g)].map((m) => m[1]);
+  [...tekst.matchAll(/```html[^\n]*\n([\s\S]*?)```/g)].map((m) => m[1]);
 const regels = (html: string) =>
   html
     .split('\n')

@@ -9,72 +9,165 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 Wil je hetzelfde stuk code op meer plekken in je programma gebruiken, dan schrijf je het één keer als **functie**: je geeft een blok code een naam, en daarna roep je het aan zo vaak als je wilt.
 
-## Een functie maken en aanroepen
+## Van losse regels naar een functie
 
-Met `def` definieer je een functie. Roepen doe je met de naam en haakjes:
+### Schrijf het uit
+
+Een lied voor de schoolreis heeft twee coupletten, en na elk couplet komt het refrein. Zonder functie staat elke regel van het lied er los:
 
 ```python
-def groet():
-    print("Hallo!")
-
-groet()
-groet()
+print("De bus staat voor de school")
+print("Hé ho, we gaan op reis")
+print("En niemand wil naar huis")
+print("De bus staat in de file")
+print("Hé ho, we gaan op reis")
+print("En niemand wil naar huis")
 ```
 
 Uitvoer:
 
 ```
-Hallo!
-Hallo!
+De bus staat voor de school
+Hé ho, we gaan op reis
+En niemand wil naar huis
+De bus staat in de file
+Hé ho, we gaan op reis
+En niemand wil naar huis
 ```
 
-- `def groet():` definieert de functie. Python onthoudt hem, maar voert nog niets uit.
-- `groet()` roept de functie aan. Pas dan voert Python de code binnenin uit.
-- De code binnen de functie springt **4 spaties** in.
+Het refrein staat er twee keer, op twee plekken. Een loop lost dat niet op: tussen de refreinen staat steeds een ander couplet. Voor een derde couplet typ je het refrein nog een keer.
+
+### Maak de functie
+
+Met `def` geef je de twee regels van het refrein een naam: `refrein`. De gemarkeerde regels zijn nieuw: de regel met `def`, en daaronder het refrein, dat vier spaties inspringt. Zo weet Python welke regels bij de functie horen. Onder de functie staan alleen nog de coupletten.
+
+```python {1-3}
+def refrein():
+    print("Hé ho, we gaan op reis")
+    print("En niemand wil naar huis")
+
+print("De bus staat voor de school")
+print("De bus staat in de file")
+```
+
+Uitvoer:
+
+```
+De bus staat voor de school
+De bus staat in de file
+```
+
+Het refrein is van het scherm verdwenen. `def` maakt de functie alleen: Python onthoudt hem, maar voert de regels erin nog niet uit.
+
+### Roep hem aan
+
+Een functie **aanroepen** doe je met zijn naam en haakjes: `refrein()`. Pas dan voert Python de regels in de functie uit. De gemarkeerde regels zijn nieuw: een aanroep na elk couplet.
+
+```python {6,8}
+def refrein():
+    print("Hé ho, we gaan op reis")
+    print("En niemand wil naar huis")
+
+print("De bus staat voor de school")
+refrein()
+print("De bus staat in de file")
+refrein()
+```
+
+Uitvoer:
+
+```
+De bus staat voor de school
+Hé ho, we gaan op reis
+En niemand wil naar huis
+De bus staat in de file
+Hé ho, we gaan op reis
+En niemand wil naar huis
+```
+
+Dat is dezelfde uitvoer als van de zes losse regels. Een derde couplet kost nu twee regels: het couplet en `refrein()`. En een ander refrein verander je op één plek, in de functie.
 
 ### Voorspel
 
 ```python
-def groet():
-    print("Hallo!")
+def trommel():
+    print("Boem")
 
-print("Klaar")
+def fanfare():
+    trommel()
+    print("Toet")
+    trommel()
+
+fanfare()
 ```
 
 <Voorspel vraag="Wat zet dit programma op het scherm?">
-  <Keuze uitleg="def maakt de functie alleen. Zonder aanroep draait de code erin nooit.">`Hallo!` en `Klaar`</Keuze>
-  <Keuze goed uitleg="De functie bestaat, maar niemand roept hem aan. Alleen de laatste regel draait.">`Klaar`</Keuze>
-  <Keuze uitleg="Een functie die je niet aanroept is geen fout. Python onthoudt hem en gaat door.">Een foutmelding</Keuze>
+  <Keuze uitleg="De regels trommel() in fanfare zijn ook aanroepen. Python voert ze uit.">`Toet`</Keuze>
+  <Keuze goed uitleg="fanfare roept trommel aan, print zelf een regel en roept trommel weer aan.">`Boem`, `Toet` en `Boem`</Keuze>
+  <Keuze uitleg="Een aanroep mag ook in een functie staan. Python kent trommel dan al.">Een foutmelding</Keuze>
   <Uitleg>
 
-  Je ziet alleen `Klaar`. `def` is een recept opschrijven, `groet()` is het recept uitvoeren. Zonder die aanroep komt `Hallo!` nooit op het scherm.
+  Je ziet `Boem`, `Toet` en `Boem`. Een functie mag een andere functie aanroepen. `fanfare()` voert zijn drie regels van boven naar beneden uit, en bij elke `trommel()` doet Python eerst wat in `trommel` staat. Zo bouw je een grote functie uit kleine.
 
   </Uitleg>
 </Voorspel>
 
-## Functies mogen functies aanroepen
+## Maak het af
+
+Dit programma loopt een schooldag van drie uur af. Na het eerste en het tweede uur gaat de bel; na het derde uur ga je naar huis. De functie `bel` staat er al, maar niemand roept hem aan: op het scherm staan alleen de uren. Eén stap is nog open: de aanroepen van `bel` op de goede plek. Doe die zelf, en typ er geen `print` bij: de functie staat er al.
+
+Verwachte uitvoer:
+
+```
+Uur 1: wiskunde
+Tring
+Boeken in je tas
+Naar het volgende lokaal
+Uur 2: Engels
+Tring
+Boeken in je tas
+Naar het volgende lokaal
+Uur 3: gym
+Naar huis
+```
+
+<CodeExercise>{`def bel():
+    print("Tring")
+    print("Boeken in je tas")
+    print("Naar het volgende lokaal")
+
+print("Uur 1: wiskunde")
+print("Uur 2: Engels")
+print("Uur 3: gym")
+print("Naar huis")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Draai het programma eerst: de regels van de bel ontbreken. Een aanroep is een eigen regel. Hier doet je programma zelf de aanroep, dus die staat tegen de kantlijn, net als de uren. Tel in de verwachte uitvoer hoe vaak de bel gaat, en na welke uren.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
 
 ```python
-def lijn():
-    print("=" * 20)
+def bel():
+    print("Tring")
+    print("Boeken in je tas")
+    print("Naar het volgende lokaal")
 
-def welkom():
-    lijn()
-    print("  Welkom bij Python!")
-    lijn()
-
-welkom()
+print("Uur 1: wiskunde")
+bel()
+print("Uur 2: Engels")
+bel()
+print("Uur 3: gym")
+print("Naar huis")
 ```
 
-Uitvoer:
+Springt `bel()` in onder de `def`, dan hoort de aanroep bij de functie zelf en gebeurt er niets.
 
-```
-====================
-  Welkom bij Python!
-====================
-```
-
-Eén kleine functie (`lijn`) gebruik je twee keer binnen een grotere functie (`welkom`). Je schrijft de lijn één keer en gebruikt hem zo vaak als je wilt.
+</details>
 
 ## Puzzel
 
@@ -104,6 +197,24 @@ groet
 
 Er gebeurt niets, en je krijgt ook geen foutmelding. Zonder `()` noem je de functie alleen; je roept hem niet aan. Schrijf `groet()`.
 
+### De aanroep springt in
+
+```python
+def groet():
+    print("Hallo!")
+    groet()
+
+print("Klaar")
+```
+
+Uitvoer:
+
+```
+Klaar
+```
+
+Geen foutmelding, maar `Hallo!` komt niet op het scherm. `groet()` springt in en hoort dus bij de functie zelf: buiten de functie roept niemand hem aan. De aanroep die je programma doet, staat tegen de kantlijn, zonder spaties ervoor. Een aanroep in een andere functie springt wel in, mee met die functie, zoals `trommel()` in `fanfare` uit de voorspelvraag.
+
 ### Aanroepen voordat de functie bestaat
 
 {/* foutmelding-van: blok-erboven */}
@@ -127,14 +238,22 @@ Python leest van boven naar beneden. Op de eerste regel bestaat `groet` nog niet
 
 ## Opdracht 8.1: Welkom-functie
 
-Maak een functie `welkom()` die `"Welkom bij Python!"` print, en roep hem twee keer aan.
+Maak een functie `welkom()` die `Welkom bij Python!` print. Roep hem drie keer aan met een for-loop: dan staat de aanroep maar één keer in je programma.
+
+Verwachte uitvoer:
+
+```
+Welkom bij Python!
+Welkom bij Python!
+Welkom bij Python!
+```
 
 <CodeExercise>{`# Schrijf hier je code`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-`def welkom():` met `print(...)` op de regel eronder (4 spaties inspringen). Daarna twee keer `welkom()`.
+`def welkom():` met `print(...)` op de regel eronder (4 spaties inspringen). Een regel die bij een loop hoort, springt in, ook een aanroep.
 
 </details>
 
@@ -145,15 +264,15 @@ Maak een functie `welkom()` die `"Welkom bij Python!"` print, en roep hem twee k
 def welkom():
     print("Welkom bij Python!")
 
-welkom()
-welkom()
+for i in range(3):
+    welkom()
 ```
 
 <CodeExercise>{`def welkom():
     print("Welkom bij Python!")
 
-welkom()
-welkom()`}</CodeExercise>
+for i in range(3):
+    welkom()`}</CodeExercise>
 
 </details>
 

@@ -74,9 +74,11 @@ gaat de start op 0.
 
 ## Voorspel
 
-Wat denk je dat dit print?
+De graph ken je van bouwsteen 1. De gemarkeerde regels zijn nieuw in
+deze bouwsteen: de `start`, de tabel `afstanden`, de set `bezocht` en de
+twee prints. Wat denk je dat dit print?
 
-```python
+```python {7,9-13,15-16}
 graph = {
     'A': [('B', 4), ('C', 2)],
     'B': [('A', 4), ('D', 1)],

@@ -120,13 +120,14 @@ resultaat.append(42)        # achteraan toevoegen
 ## Veelgemaakte fouten (snel)
 
 <details>
-<summary>Top-3 fouten</summary>
+<summary>Veelgemaakte fouten</summary>
 
 {/* foutmelding-los: samenvatting van de foutenpagina, waar beide meldingen gereproduceerd worden */}
 
 1. `return -1` **binnen** de `for`-lus → returnt na 1 iteratie.
 2. `=` waar je `==` bedoelt → `SyntaxError` of stille bug.
 3. Het resultaat als index gebruiken zonder op `-1` te checken → `lijst[-1]` geeft stil het laatste element.
+4. `return i` niet verder ingesprongen dan de `if` → `IndentationError`.
 
 </details>
 

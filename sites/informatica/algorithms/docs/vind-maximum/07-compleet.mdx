@@ -11,14 +11,70 @@ sidebar_position: 7
   ]}
 />
 
-**Leerdoel:** je ziet alle bouwstenen samen werken en onderzoekt het
-algoritme als geheel.
+**Leerdoel:** je maakt de functie af met een bouwsteen die je al kent,
+ziet alle bouwstenen samen werken en onderzoekt het algoritme als geheel.
+
+## Maak het af
+
+In deze `vind_maximum` staan de bouwstenen samen, op één na. De
+startwaarde en de vergelijking staan er, maar hij bekijkt alleen het
+tweede getal: je krijgt de grootste van de eerste twee. `max_tot_nu_toe`
+heet hier korter `maximum`.
+Eén stap is nog open: bouwsteen 2, door de lijst lopen en updaten. Doe die zelf.
+Gebruik daarbij niet de functie `max` van Python.
+
+Verwachte uitvoer:
+
+```
+scores: 41
+vorst: -2
+```
+
+<PyRunner initialCode={`def vind_maximum(lijst):
+    maximum = lijst[0]
+    waarde = lijst[1]   # nu alleen het tweede getal
+    if waarde > maximum:
+        maximum = waarde
+    return maximum
+
+print("scores:", vind_maximum([12, 30, 8, 41, 25]))
+print("vorst:", vind_maximum([-4, -9, -2, -6]))`} />
+
+<details>
+<summary>Tip</summary>
+
+De vergelijking moet voor elk getal van de lijst draaien, niet alleen
+voor `lijst[1]`. Welke regel geeft je elke ronde een nieuwe `waarde`?
+Kijk bij bouwsteen 2, door de lijst lopen en updaten, en let op wat er
+dan moet inspringen.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def vind_maximum(lijst):
+    maximum = lijst[0]
+    for waarde in lijst:
+        if waarde > maximum:
+            maximum = waarde
+    return maximum
+
+print("scores:", vind_maximum([12, 30, 8, 41, 25]))
+print("vorst:", vind_maximum([-4, -9, -2, -6]))
+```
+
+De `for` staat op de plek van `waarde = lijst[1]`, en de `if` springt
+in: hij draait nu voor elk getal.
+
+</details>
 
 ## Alles samen
 
-In de bouwstenen heette de variabele `max_tot_nu_toe`, want dat is precies
-wat hij is: het maximum tot nu toe. Nu de functie af is, is `maximum`
-korter en even duidelijk.
+Zo ziet de hele functie eruit, met bij elke regel zijn bouwsteen.
+`maximum` heette in de bouwstenen `max_tot_nu_toe`: het maximum tot nu
+toe. In een functie die af is, is `maximum` korter en even duidelijk.
 
 <CodeUitleg>
 

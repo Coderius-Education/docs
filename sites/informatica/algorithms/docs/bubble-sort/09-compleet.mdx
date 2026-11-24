@@ -4,7 +4,70 @@ sidebar_position: 9
 
 # Het complete algoritme
 
-**Leerdoel:** je ziet alle bouwstenen samen en onderzoekt het algoritme.
+**Leerdoel:** je maakt de functie af met een bouwsteen die je al kent,
+ziet alle bouwstenen samen en onderzoekt het algoritme.
+
+## Maak het af
+
+In deze `bubble_sort` staan de bouwstenen samen, op één na. Hij sorteert
+al en print de lijst na elke ronde, maar maakt elke ronde af, ook als de
+lijst allang goed staat.
+Eén stap is nog open: bouwsteen 5, vroeg klaar als er niets meer hoeft. Doe die zelf.
+
+Verwachte uitvoer:
+
+```
+ronde 0: [4, 7, 9, 12]
+gesorteerd: [4, 7, 9, 12]
+ronde 0: [3, 5, 8, 11, 14]
+ronde 1: [3, 5, 8, 11, 14]
+gesorteerd: [3, 5, 8, 11, 14]
+```
+
+<PyRunner initialCode={`def bubble_sort(lijst):
+    n = len(lijst)
+    for ronde in range(n - 1):
+        for i in range(n - 1 - ronde):
+            if lijst[i] > lijst[i + 1]:
+                lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+        print(f"ronde {ronde}: {lijst}")
+        # hier komt de vroege uitstap
+    return lijst
+
+print("gesorteerd:", bubble_sort([4, 7, 9, 12]))
+print("gesorteerd:", bubble_sort([3, 8, 5, 11, 14]))`} />
+
+<details>
+<summary>Tip</summary>
+
+Bouwsteen 5 raakt de functie op drie plekken. Waar begint de vlag elke
+ronde op `False`, waar gaat hij op `True`, en waar kijk je of je klaar
+bent? Het commentaar staat op de laatste van die drie.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def bubble_sort(lijst):
+    n = len(lijst)
+    for ronde in range(n - 1):
+        geswapt = False
+        for i in range(n - 1 - ronde):
+            if lijst[i] > lijst[i + 1]:
+                lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+                geswapt = True
+        print(f"ronde {ronde}: {lijst}")
+        if not geswapt:
+            break
+    return lijst
+
+print("gesorteerd:", bubble_sort([4, 7, 9, 12]))
+print("gesorteerd:", bubble_sort([3, 8, 5, 11, 14]))
+```
+
+</details>
 
 ## Alles samen
 

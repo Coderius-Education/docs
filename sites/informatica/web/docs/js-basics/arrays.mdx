@@ -78,51 +78,90 @@ export const makeHtml = `<!DOCTYPE html>
 export const makeJs = `// Schrijf hier je code
 `;
 
-Tot nu toe gebruikte je losse variabelen: `let naam1 = 'Anna';`, `let naam2 = 'Bram';`. Voor echte lijsten wordt dat onhandig. Daarvoor is de **array**:
+Tot nu toe gebruikte je losse variabelen: `let naam1 = 'Anna';`, `let naam2 = 'Bram';`. Voor echte lijsten wordt dat onhandig. Daarvoor is de **array**.
+
+### Maak de array
+
+Een array is een geordende lijst tussen vierkante haken, met komma's tussen de items. Er past van alles in: strings, getallen, booleans. Deze array is een fruitschaal:
 
 ```js
-const namen = ['Anna', 'Bram', 'Chris'];
+const fruit = ['appel', 'banaan', 'kiwi'];
+console.log(fruit[0]);
 ```
 
-Een array is een geordende lijst tussen vierkante haken, met komma's tussen de items. Er past van alles in: strings, getallen, booleans.
+Uitvoer in de console:
 
-## Een item ophalen: de index
-
-Elk item heeft een **index**, een positienummer dat bij **0** begint:
-
-```js
-const namen = ['Anna', 'Bram', 'Chris'];
-console.log(namen[0]);  // 'Anna'
-console.log(namen[1]);  // 'Bram'
-console.log(namen[2]);  // 'Chris'
+```
+appel
 ```
 
-:::tip[Start op 0, niet op 1]
-Bijna alle programmeertalen tellen vanaf 0. `namen[3]` bestaat hier niet en geeft `undefined`.
-:::
+Elk item heeft een **index**, een positienummer dat bij **0** begint: `fruit[0]` is het eerste item. Van de drie stukken fruit staat er één in de console.
 
-## Toevoegen, veranderen, tellen
+### Pak elk item
 
-Een array ligt niet vast. Je zet er items bij, vervangt er een, en vraagt op hoeveel het er zijn:
+De gemarkeerde regels zijn nieuw: een `console.log` voor het tweede en voor het derde item.
 
-```js
-namen.push('Daan');         // voegt 'Daan' toe aan het einde
-namen[0] = 'Anouk';         // vervangt het eerste item
-console.log(namen.length);  // hoeveel items er zijn
+```js {3-4}
+const fruit = ['appel', 'banaan', 'kiwi'];
+console.log(fruit[0]);
+console.log(fruit[1]);
+console.log(fruit[2]);
 ```
 
-## Combineren met een loop
+Uitvoer in de console:
 
-Met een loop bewerk je alle items één voor één — de teller `i` is meteen de index:
+```
+appel
+banaan
+kiwi
+```
 
-```js
-const namen = ['Anna', 'Bram', 'Chris'];
-for (let i = 0; i < namen.length; i++) {
-  console.log('Hallo ' + namen[i]);
+Het laatste item heeft index 2, niet 3: bijna alle programmeertalen tellen vanaf 0. `fruit[3]` bestaat hier niet en geeft `undefined`. Elk item heeft nu een eigen regel code: bij een schaal met twintig stukken fruit zijn dat twintig regels.
+
+### Gebruik een loop
+
+Een loop loopt alle items één voor één af: de teller `i` is meteen de index. De gemarkeerde regels zijn nieuw: een `for`-loop op de plek van de drie losse regels.
+
+```js {2-4}
+const fruit = ['appel', 'banaan', 'kiwi'];
+for (let i = 0; i < fruit.length; i++) {
+  console.log(fruit[i]);
 }
 ```
 
-Door `i < namen.length` als voorwaarde te nemen, klopt de loop vanzelf nog als de array langer of korter wordt.
+Uitvoer in de console:
+
+```
+appel
+banaan
+kiwi
+```
+
+`fruit.length` is het aantal items: 3. De loop draait dus voor index 0, 1 en 2. De schaal zelf verandert nog niet: er komt geen fruit bij, en de appel blijft een appel.
+
+### Verander de array
+
+Een array ligt niet vast. De gemarkeerde regels zijn nieuw: `push` zet een item achteraan, en `fruit[0] = 'mango'` vervangt het eerste item.
+
+```js {2-3}
+const fruit = ['appel', 'banaan', 'kiwi'];
+fruit.push('peer');
+fruit[0] = 'mango';
+for (let i = 0; i < fruit.length; i++) {
+  console.log(fruit[i]);
+}
+```
+
+Uitvoer in de console:
+
+```
+mango
+banaan
+kiwi
+peer
+```
+
+`fruit` is een `const`, en toch verandert de array: `const` legt vast welke array er in `fruit` zit, niet wat erin staat. De loop is niet veranderd en toont toch vier items. Met `i < fruit.length` als voorwaarde klopt hij vanzelf als de array langer of korter wordt.
 
 ## Predict
 

@@ -79,7 +79,7 @@ export const INTRODUCEERT: Record<string, string[]> = {
   'js-basics/script-tag': ['js-function'],
   'js-basics/scriptjs': [],
   'js-basics/variabelen': ['js-let', 'js-const'],
-  'js-basics/events': ['js-add-event-listener'],
+  'js-basics/events': ['js-add-event-listener', 'js-tekst-plakken'],
   'js-basics/prompt-alert': ['js-prompt', 'js-alert'],
   'js-basics/operatoren-types': ['js-typeof', 'js-number', 'js-template-literal'],
   'js-basics/vergelijken': ['js-strict-equality', 'js-logical-operators'],
@@ -156,6 +156,19 @@ export const EXTRA_TECHNIEKEN: Technique[] = [
     label: 'onclick (HTML-attribuut)',
     pattern: /\bonclick\s*=\s*["']/g,
     level: 'gevorderd',
+  },
+  {
+    id: 'js-tekst-plakken',
+    category: 'js',
+    group: 'Variabelen',
+    // Tekst met `+` aan iets anders plakken: `'Aantal: ' + teller`. Een
+    // doorloop als leerling vond het in een opdracht van events, zonder dat
+    // een les het uitlegde. Alleen een string met enkele aanhalingstekens
+    // direct naast de `+`: zo telt `teller + 1` niet, en ook geen
+    // `"…"` in een HTML-attribuut.
+    label: 'tekst plakken met +',
+    pattern: /'[^'\n]*'\s*\+(?!\+)|(?<!\+)\+\s*'[^'\n]*'/g,
+    level: 'basis',
   },
 ];
 

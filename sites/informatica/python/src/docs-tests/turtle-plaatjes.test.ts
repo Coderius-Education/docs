@@ -34,7 +34,7 @@ import { draaiTurtle } from '../../../../../packages/python-runner/src/turtle/dr
 const DOCS = fileURLToPath(new URL('../../docs', import.meta.url));
 const SCHRIJF = process.env.SCHRIJF_PLAATJES === '1';
 const MARKER =
-  /(?:\{\/\*\s*invoer:\s*([^*]*?)\s*\*\/\}\s*\n)?\{\/\*\s*turtle-plaatje(?: met zaad (\d+))?:\s*(\S+)\s*\*\/\}\s*\n+```python\n([\s\S]*?)\n```/g;
+  /(?:\{\/\*\s*invoer:\s*([^*]*?)\s*\*\/\}\s*\n)?\{\/\*\s*turtle-plaatje(?: met zaad (\d+))?:\s*(\S+)\s*\*\/\}\s*\n+```python[^\n]*\n([\s\S]*?)\n```/g;
 const MAX_STAPPEN = 1000;
 
 function mdxBestanden(map: string): string[] {

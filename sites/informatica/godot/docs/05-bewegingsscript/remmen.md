@@ -70,7 +70,9 @@ Je karakter komt niet meer van zijn plek. Alleen de `else` zet `velocity.x` op `
 
 ## Je script tot nu toe
 
-```gdscript
+De gemarkeerde regels zijn nieuw of veranderd in deze les.
+
+```gdscript {10-13}
 extends CharacterBody2D
 
 const SPEED = 300.0

@@ -9,77 +9,197 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 Een variabele houdt één waarde vast. Wil je tien waardes bewaren, zoals een boodschappenlijstje, een klassenlijst of een rij cijfers, dan gebruik je een **lijst** (Engels: *list*).
 
-## Een lijst maken
+## Een estafetteteam
 
-Zet de elementen tussen blokhaken, gescheiden door komma's:
+### Maak de lijst
 
-```python
-kleuren = ["rood", "groen", "blauw"]
-
-print(kleuren)         # ['rood', 'groen', 'blauw']
-print(len(kleuren))    # 3
-```
-
-`len()` geeft het aantal elementen in de lijst.
-
-### Voorspel
+Vier lopers vormen een estafetteteam. Een lijst bewaart hun namen in de volgorde waarin ze lopen. De elementen staan tussen blokhaken, met komma's ertussen:
 
 ```python
-kleuren = ["rood", "groen", "blauw"]
+team = ["Noor", "Daan", "Yara", "Sem"]
 
-print(kleuren[1])
-```
-
-<Voorspel vraag="Wat zet dit programma op het scherm?">
-  <Keuze uitleg="Dat zou kloppen als Python bij 1 begon te tellen. Hij begint ergens anders.">`rood`</Keuze>
-  <Keuze goed uitleg="Python telt de plekken vanaf 0. Plek 1 is dus het tweede element.">`groen`</Keuze>
-  <Keuze uitleg="Plek 1 is niet het laatste element. Er zijn drie plekken, en Python begint bij 0.">`blauw`</Keuze>
-  <Uitleg>
-
-  Je ziet `groen`. Het eerste element staat op plek 0, het tweede op plek 1. In de volgende stap zie je hoe dat verder gaat.
-
-  </Uitleg>
-</Voorspel>
-
-## Een element opzoeken
-
-Elk element heeft een **positie** (index). Python begint met tellen vanaf **0**:
-
-```python
-kleuren = ["rood", "groen", "blauw"]
-
-print(kleuren[0])    # rood       (eerste)
-print(kleuren[1])    # groen      (tweede)
-print(kleuren[2])    # blauw      (derde)
-print(kleuren[-1])   # blauw      (laatste — handige truc)
-```
-
-`-1` is altijd het laatste element, `-2` het voorlaatste, enzovoort.
-
-## Door een lijst loopen
-
-Met een `for`-loop pak je elk element automatisch:
-
-```python
-kleuren = ["rood", "groen", "blauw"]
-
-for kleur in kleuren:
-    print(kleur)
+print(team)
+print(f"{len(team)} lopers")
 ```
 
 Uitvoer:
 
 ```
-rood
-groen
-blauw
+['Noor', 'Daan', 'Yara', 'Sem']
+4 lopers
 ```
 
-In elke ronde krijgt `kleur` automatisch de volgende waarde uit de lijst.
+`len()` geeft het aantal elementen in de lijst. Het hele team staat op één regel, met blokhaken en al. Wie er start, staat er niet los bij.
 
-:::tip[Eerst op papier]
-Speel dit eerst na zonder computer, met een rij bekertjes: [Een rij bekertjes](site:python/docs/projecten/unplugged/bekertjes). Je docent kan de hand-out printen.
-:::
+### Pak een element
+
+De startloper is het eerste element. Eén element haal je op met blokhaken achter de naam van de lijst, met daartussen de plek van het element. De gemarkeerde regel is nieuw: het eerste element, dus plek `1`.
+
+```python {5}
+team = ["Noor", "Daan", "Yara", "Sem"]
+
+print(team)
+print(f"{len(team)} lopers")
+print(f"Start: {team[1]}")
+```
+
+Uitvoer:
+
+```
+['Noor', 'Daan', 'Yara', 'Sem']
+4 lopers
+Start: Daan
+```
+
+Dat klopt niet: Daan loopt als tweede. Op plek `1` staat dus niet het eerste element.
+
+### Tel vanaf nul
+
+Python telt de plekken van een lijst vanaf 0: Noor staat op plek `0`, Daan op `1`, Yara op `2` en Sem op `3`. In de eerste gemarkeerde regel is `1` nu `0`. De tweede gemarkeerde regel is nieuw: `team[-1]` is het laatste element, want een min telt vanaf het eind.
+
+```python {5-6}
+team = ["Noor", "Daan", "Yara", "Sem"]
+
+print(team)
+print(f"{len(team)} lopers")
+print(f"Start: {team[0]}")
+print(f"Slot: {team[-1]}")
+```
+
+Uitvoer:
+
+```
+['Noor', 'Daan', 'Yara', 'Sem']
+4 lopers
+Start: Noor
+Slot: Sem
+```
+
+De plek van een element heet de **index**. `team[3]` geeft ook Sem, maar `team[-1]` blijft kloppen als het team groeit. De opstelling zelf staat nog op één regel, tussen blokhaken.
+
+### Loop de lijst af
+
+Een `for`-loop kan een lijst aflopen: elke ronde komt het volgende element in de loop-variabele. De gemarkeerde regels zijn veranderd: in plaats van de hele lijst in één keer print de loop elke loper op een eigen regel.
+
+```python {3-4}
+team = ["Noor", "Daan", "Yara", "Sem"]
+
+for loper in team:
+    print(loper)
+print(f"{len(team)} lopers")
+print(f"Start: {team[0]}")
+print(f"Slot: {team[-1]}")
+```
+
+Uitvoer:
+
+```
+Noor
+Daan
+Yara
+Sem
+4 lopers
+Start: Noor
+Slot: Sem
+```
+
+In de loop staat geen `range` en geen index: de lijst bepaalt zelf hoeveel rondes er zijn. Komt er een vijfde loper bij, dan print de loop die ook, telt `len()` hem mee en wijst `team[-1]` naar hem. Vlak voor de start verstuikt Daan zijn enkel, maar de lijst noemt hem nog.
+
+### Vervang een loper
+
+Joris loopt in de plaats van Daan. Een element vervangen is een toekenning, met de index tussen blokhaken. De gemarkeerde regel is nieuw: `team[1] = "Joris"` zet Joris op plek 1, waar Daan stond.
+
+```python {2}
+team = ["Noor", "Daan", "Yara", "Sem"]
+team[1] = "Joris"
+
+for loper in team:
+    print(loper)
+print(f"{len(team)} lopers")
+print(f"Start: {team[0]}")
+print(f"Slot: {team[-1]}")
+```
+
+Uitvoer:
+
+```
+Noor
+Joris
+Yara
+Sem
+4 lopers
+Start: Noor
+Slot: Sem
+```
+
+Daan is weg, en het team telt nog steeds vier lopers: de toekenning vervangt een element, er komt er geen bij.
+
+### Voorspel
+
+```python
+dagen = ["ma", "di", "wo", "do", "vr"]
+
+print(dagen[len(dagen) - 1])
+```
+
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze uitleg="Plek 4 is niet het vierde element: Python telt de plekken vanaf 0.">`do`</Keuze>
+  <Keuze goed uitleg="len(dagen) is 5, dus er staat dagen[4]: het vijfde element.">`vr`</Keuze>
+  <Keuze uitleg="dagen[5] zou omvallen, maar tussen de blokhaken staat 5 - 1.">Een foutmelding</Keuze>
+  <Uitleg>
+
+  Je ziet `vr`. Vijf elementen staan op plek 0 tot en met 4. De laatste plek is dus altijd één minder dan wat `len()` geeft. `dagen[-1]` wijst naar hetzelfde element.
+
+  </Uitleg>
+</Voorspel>
+
+## Maak het af
+
+Dit programma print je rooster van vandaag: bovenaan het eerste en het laatste uur, daaronder elk vak op een eigen regel en het aantal lessen. Achter `Eerste uur:` staat nog de hele lijst in plaats van één vak. Twee stappen zijn nog open: het eerste uur en het laatste uur. Doe die zelf, boven de loop, en haal de vakken uit de lijst: typ ze niet over.
+
+Verwachte uitvoer:
+
+```
+Eerste uur: wiskunde
+Laatste uur: Frans
+wiskunde
+gym
+Engels
+muziek
+Frans
+5 lessen
+```
+
+<CodeExercise>{`rooster = ["wiskunde", "gym", "Engels", "muziek", "Frans"]
+
+print(f"Eerste uur: {rooster}")
+for vak in rooster:
+    print(vak)
+print(f"{len(rooster)} lessen")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Draai het programma eerst: achter `Eerste uur:` staat de hele lijst. Op welke plek staat het eerste element? Het laatste uur is een nieuwe regel van dezelfde vorm, direct eronder. Tel daarvoor de plekken na, of tel vanaf het eind.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+rooster = ["wiskunde", "gym", "Engels", "muziek", "Frans"]
+
+print(f"Eerste uur: {rooster[0]}")
+print(f"Laatste uur: {rooster[-1]}")
+for vak in rooster:
+    print(vak)
+print(f"{len(rooster)} lessen")
+```
+
+`rooster[4]` geeft ook `Frans`. `rooster[5]` bestaat niet: vijf elementen staan op plek 0 tot en met 4. Boven de loop bestaat `vak` nog niet, dus daar kun je het laatste vak alleen met een index uit de lijst halen.
+
+</details>
 
 ## Er gaat iets mis
 
@@ -117,18 +237,40 @@ TypeError: 'list' object is not callable
 
 Met ronde haakjes roep je een functie aan, en een lijst is geen functie. Een element opzoeken doe je met blokhaken: `kleuren[0]`.
 
+### Tellen vanaf 1
+
+```python
+kleuren = ["rood", "groen", "blauw"]
+print(kleuren[1])
+```
+
+Uitvoer:
+
+```
+groen
+```
+
+Geen foutmelding, maar je wilde het eerste element en krijgt het tweede. Het eerste element staat op plek 0: `kleuren[0]`.
+
 ---
 
 ## Opdracht 10a.1: Tweede element
 
-Maak een lijst `getallen` met de waardes `10`, `20` en `30`, en print het **tweede** element.
+Maak een lijst `getallen` met de waardes `10`, `20` en `30`, en print het **tweede** element. Maak dat element daarna `25` en print de hele lijst. Typ de lijst daarvoor niet opnieuw: vervang het element met zijn index.
+
+Verwachte uitvoer:
+
+```
+20
+[10, 25, 30]
+```
 
 <CodeExercise>{`# Schrijf hier je code`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Het tweede element heeft index `1`, niet `2` — Python begint bij `0`.
+Het tweede element heeft index `1`, niet `2`: Python begint bij `0`. Met dezelfde index geef je het element een nieuwe waarde.
 
 </details>
 
@@ -139,11 +281,15 @@ Het tweede element heeft index `1`, niet `2` — Python begint bij `0`.
 getallen = [10, 20, 30]
 
 print(getallen[1])
+getallen[1] = 25
+print(getallen)
 ```
 
 <CodeExercise>{`getallen = [10, 20, 30]
 
-print(getallen[1])`}</CodeExercise>
+print(getallen[1])
+getallen[1] = 25
+print(getallen)`}</CodeExercise>
 
 </details>
 
@@ -153,7 +299,7 @@ print(getallen[1])`}</CodeExercise>
 
 Maak een lijst van 4 vruchten en print voor elk een zin: `Ik hou van [vrucht]!`.
 
-Verwachte uitvoer:
+Verwachte uitvoer (voorbeeld):
 
 ```
 Ik hou van appel!
@@ -223,8 +369,6 @@ for cijfer in cijfers:
 
 print(f"Het hoogste cijfer is: {hoogste}")
 ```
-
-In de [volgende les](site:python/docs/data/10b-lijst-methoden) leer je hoe je een lijst **verandert**: elementen toevoegen, verwijderen of invoegen.
 
 <CodeExercise>{`cijfers = [7, 4, 8, 5, 9, 3, 6]
 

@@ -67,7 +67,7 @@ describe('een opdracht begint klein', () => {
         // Het antwoord mag niet al in de editor staan: elke regel van het
         // antwoord in de startcode betekent dat er niets te bouwen is.
         const antwoord = body.match(
-          /<summary>Antwoord<\/summary>[\s\S]*?```python\n([\s\S]*?)```/,
+          /<summary>Antwoord<\/summary>[\s\S]*?```python[^\n]*\n([\s\S]*?)```/,
         )?.[1];
         if (antwoord) {
           const start = new Set(regels(code));
@@ -353,7 +353,7 @@ describe('een antwoord houdt de beslissing van het filter', () => {
         const code = startcode(delen[i + 1]);
         if (code === null || !code.includes('print("spam")')) continue;
         const antwoord = delen[i + 1].match(
-          /<summary>Antwoord<\/summary>([\s\S]*?)```python\n([\s\S]*?)```/,
+          /<summary>Antwoord<\/summary>([\s\S]*?)```python[^\n]*\n([\s\S]*?)```/,
         );
         // Een antwoord dat zegt wat het vervangt, is een stuk van het programma.
         if (!antwoord || /Dit (vervangt|komt onder)/.test(antwoord[1])) continue;

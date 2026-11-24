@@ -42,8 +42,8 @@ function telOp() {
 
 export const onderzoek = [
   {
-    vraag: "Klik een paar keer op de knop en klik dan opnieuw op Run. Waar staat de teller nu, en waarom?",
-    antwoord: "Weer op `0`, en de console is leeg. Run laadt de pagina opnieuw, dus `let teller = 0;` draait opnieuw en de variabele begint van voren af aan.",
+    vraag: "Verplaats `let teller = 0;` naar binnen de functie, als eerste regel. Klik op Run en dan drie keer op de knop. Wat zie je?",
+    antwoord: "Na elke klik staat er `1`, en de console logt drie keer `Teller staat op: 1`. Binnen de functie maakt elke klik de variabele opnieuw aan, met 0 als waarde. Daarom staat `let teller = 0;` buiten de functie.",
   },
   {
     vraag: "Verander `teller + 1` in `teller - 1`. Wat gebeurt er bij elke klik?",
@@ -79,24 +79,61 @@ export const makeHtml = `<!DOCTYPE html>
 export const makeJs = `// Schrijf hier je code
 `;
 
-Een variabele is een plek in het geheugen met een naam. Je maakt hem aan met `let`, geeft hem een naam en kent er een waarde aan toe:
+Een variabele is een plek in het geheugen met een naam. Hij onthoudt een waarde, en die waarde kun je later veranderen.
+
+### Maak de variabele
+
+Een variabele houdt bij hoeveel euro er in je spaarpot zit. Je maakt hem aan met `let`:
 
 ```js
-let teller = 0;
+let spaarpot = 0;
+console.log('In de pot:', spaarpot);
 ```
 
-`let` maakt een nieuwe variabele aan, `teller` is de naam (kies zelf; kleine letters, geen spaties) en `= 0` is de beginwaarde.
+`let` maakt een nieuwe variabele aan, `spaarpot` is de naam (kies zelf; kleine letters, geen spaties) en `= 0` is de beginwaarde. De console logt `In de pot: 0`: na de komma zet `console.log` een tweede waarde achter de tekst. De pot is leeg, en er komt nog niets bij.
 
-Daarna kun je de waarde aanpassen en tonen, bijvoorbeeld in een functie die bij elke klik draait:
+### Verander de waarde
 
-```js
-function telOp() {
-  teller = teller + 1;  // voeg 1 toe aan de huidige waarde
-  document.getElementById('uitvoer').textContent = teller;
+De waarde van een variabele kun je veranderen. De gemarkeerde regel is nieuw: er gaat 2 euro in de pot.
+
+```js {2}
+let spaarpot = 0;
+spaarpot = spaarpot + 2;
+console.log('In de pot:', spaarpot);
+```
+
+JavaScript rekent eerst de rechterkant uit, `0 + 2`, en bewaart de uitkomst weer in `spaarpot`. De console logt `In de pot: 2`. Dat gebeurt één keer, bij het laden van de pagina: nog een keer sparen kan niet.
+
+### Spaar met een knop
+
+Een knop met `onclick="spaar()"` roept een functie aan, en die spaart bij elke klik opnieuw. De gemarkeerde regels zijn nieuw of veranderd: de functie `spaar`, met de twee regels erin. `let spaarpot = 0;` blijft erboven staan, **buiten** de functie: binnen de functie zou elke klik weer bij 0 beginnen.
+
+```js {3-6}
+let spaarpot = 0;
+
+function spaar() {
+  spaarpot = spaarpot + 2;
+  console.log('In de pot:', spaarpot);
 }
 ```
 
-De regel `let teller = 0;` staat **buiten** de functie: dan blijft de variabele bestaan tussen de klikken door en onthoudt hij zijn waarde. Dat onthouden is precies waar variabelen voor zijn.
+Bij de eerste klik logt de console `In de pot: 2`, bij de tweede `In de pot: 4`. De variabele blijft bestaan tussen de klikken door en onthoudt zijn waarde: daar zijn variabelen voor. Op de pagina zelf is nog niets te zien.
+
+### Toon de waarde
+
+Op de pagina staat een `<p id="pot">` voor het bedrag. De gemarkeerde regel is nieuw: na elke klik zet de functie de waarde van `spaarpot` in die alinea.
+
+```js {5}
+let spaarpot = 0;
+
+function spaar() {
+  spaarpot = spaarpot + 2;
+  document.getElementById('pot').textContent = spaarpot;
+  console.log('In de pot:', spaarpot);
+}
+```
+
+Het bedrag op de pagina loopt nu gelijk met de console.
 
 ## `let` of `const`?
 
@@ -133,9 +170,9 @@ function telOp() {
 ```
 
 <details>
-<summary>Wat zie je in de `<p>` na drie klikken?</summary>
+<summary>Je klikt drie keer op de knop, daarna op Run, en dan nog één keer op de knop. Wat staat er in de `<p>`?</summary>
 
-`3`. Elke klik verhoogt `teller` met 1 en toont de nieuwe waarde. De variabele onthoudt de vorige stand: hij begint bij 0 en telt op zolang de pagina open staat.
+`1`. Na drie klikken stond er `3`. Run laadt de pagina opnieuw: `let teller = 0;` draait dan weer, en de variabele begint opnieuw bij 0. De klik daarna maakt er `1` van.
 
 </details>
 

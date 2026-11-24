@@ -11,9 +11,10 @@ genoeg keer herhaalt om de hele lijst te sorteren.
 
 Per pass komt het grootste-van-de-rest naar achteren. Voor `n` elementen
 zijn `n − 1` passes altijd genoeg: staat de rest goed, dan staat het
-laatste element vanzelf ook goed.
+laatste element vanzelf ook goed. De gemarkeerde regel is nieuw in deze
+bouwsteen: de buitenste lus om de pass van bouwsteen 3.
 
-```python
+```python {1}
 for ronde in range(len(lijst) - 1):
     for i in range(len(lijst) - 1):
         if lijst[i] > lijst[i + 1]:

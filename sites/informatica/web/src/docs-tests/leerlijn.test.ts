@@ -44,7 +44,7 @@ for (const [les, ids] of Object.entries(INTRODUCEERT)) {
  */
 function codeUit(bron: string): string {
   const stukken: string[] = [];
-  for (const m of bron.matchAll(/```(?:html|css|js|javascript)\n([\s\S]*?)```/g)) {
+  for (const m of bron.matchAll(/```(?:html|css|js|javascript)\b[^\n]*\n([\s\S]*?)```/g)) {
     stukken.push(m[1]);
   }
   for (const m of bron.matchAll(/export const \w+ = `([\s\S]*?)`;/g)) {

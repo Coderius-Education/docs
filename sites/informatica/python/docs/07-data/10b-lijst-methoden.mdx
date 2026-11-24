@@ -7,53 +7,166 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 # 10b Lijst-methoden
 
-Je kunt nu een lijst maken, opvragen en doorlopen. Met methoden **verander** je een lijst: elementen toevoegen, verwijderen of invoegen.
+Je kunt nu een lijst maken, opvragen, doorlopen en er een element in vervangen. Met methoden **verander** je een lijst verder: elementen toevoegen, verwijderen of invoegen.
 
-## De belangrijkste methoden
+## Lootjes trekken
 
-Net als bij strings hebben lijsten methoden die je met een punt aanroept:
+### Pak de laatste
 
-| Methode | Wat doet hij? |
-|---------|---------------|
-| `lijst.append(x)` | Voeg `x` toe aan het einde |
-| `lijst.insert(i, x)` | Voeg `x` toe op positie `i` |
-| `lijst.remove(x)` | Verwijder de eerste `x` uit de lijst |
-| `lijst.pop()` | Verwijder het laatste element en geef het terug |
-| `lijst.pop(i)` | Verwijder het element op positie `i` en geef het terug |
-
-### De methoden gebruiken
+Drie vrienden trekken lootjes voor een surprise. De lootjes zitten in een hoed: een lijst, met het bovenste lootje achteraan. Emma pakt het bovenste. Net als een tekst heeft een lijst methoden, die je met een punt aanroept:
 
 ```python
-dieren = ["kat", "hond", "vis"]
+hoed = ["Daan", "Yara", "Emma"]
 
-dieren.append("vogel")
-print(dieren)            # ['kat', 'hond', 'vis', 'vogel']
-
-dieren.remove("hond")
-print(dieren)            # ['kat', 'vis', 'vogel']
-
-laatste = dieren.pop()
-print(laatste)           # vogel
-print(dieren)            # ['kat', 'vis']
+lot = hoed.pop()
+print(f"Emma trekt {lot}")
+print(hoed)
 ```
 
-`.remove("hond")` geeft niets terug; `.pop()` geeft het verwijderde element wél terug, zodat je het kunt opvangen.
+Uitvoer:
 
-Anders dan bij een tekst veranderen deze methoden de lijst zelf. `"hallo".upper()` liet de tekst zoals hij was, `dieren.append("vogel")` verandert `dieren`.
+```
+Emma trekt Emma
+['Daan', 'Yara']
+```
 
-## Handige ingebouwde functies
+**`pop()`** haalt het laatste element uit de lijst en geeft het terug: het komt in `lot`. De lijst is daarna een element korter. Met een plek tussen de haakjes pakt `pop` een ander element: `hoed.pop(0)` is het eerste. Hier pakt `pop()` het bovenste lootje, en dat is van Emma zelf: ze trekt haar eigen naam.
 
-Voor lijsten van getallen heb je vaak geen loop nodig:
+### Haal er één uit
+
+Om niet haar eigen naam te trekken, haalt Emma eerst haar eigen lootje uit de hoed. De gemarkeerde regel is nieuw: **`remove`** zoekt `"Emma"` op in de lijst en haalt dat element weg.
+
+```python {3}
+hoed = ["Daan", "Yara", "Emma"]
+
+hoed.remove("Emma")
+lot = hoed.pop()
+print(f"Emma trekt {lot}")
+print(hoed)
+```
+
+Uitvoer:
+
+```
+Emma trekt Yara
+['Daan']
+```
+
+`remove` geeft niets terug, dus er staat geen variabele voor. Emma trekt nu Yara. Haar eigen lootje ligt alleen nog naast de hoed: zo trekt niemand Emma.
+
+### Voeg toe
+
+Na het trekken gaat het lootje van Emma terug in de hoed. De gemarkeerde regel is nieuw: **`append`** voegt `"Emma"` toe aan het eind van de lijst.
+
+```python {6}
+hoed = ["Daan", "Yara", "Emma"]
+
+hoed.remove("Emma")
+lot = hoed.pop()
+print(f"Emma trekt {lot}")
+hoed.append("Emma")
+print(hoed)
+```
+
+Uitvoer:
+
+```
+Emma trekt Yara
+['Daan', 'Emma']
+```
+
+Moet een element ergens anders komen, dan gebruik je `insert`: `hoed.insert(0, "Emma")` voegt Emma toe op plek 0. Anders dan bij een tekst veranderen deze methoden de lijst zelf. `"hallo".upper()` liet de tekst zoals hij was, `hoed.append("Emma")` verandert `hoed`.
+
+### Begin leeg
+
+Volgend jaar doen er meer vrienden mee, en wie er meedoet, weet je pas als ze zich melden. De hoed begint dan leeg: `[]` zijn blokhaken zonder iets ertussen, een lijst zonder elementen. Elke `append` doet er een lootje in.
 
 ```python
-getallen = [3, 1, 4, 1, 5]
+hoed = []
+print(hoed)
 
-print(len(getallen))      # 5
-print(sum(getallen))      # 14
-print(min(getallen))      # 1
-print(max(getallen))      # 5
-print(sorted(getallen))   # [1, 1, 3, 4, 5]
+hoed.append("Daan")
+hoed.append("Sem")
+print(hoed)
 ```
+
+Uitvoer:
+
+```
+[]
+['Daan', 'Sem']
+```
+
+Een lege lijst print als `[]`, en `len(hoed)` is dan `0`. Zo begint elke lijst die het programma pas onderweg vult.
+
+:::tip[Eerst op papier]
+Speel dit eerst na zonder computer, met een rij bekertjes: [Een rij bekertjes](site:python/docs/projecten/unplugged/bekertjes). Je docent kan de hand-out printen.
+:::
+
+## Maak het af
+
+Bij zaalvoetbal staan Finn, Lotte en Mila in het veld. Lotte wordt gewisseld voor Jip. Het programma meldt de wissel al, maar de lijst is nog niet veranderd. Twee stappen zijn nog open: Lotte uit de lijst halen en Jip toevoegen. Doe die zelf, en laat de eerste regel staan: verander de lijst met methoden.
+
+Verwachte uitvoer:
+
+```
+Lotte gaat eruit, Jip komt erin
+['Finn', 'Mila', 'Jip']
+```
+
+<CodeExercise>{`veld = ["Finn", "Lotte", "Mila"]
+
+print("Lotte gaat eruit, Jip komt erin")
+print(veld)`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Lotte staat niet achteraan in de lijst. Welke methode haalt een element weg dat je bij naam noemt? Kijk ook waar je de nieuwe regels zet: `print(veld)` laat de lijst zien zoals hij op dat moment is.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+veld = ["Finn", "Lotte", "Mila"]
+
+print("Lotte gaat eruit, Jip komt erin")
+veld.remove("Lotte")
+veld.append("Jip")
+print(veld)
+```
+
+`veld.pop()` had Mila uit het veld gehaald: `pop()` pakt altijd de laatste.
+
+</details>
+
+## Rekenen met een lijst
+
+### Tel op en sorteer
+
+Voor een lijst met getallen heeft Python functies die je een loop besparen. Net als bij `len()` staat de lijst tussen de haakjes:
+
+```python
+punten = [3, 1, 4, 1, 5]
+
+print(sum(punten))
+print(min(punten))
+print(max(punten))
+print(sorted(punten))
+```
+
+Uitvoer:
+
+```
+14
+1
+5
+[1, 1, 3, 4, 5]
+```
+
+`sum()` telt alle elementen op, `min()` en `max()` geven het kleinste en het grootste, en `sorted()` zet de elementen op volgorde, van klein naar groot. Het gemiddelde is `sum(punten) / len(punten)`.
 
 ### Voorspel
 
@@ -106,7 +219,7 @@ Uitvoer:
 ValueError: list.remove(x): x not in list
 ```
 
-Er zit geen hond in de lijst. Controleer het eerst: `if "hond" in dieren:`.
+Er zit geen hond in de lijst. Met `in` kijk je eerst of iets in een lijst zit: `"hond" in dieren` is `False`, dus onder `if "hond" in dieren:` slaat Python de `remove` over.
 
 ### Het resultaat van append bewaren
 
@@ -118,18 +231,40 @@ print(dieren)   # None
 
 Geen foutmelding, maar je lijst is weg. `append` verandert de lijst zelf en geeft niets terug, dus `dieren` wordt `None`. Schrijf alleen `dieren.append("hond")`, zonder `dieren =` ervoor.
 
+### De lijst veranderen na de print
+
+```python
+dieren = ["kat", "hond", "vis"]
+print(dieren)
+dieren.remove("hond")
+```
+
+Uitvoer:
+
+```
+['kat', 'hond', 'vis']
+```
+
+Geen foutmelding, maar de hond staat er nog. Python voert de regels van boven naar beneden uit: bij de `print` was de lijst nog niet veranderd. Zet `print(dieren)` onder de regel met `remove`.
+
 ---
 
 ## Opdracht 10b.1: Boodschappenlijstje
 
-Maak een lijst `boodschappen` met `"brood"` en `"melk"`. Voeg daarna `"appels"` toe en print de lijst.
+Maak een lijst `boodschappen` met `"brood"` en `"melk"`. Voeg daarna `"appels"` toe. Eieren wil je als eerste pakken: zet `"eieren"` vooraan in de lijst. Print daarna de lijst. Typ de lijst niet opnieuw: verander hem met methoden.
+
+Verwachte uitvoer:
+
+```
+['eieren', 'brood', 'melk', 'appels']
+```
 
 <CodeExercise>{`# Schrijf hier je code`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-`boodschappen.append("appels")` voegt het achteraan toe.
+`boodschappen.append("appels")` voegt het achteraan toe. Welke methode zet een element op een plek die je zelf kiest? Vooraan is plek `0`.
 
 </details>
 
@@ -140,15 +275,15 @@ Maak een lijst `boodschappen` met `"brood"` en `"melk"`. Voeg daarna `"appels"` 
 boodschappen = ["brood", "melk"]
 
 boodschappen.append("appels")
+boodschappen.insert(0, "eieren")
 
 print(boodschappen)
 ```
 
-Uitvoer: `['brood', 'melk', 'appels']`.
-
 <CodeExercise>{`boodschappen = ["brood", "melk"]
 
 boodschappen.append("appels")
+boodschappen.insert(0, "eieren")
 
 print(boodschappen)`}</CodeExercise>
 
@@ -158,7 +293,7 @@ print(boodschappen)`}</CodeExercise>
 
 ## Opdracht 10b.2: Cijfergemiddelde
 
-Gegeven een lijst cijfers, bereken het gemiddelde en tel hoeveel cijfers een voldoende (`>= 5.5`) zijn.
+In het veld staat een lijst `cijfers`. Bereken het gemiddelde en tel hoeveel cijfers een voldoende (`>= 5.5`) zijn. Laat het programma rekenen: met andere cijfers in de lijst moet het ook kloppen.
 
 Verwachte uitvoer:
 
@@ -167,7 +302,7 @@ Gemiddelde: 6.2
 Aantal voldoendes: 6
 ```
 
-<CodeExercise>{`# Schrijf hier je code`}</CodeExercise>
+<CodeExercise>{`cijfers = [7, 4, 8, 5, 9, 3, 6, 8, 5, 7]`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -211,10 +346,11 @@ print(f"Aantal voldoendes: {aantal_voldoende}")`}</CodeExercise>
 
 ## Opdracht 10b.3: To-do lijst manager
 
-Bouw een to-do lijst met drie functies:
+Bouw een to-do lijst met drie functies. Onderaan in het veld staan de lege lijst en de aanroepen al; schrijf de functies erboven.
 
-- `toon_taken(taken)` print alle taken genummerd, en `voeg_toe(taken, taak)` voegt een taak toe.
-- `verwijder(taken, nummer)` verwijdert de taak op die plek. De gebruiker telt vanaf 1.
+- `voeg_toe(taken, taak)` voegt een taak toe en print `Toegevoegd:` met de taak erachter.
+- `toon_taken(taken)` print een kop, alle taken genummerd vanaf 1, en een lege regel.
+- `verwijder(taken, nummer)` verwijdert de taak met dat nummer. De gebruiker telt vanaf 1.
 
 Verwachte uitvoer:
 
@@ -233,14 +369,27 @@ Toegevoegd: Kamer opruimen
 
 ```
 
-<CodeExercise>{`# Schrijf hier je code`}</CodeExercise>
+{/* niet-draaien: de drie functies schrijft de leerling zelf, boven de aanroepen */}
+<CodeExercise>{`# Schrijf hier de drie functies
+
+
+mijn_taken = []
+
+voeg_toe(mijn_taken, "Python oefenen")
+voeg_toe(mijn_taken, "Boodschappen doen")
+voeg_toe(mijn_taken, "Kamer opruimen")
+toon_taken(mijn_taken)
+
+verwijder(mijn_taken, 2)
+toon_taken(mijn_taken)`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
 De functies krijgen de lijst als parameter en veranderen hem met `append` en `pop`. Dat werkt zonder `global` en zonder `return`: je maakt geen nieuwe variabele, je past de lijst aan die je meekreeg.
 
-- `voeg_toe`: één regel, `taken.append(taak)`.
+- `voeg_toe`: `taken.append(taak)`, en dan de `print`.
+- `toon_taken`: een teller `nummer` die vóór de loop `0` is en elke ronde 1 omhoog gaat.
 - `verwijder`: `taken.pop(nummer - 1)`. De `-1` is nodig omdat de gebruiker bij `1` begint te tellen, maar Python bij `0`.
 
 </details>
@@ -251,8 +400,10 @@ De functies krijgen de lijst als parameter en veranderen hem met `append` en `po
 ```python
 def toon_taken(taken):
     print("=== Mijn To-Do Lijst ===")
-    for i in range(len(taken)):
-        print(f"  {i + 1}. {taken[i]}")
+    nummer = 0
+    for taak in taken:
+        nummer = nummer + 1
+        print(f"  {nummer}. {taak}")
     print()
 
 def voeg_toe(taken, taak):
@@ -273,12 +424,12 @@ verwijder(mijn_taken, 2)
 toon_taken(mijn_taken)
 ```
 
-Een lijst werkt met posities (`[0]`, `[1]`, ...). In de [volgende les](site:python/docs/data/11a-dictionaries-basis) leer je **dictionaries**: waardes opzoeken via een **naam** in plaats van een nummer.
-
 <CodeExercise>{`def toon_taken(taken):
     print("=== Mijn To-Do Lijst ===")
-    for i in range(len(taken)):
-        print(f"  {i + 1}. {taken[i]}")
+    nummer = 0
+    for taak in taken:
+        nummer = nummer + 1
+        print(f"  {nummer}. {taak}")
     print()
 
 def voeg_toe(taken, taak):

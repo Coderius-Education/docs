@@ -11,36 +11,89 @@ Je functies uit de vorige les deden altijd precies hetzelfde. Met een **paramete
 
 ## Een parameter meegeven
 
-Tussen de haakjes van `def` zet je de naam van de parameter. Binnen de functie gebruik je hem als gewone variabele:
+### Schrijf de functie
+
+Je nodigt Noor en Daan uit voor je feest. Op elke kaart staat de naam van de gast, en wat die gast meeneemt. Eerst een functie zoals je die kent, met de kaart voor Noor erin:
 
 ```python
-def begroet(naam):
-    print(f"Hallo, {naam}!")
+def kaart():
+    print("Hoi Noor,")
+    print("Kom je naar mijn feest?")
+    print("Groetjes, Sam")
 
-begroet("Sara")
-begroet("Alex")
+kaart()
+kaart()
 ```
 
 Uitvoer:
 
 ```
-Hallo, Sara!
-Hallo, Alex!
+Hoi Noor,
+Kom je naar mijn feest?
+Groetjes, Sam
+Hoi Noor,
+Kom je naar mijn feest?
+Groetjes, Sam
 ```
 
-- `naam` (tussen de haakjes van `def begroet`) is de **parameter**.
-- `"Sara"` en `"Alex"` zijn de **argumenten**: de waardes die je meegeeft bij de aanroep.
+Twee aanroepen geven twee kaarten voor Noor. De tweede was voor Daan bedoeld, maar de functie doet elke keer hetzelfde.
 
-## Meerdere parameters
+### Geef iets mee
 
-Scheid meerdere parameters met komma's:
+Een **parameter** is een naam tussen de haakjes van `def`: een variabele die zijn waarde krijgt bij de aanroep. De gemarkeerde regels zijn veranderd: de `def` heeft de parameter `naam`, de eerste `print` gebruikt hem in een f-string, en elke aanroep geeft een naam mee.
 
-```python
-def adres(straat, nummer):
-    print(f"{straat} {nummer}")
+```python {1-2,6-7}
+def kaart(naam):
+    print(f"Hoi {naam},")
+    print("Kom je naar mijn feest?")
+    print("Groetjes, Sam")
 
-adres("Hoofdstraat", 12)
+kaart("Noor")
+kaart("Daan")
 ```
+
+Uitvoer:
+
+```
+Hoi Noor,
+Kom je naar mijn feest?
+Groetjes, Sam
+Hoi Daan,
+Kom je naar mijn feest?
+Groetjes, Sam
+```
+
+`"Noor"` en `"Daan"` zijn de **argumenten**: de waardes die je meegeeft bij de aanroep. Elke gast heeft een eigen kaart, maar wat die gast meeneemt, staat er nog niet op.
+
+### Geef meer mee
+
+Een functie mag meer parameters hebben, met een komma ertussen. De gemarkeerde regels zijn nieuw of veranderd: de `def` heeft er `hapje` bij, een nieuwe `print` gebruikt hem, en elke aanroep geeft twee argumenten mee.
+
+```python {1,4,7-8}
+def kaart(naam, hapje):
+    print(f"Hoi {naam},")
+    print("Kom je naar mijn feest?")
+    print(f"Neem jij de {hapje} mee?")
+    print("Groetjes, Sam")
+
+kaart("Noor", "chips")
+kaart("Daan", "cola")
+```
+
+Uitvoer:
+
+```
+Hoi Noor,
+Kom je naar mijn feest?
+Neem jij de chips mee?
+Groetjes, Sam
+Hoi Daan,
+Kom je naar mijn feest?
+Neem jij de cola mee?
+Groetjes, Sam
+```
+
+Noor neemt de chips mee en Daan de cola. Binnen de functie zijn `naam` en `hapje` gewone variabelen: je gebruikt ze waar je een waarde nodig hebt.
 
 ### Voorspel
 
@@ -52,7 +105,7 @@ adres(12, "Hoofdstraat")
 ```
 
 <Voorspel vraag="Wat zet dit programma op het scherm?">
-  <Keuze uitleg="Python kijkt niet wat er bij straat of nummer past. Hij vult de parameters op volgorde.">`Hoofdstraat 12`</Keuze>
+  <Keuze uitleg="Python kijkt niet wat bij straat of nummer past. Hij vult ze op volgorde.">`Hoofdstraat 12`</Keuze>
   <Keuze goed uitleg="Het eerste argument gaat naar de eerste parameter: straat wordt 12.">`12 Hoofdstraat`</Keuze>
   <Keuze uitleg="Een getal als straat is vreemd, maar Python ziet daar geen fout in.">Een foutmelding</Keuze>
   <Uitleg>
@@ -61,6 +114,47 @@ adres(12, "Hoofdstraat")
 
   </Uitleg>
 </Voorspel>
+
+## Maak het af
+
+In de kantine kost alles 3 euro. De functie `bon` krijgt een product en een aantal, en print wat dat samen kost. De zin klopt al, maar de prijs is bij elke aanroep 6 euro: in de berekening staat nog een vast getal. Eén stap is nog open: de parameter in de berekening. Doe die zelf.
+
+Verwachte uitvoer:
+
+```
+2 keer tosti: 6 euro
+5 keer soep: 15 euro
+```
+
+<CodeExercise>{`def bon(product, aantal):
+    prijs = 2 * 3
+    print(f"{aantal} keer {product}: {prijs} euro")
+
+bon("tosti", 2)
+bon("soep", 5)`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Draai het programma eerst: vijf keer soep kost ook 6 euro. In de berekening staan twee getallen. Welk van de twee is de prijs van één product, en welk hoort bij elke aanroep anders te zijn?
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+def bon(product, aantal):
+    prijs = aantal * 3
+    print(f"{aantal} keer {product}: {prijs} euro")
+
+bon("tosti", 2)
+bon("soep", 5)
+```
+
+Een parameter is binnen de functie een gewone variabele, dus je mag ermee rekenen.
+
+</details>
 
 ## Er gaat iets mis
 
@@ -102,18 +196,44 @@ TypeError: begroet() takes 1 positional argument but 2 were given
 
 `begroet` heeft één parameter, dus hij neemt één argument. Wil je twee mensen begroeten, roep hem dan twee keer aan.
 
+### De parameter niet gebruiken
+
+```python
+def begroet(naam):
+    print("Hallo, Sara!")
+
+begroet("Sara")
+begroet("Alex")
+```
+
+Uitvoer:
+
+```
+Hallo, Sara!
+Hallo, Sara!
+```
+
+Geen foutmelding, maar Alex krijgt de groet van Sara. De functie heeft een parameter en doet er niets mee: in de `print` staat nog een vaste naam. Zet de parameter op de plek van die vaste waarde: `f"Hallo, {naam}!"`.
+
 ---
 
 ## Opdracht 9a.1: Welkom met naam
 
-Maak een functie `welkom(naam)` die `"Welkom, [naam]!"` print, en roep hem aan met je eigen naam.
+Maak een functie `welkom(naam)` die `Welkom,` en de naam print. Roep hem twee keer aan: met de tekst `"Alex"`, en met de variabele `gast` die al in het veld staat.
 
-<CodeExercise>{`# Schrijf hier je code`}</CodeExercise>
+Verwachte uitvoer:
+
+```
+Welkom, Alex!
+Welkom, Noor!
+```
+
+<CodeExercise>{`gast = "Noor"`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-`def welkom(naam):` met een f-string `f"Welkom, {naam}!"`. Roep aan met `welkom("Alex")`.
+`def welkom(naam):` met een f-string `f"Welkom, {naam}!"`. Tussen de haakjes van een aanroep mag elke waarde staan, ook een variabele. Hoe die variabele heet, maakt niet uit: in de functie heet de waarde `naam`.
 
 </details>
 
@@ -121,16 +241,22 @@ Maak een functie `welkom(naam)` die `"Welkom, [naam]!"` print, en roep hem aan m
 <summary>Klik hier voor de oplossing.</summary>
 
 ```python
+gast = "Noor"
+
 def welkom(naam):
     print(f"Welkom, {naam}!")
 
 welkom("Alex")
+welkom(gast)
 ```
 
-<CodeExercise>{`def welkom(naam):
+<CodeExercise>{`gast = "Noor"
+
+def welkom(naam):
     print(f"Welkom, {naam}!")
 
-welkom("Alex")`}</CodeExercise>
+welkom("Alex")
+welkom(gast)`}</CodeExercise>
 
 </details>
 
@@ -192,7 +318,7 @@ groet("Maria", "es")`}</CodeExercise>
 
 ## Opdracht 9a.3: Vormen tekenen
 
-Maak twee functies: `driehoek(hoogte)` en `vierkant(grootte)`. De driehoek groeit per regel; het vierkant is altijd even breed als hoog. Roep ze beide aan.
+Maak twee functies: `driehoek(hoogte)` en `vierkant(grootte)`. De driehoek groeit per regel; het vierkant is altijd even breed als hoog. Roep ze beide aan, met een lege regel ertussen: `print()` zonder iets tussen de haakjes print een lege regel.
 
 Verwachte uitvoer (bij `driehoek(4)` en `vierkant(4)`):
 

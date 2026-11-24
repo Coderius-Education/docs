@@ -7,41 +7,177 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 # 6c Een ronde overslaan met continue
 
-Soms wil je in een loop bepaalde rondes overslaan. Wat denk je dat dit doet?
+Soms wil je in een loop één ronde overslaan. Daar is `continue` voor.
+
+## Een rustdag in je schema
+
+### Schrijf de loop
+
+Je maakt een trainingsschema voor vijf dagen: elke dag trainen en daarna rekken. Eerst de loop die elke dag hetzelfde doet:
 
 ```python
-for i in range(6):
-    if i == 3:
+for dag in range(1, 6):
+    print(f"Dag {dag}: trainen")
+    print("Daarna rekken")
+```
+
+Uitvoer:
+
+```
+Dag 1: trainen
+Daarna rekken
+Dag 2: trainen
+Daarna rekken
+Dag 3: trainen
+Daarna rekken
+Dag 4: trainen
+Daarna rekken
+Dag 5: trainen
+Daarna rekken
+```
+
+Vijf dagen trainen en rekken, zonder rustdag.
+
+### Herken de ronde
+
+Dag 3 wordt een rustdag. Een `if` in de loop kijkt elke ronde of het dag 3 is. De gemarkeerde regels zijn nieuw: de `if` en de `print` die erbij hoort. Die `print` springt acht spaties in: vier voor de loop en vier voor de `if`.
+
+```python {2-3}
+for dag in range(1, 6):
+    if dag == 3:
+        print(f"Dag {dag}: rust")
+    print(f"Dag {dag}: trainen")
+    print("Daarna rekken")
+```
+
+Uitvoer:
+
+```
+Dag 1: trainen
+Daarna rekken
+Dag 2: trainen
+Daarna rekken
+Dag 3: rust
+Dag 3: trainen
+Daarna rekken
+Dag 4: trainen
+Daarna rekken
+Dag 5: trainen
+Daarna rekken
+```
+
+Dag 3 staat er nu twee keer: eerst rust, en daarna toch trainen en rekken. Na het `if`-blok gaat Python verder met de volgende regels van de loop.
+
+### Sla de rest over
+
+**`continue`** zegt: stop met déze ronde en ga meteen door met de volgende. De gemarkeerde regel is nieuw: `continue` staat onderaan in het `if`-blok, op acht spaties. Op dag 3 komt Python zo niet meer bij de twee regels eronder.
+
+```python {4}
+for dag in range(1, 6):
+    if dag == 3:
+        print(f"Dag {dag}: rust")
+        continue
+    print(f"Dag {dag}: trainen")
+    print("Daarna rekken")
+```
+
+Uitvoer:
+
+```
+Dag 1: trainen
+Daarna rekken
+Dag 2: trainen
+Daarna rekken
+Dag 3: rust
+Dag 4: trainen
+Daarna rekken
+Dag 5: trainen
+Daarna rekken
+```
+
+De loop zelf draait door: dag 4 en 5 staan er nog.
+
+### Voorspel
+
+```python
+for i in range(5):
+    if i < 3:
         continue
     print(i)
 ```
 
 <Voorspel vraag="Welke getallen zet dit programma op het scherm?">
-  <Keuze uitleg="continue stopt niet de hele loop. Na de 3 gaat hij verder.">`0`, `1` en `2`</Keuze>
-  <Keuze goed uitleg="Bij i == 3 slaat continue de print over, en daarna gaat de loop door met 4.">`0`, `1`, `2`, `4` en `5`</Keuze>
-  <Keuze uitleg="De print staat ná continue, dus in de ronde van de 3 komt Python er niet aan toe.">`0`, `1`, `2`, `3`, `4` en `5`</Keuze>
+  <Keuze uitleg="Juist in die rondes is i < 3 waar, en dan slaat continue de print over.">`0`, `1` en `2`</Keuze>
+  <Keuze goed uitleg="Bij 0, 1 en 2 slaat continue de print over. Bij 3 en 4 niet.">`3` en `4`</Keuze>
+  <Keuze uitleg="continue stopt de loop niet. Na een overgeslagen ronde komt de volgende.">Niets</Keuze>
   <Uitleg>
 
-  De 3 ontbreekt. **`continue`** zegt: stop met déze ronde en ga meteen door met de volgende. Wat in de loop ná `continue` staat (hier de `print`), slaat Python die ronde over, en de loop zelf draait door.
+  Je ziet `3` en `4`. `continue` werkt in elke ronde waarin de `if` waar is: hier drie rondes achter elkaar. Pas bij 3 komt Python bij de `print`.
 
   </Uitleg>
 </Voorspel>
 
-## Waarom is dit handig?
+## Maak het af
 
-Zonder `continue` moet je de rest van de loop in een `else` stoppen:
+Deze bus rijdt langs vijf haltes. Bij elke halte stopt hij en stappen er mensen in. Halte 3 is opgebroken: de `if` meldt dat al, maar de bus stopt er nog steeds. Eén stap is nog open: `continue` op de goede plek. Doe die zelf.
 
-```python
-for i in range(6):
-    if i == 3:
-        print("overslaan")
-    else:
-        print(i)
+Verwachte uitvoer:
+
+```
+Halte 1: stoppen
+Mensen stappen in
+Halte 2: stoppen
+Mensen stappen in
+Halte 3 vervalt
+Halte 4: stoppen
+Mensen stappen in
+Halte 5: stoppen
+Mensen stappen in
 ```
 
-Bij één regel maakt dat weinig uit. Maar hoe meer code er in de loop
-staat, hoe fijner het is om bovenaan te zeggen "deze ronde niet" en
-daarna verder te schrijven zonder extra inspringen.
+<CodeExercise>{`for halte in range(1, 6):
+    if halte == 3:
+        print(f"Halte {halte} vervalt")
+    print(f"Halte {halte}: stoppen")
+    print("Mensen stappen in")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Draai het programma eerst: bij halte 3 staan er drie regels. `continue` hoort bij de `if`. Kijk hoeveel spaties de `print` in het `if`-blok inspringt.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+for halte in range(1, 6):
+    if halte == 3:
+        print(f"Halte {halte} vervalt")
+        continue
+    print(f"Halte {halte}: stoppen")
+    print("Mensen stappen in")
+```
+
+Staat `continue` op vier spaties, dan hoort hij niet meer bij de `if` en slaat de loop in elke ronde de rest over.
+
+</details>
+
+## Waarom is dit handig?
+
+Zonder `continue` zet je de rest van de loop in een `else`:
+
+```python
+for dag in range(1, 6):
+    if dag == 3:
+        print(f"Dag {dag}: rust")
+    else:
+        print(f"Dag {dag}: trainen")
+        print("Daarna rekken")
+```
+
+Dat doet hetzelfde. Het verschil zit in de vorm: met `else` springt alles wat bij een gewone dag hoort een niveau verder in. Hoe meer code er in de loop staat, hoe fijner het is om bovenaan te zeggen "deze ronde niet" en daarna verder te schrijven zonder extra inspringen.
 
 **Let op:** verwar `continue` niet met het verwante `break`, dat de
 **hele loop** stopt in plaats van één ronde over te slaan. Dat is de
@@ -68,6 +204,24 @@ SyntaxError: 'continue' not properly in loop
 ```
 
 `continue` hoort in een loop, en die van jou springt niet ver genoeg in. Meestal hoort hij bij de `if` in de loop.
+
+### continue buiten het if-blok
+
+```python
+for i in range(6):
+    if i == 3:
+        print("overslaan")
+    continue
+    print(i)
+```
+
+Uitvoer:
+
+```
+overslaan
+```
+
+Geen foutmelding, maar er komt geen enkel getal op het scherm. `continue` staat op vier spaties en hoort dus bij de loop, niet bij de `if`: in elke ronde slaat hij de `print` eronder over. Zet `continue` op acht spaties, in het `if`-blok.
 
 ### continue na de print
 

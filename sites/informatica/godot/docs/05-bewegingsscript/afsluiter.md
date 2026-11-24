@@ -123,7 +123,9 @@ Het gaat mis zodra je ook in de lucht mag springen, zoals bij dubbel springen in
 
 Je bewegingsscript is compleet, en je hebt geen regel gekregen die je niet zelf hebt getypt.
 
-```gdscript
+De gemarkeerde regels zijn nieuw of veranderd in deze les.
+
+```gdscript {4,10-11}
 extends CharacterBody2D
 
 const SPEED = 300.0

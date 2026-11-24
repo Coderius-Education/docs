@@ -19,6 +19,7 @@
   --ifm-color-gray-900: #1c2420;
   --coderius-markeer: #f9df5c;
   --docusaurus-highlighted-code-line-bg: color-mix(in srgb, #f9df5c 38%, transparent);
+  --coderius-markeer-rand: #9a6700;
   --ifm-color-primary: #007e57;
   --ifm-color-primary-dark: #00734f;
   --ifm-color-primary-darker: #006a49;
@@ -34,7 +35,8 @@ html[data-theme="dark"]:not(#\#):not(#\#) {
   --ifm-background-surface-color: #19211e;
   --ifm-color-content: #e2eae6;
   --ifm-heading-color: #e2eae6;
-  --docusaurus-highlighted-code-line-bg: color-mix(in srgb, #f9df5c 20%, transparent);
+  --docusaurus-highlighted-code-line-bg: color-mix(in srgb, #f9df5c 4%, transparent);
+  --coderius-markeer-rand: #f9df5c;
   --ifm-color-primary: #3ec691;
   --ifm-color-primary-dark: #2ebb86;
   --ifm-color-primary-darker: #20b27f;

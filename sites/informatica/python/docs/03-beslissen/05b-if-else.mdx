@@ -9,37 +9,75 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 Een vergelijking geeft `True` of `False`. Met `if` en `else` laat je je programma daar **iets mee doen**.
 
-## if en else
+## Een record in je spel
 
-Met `if` voer je code uit als een voorwaarde `True` is. Met `else` zeg je wat er anders moet gebeuren:
+### Print het bericht
+
+Na elk potje laat een spel je punten zien, en het meldt een nieuw record. Eerst de twee regels die dat op het scherm zetten:
 
 ```python
-leeftijd = 15
+punten = 120
+record = 150
 
-if leeftijd >= 18:
-    print("Je bent volwassen!")
-else:
-    print("Je bent nog minderjarig.")
+print(f"Je punten: {punten}")
+print("Nieuw record.")
+```
+
+Uitvoer:
+
+```
+Je punten: 120
+Nieuw record.
+```
+
+Dat klopt niet: het record staat op 150, en 120 is minder. Het programma meldt bij elk aantal punten een record.
+
+### Stel de voorwaarde
+
+Een `if` voert code alleen uit als een voorwaarde `True` is. De gemarkeerde regels zijn nieuw of veranderd: de `if` met de voorwaarde `punten > record` en een dubbele punt, en de `print` eronder, die nu vier spaties inspringt.
+
+```python {5-6}
+punten = 120
+record = 150
+
+print(f"Je punten: {punten}")
+if punten > record:
+    print("Nieuw record.")
+```
+
+Uitvoer:
+
+```
+Je punten: 120
 ```
 
 {/* foutmelding-van: if True:\nprint("hoi") */}
 
-De regels ná `if` en `else` springen **4 spaties** in. Die inspringing is geen opmaak: Python ziet eraan welke regels bij het blok horen. Laat je hem weg, dan krijg je een `IndentationError`.
+Die inspringing is geen opmaak: Python ziet eraan welke regels bij de `if` horen, het **blok**. Laat je hem weg, dan krijg je een `IndentationError`. 120 is niet groter dan 150, dus Python slaat het blok over. Wie geen record haalt, hoort nu niets.
 
-## if zonder else
+### Vang de rest op
 
-Je hebt niet altijd een `else` nodig:
+`else` zegt wat er gebeurt als de voorwaarde van de `if` `False` is. De gemarkeerde regels zijn nieuw: `else` met een dubbele punt, recht onder de `if`, en een `print` die vier spaties inspringt.
 
-```python
-score = 80
+```python {7-8}
+punten = 120
+record = 150
 
-if score >= 50:
-    print("Gefeliciteerd, je bent geslaagd!")
-
-print("Je score was:", score)
+print(f"Je punten: {punten}")
+if punten > record:
+    print("Nieuw record.")
+else:
+    print("Het record blijft staan.")
 ```
 
-De tweede `print` springt niet in. Hij staat buiten het `if`-blok, dus Python voert hem **altijd** uit.
+Uitvoer:
+
+```
+Je punten: 120
+Het record blijft staan.
+```
+
+Van de twee blokken voert Python er altijd precies één uit. Met `punten = 180` staat er `Nieuw record.` Een `else` is niet verplicht: zonder `else` doet een `if` niets als de voorwaarde `False` is.
 
 ### Voorspel
 
@@ -61,6 +99,49 @@ print("Klaar")
 
   </Uitleg>
 </Voorspel>
+
+## Maak het af
+
+Bij het poortje van het station kijkt dit programma of er genoeg saldo op je kaart staat voor een rit van 4 euro. De drie `print`-regels staan er al, maar het programma zegt ze alle drie: eerst `Goede reis.` en meteen daarna dat je moet opladen. Twee stappen zijn nog open: de `if` met de voorwaarde, en `else` voor wie te weinig saldo heeft. Doe die zelf, en gooi geen regel weg: met `saldo = 3` moet hetzelfde programma zeggen dat je moet opladen.
+
+Verwachte uitvoer:
+
+```
+Saldo: 10 euro
+Goede reis.
+```
+
+<CodeExercise>{`saldo = 10
+ritprijs = 4
+
+print(f"Saldo: {saldo} euro")
+print("Goede reis.")
+print("Laad eerst je kaart op.")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Welke regel hoort bij genoeg saldo, en welke bij te weinig? Die twee springen in, elk onder een eigen regel met een dubbele punt. De regel met je saldo komt altijd op het scherm en springt niet in.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+saldo = 10
+ritprijs = 4
+
+print(f"Saldo: {saldo} euro")
+if saldo >= ritprijs:
+    print("Goede reis.")
+else:
+    print("Laad eerst je kaart op.")
+```
+
+Staat de laatste `print` nog zonder `else` onder de `if`, dan zegt het programma na `Goede reis.` nog steeds dat je moet opladen.
+
+</details>
 
 ## Puzzel
 
@@ -139,18 +220,49 @@ SyntaxError: invalid syntax. Maybe you meant '==' or ':=' instead of '='?
 
 Met één `=` geef je een variabele een waarde. Vergelijken doe je met `==`. Python raadt het in de melding zelf al.
 
+### else vergeten
+
+```python
+leeftijd = 20
+
+if leeftijd >= 18:
+    print("Volwassen")
+print("Minderjarig")
+```
+
+Uitvoer:
+
+```
+Volwassen
+Minderjarig
+```
+
+Geen foutmelding, maar het programma zegt twee dingen die elkaar tegenspreken. De laatste `print` springt niet in en hoort dus niet bij de `if`: Python voert hem altijd uit. Zet er `else:` boven en laat de `print` inspringen.
+
 ---
 
 ## Opdracht 5b.1: Geslaagd?
 
-Schrijf een `if`/`else` die `"Gefeliciteerd, je bent geslaagd!"` print als `cijfer` minstens `5.5` is, en anders `"Helaas, gezakt."`.
+Maak een variabele `cijfer` met de waarde `5.5`. Schrijf een `if`/`else` die `Gefeliciteerd, je bent geslaagd!` print als `cijfer` minstens `5.5` is, en anders `Helaas, gezakt.`
+
+Verwachte uitvoer (bij `cijfer = 5.5`):
+
+```
+Gefeliciteerd, je bent geslaagd!
+```
+
+Verwachte uitvoer (bij `cijfer = 5.4`):
+
+```
+Helaas, gezakt.
+```
 
 <CodeExercise>{`# Schrijf hier je code`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-`if cijfer >= 5.5:` voor de eerste tak, `else:` voor de tweede. Vergeet de dubbele punt en de inspringing niet.
+`if cijfer >= 5.5:` voor de eerste tak, `else:` voor de tweede. Vergeet de dubbele punt en de inspringing niet. Probeer je programma daarna met `cijfer = 5.4`.
 
 </details>
 
@@ -158,7 +270,7 @@ Schrijf een `if`/`else` die `"Gefeliciteerd, je bent geslaagd!"` print als `cijf
 <summary>Klik hier voor de oplossing.</summary>
 
 ```python
-cijfer = 6.0
+cijfer = 5.5
 
 if cijfer >= 5.5:
     print("Gefeliciteerd, je bent geslaagd!")
@@ -166,7 +278,9 @@ else:
     print("Helaas, gezakt.")
 ```
 
-<CodeExercise>{`cijfer = 6.0
+Met `>` in plaats van `>=` zakt wie precies een 5,5 heeft.
+
+<CodeExercise>{`cijfer = 5.5
 
 if cijfer >= 5.5:
     print("Gefeliciteerd, je bent geslaagd!")
@@ -179,7 +293,7 @@ else:
 
 ## Opdracht 5b.2: Toegangscontrole
 
-Een feestje heeft een minimumleeftijd van 14. Print of de gast welkom is.
+Een feestje heeft een minimumleeftijd van 14. Print of de gast welkom is. Is hij te jong, zeg dan op een tweede regel over hoeveel jaar hij terug kan komen. Dat getal rekent je programma uit.
 
 Verwachte uitvoer (bij `leeftijd = 15`):
 
@@ -187,10 +301,11 @@ Verwachte uitvoer (bij `leeftijd = 15`):
 Welkom op het feestje!
 ```
 
-Verwachte uitvoer (bij `leeftijd = 12`):
+Verwachte uitvoer (bij `leeftijd = 11`):
 
 ```
 Sorry, je bent te jong.
+Kom over 3 jaar terug.
 ```
 
 <CodeExercise>{`# Schrijf hier je code`}</CodeExercise>
@@ -198,7 +313,7 @@ Sorry, je bent te jong.
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-`if leeftijd >= 14:` — de drempel is 14, niet 18.
+Wie precies 14 is, mag erin: kies het teken daarbij. Onder `else` mogen twee regels inspringen. Het aantal jaren is het verschil tussen 14 en `leeftijd`, en dat kun je in een f-string uitrekenen.
 
 </details>
 
@@ -206,20 +321,22 @@ Sorry, je bent te jong.
 <summary>Klik hier voor de oplossing.</summary>
 
 ```python
-leeftijd = 15
+leeftijd = 11
 
 if leeftijd >= 14:
     print("Welkom op het feestje!")
 else:
     print("Sorry, je bent te jong.")
+    print(f"Kom over {14 - leeftijd} jaar terug.")
 ```
 
-<CodeExercise>{`leeftijd = 15
+<CodeExercise>{`leeftijd = 11
 
 if leeftijd >= 14:
     print("Welkom op het feestje!")
 else:
-    print("Sorry, je bent te jong.")`}</CodeExercise>
+    print("Sorry, je bent te jong.")
+    print(f"Kom over {14 - leeftijd} jaar terug.")`}</CodeExercise>
 
 </details>
 

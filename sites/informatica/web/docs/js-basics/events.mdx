@@ -91,9 +91,9 @@ export const makeJs = `// Schrijf hier je code
 
 Tot nu toe koppelde je gedrag aan een knop met `onclick` in de HTML. Vanaf deze les doe je dat vanuit JavaScript, met **`addEventListener`** — dan blijven HTML en gedrag gescheiden, en kun je op veel meer reageren dan alleen klikken.
 
-## Een functie maken
+### Schrijf de functie
 
-Dit ken je al uit [De script-tag](site:web/docs/js-basics/script-tag):
+De HTML heeft een knop met `id="knop"`, zonder `onclick`, en een `<p id="status">`. Een functie maken ken je al uit [De script-tag](site:web/docs/js-basics/script-tag):
 
 ```js
 function zegHoi() {
@@ -101,11 +101,17 @@ function zegHoi() {
 }
 ```
 
-## De functie aan een event koppelen
+Een klik op de knop doet niets: zonder `onclick` roept niets de functie `zegHoi` aan.
 
-`addEventListener` zet een luisteraar op een element. De drie onderdelen:
+### Koppel het event
 
-```js
+`addEventListener` zet een luisteraar op een element, hier de knop met `id="knop"`. De gemarkeerde regel is nieuw: hij koppelt de functie aan een klik op die knop.
+
+```js {5}
+function zegHoi() {
+  document.getElementById('status').textContent = 'Geklikt.';
+}
+
 document.getElementById('knop').addEventListener('click', zegHoi);
 ```
 
@@ -113,7 +119,11 @@ document.getElementById('knop').addEventListener('click', zegHoi);
 - `'click'`: de naam van het event waarop je reageert
 - `zegHoi`: de functie die draait zodra het event plaatsvindt
 
-De functie geef je mee **zonder haakjes**: je noemt zijn naam, zoals je iemand een telefoonnummer geeft. De browser "belt" hem pas bij het event.
+Na een klik staat er `Geklikt.` in de `<p id="status">`.
+
+### Let op de haakjes
+
+In `addEventListener('click', zegHoi)` staat de functie **zonder haakjes**: je noemt zijn naam, zoals je iemand een telefoonnummer geeft. De browser "belt" hem pas bij het event.
 
 :::note[Naamloze functies in andermans code]
 Op internet zie je vaak een functie zonder naam, rechtstreeks in de listener: `addEventListener('click', function() { ... })`. Dat werkt, maar in deze lessen krijgt elke functie een naam: dat leest makkelijker, en je kunt hem vaker gebruiken.
@@ -213,7 +223,7 @@ De muis-listeners blijven ook werken: elke listener reageert op zijn eigen event
 
 ## Opdracht 2: Klik-teller
 
-Schrijf een functie `telKlik` die de klikken telt: bij elke klik komt er 1 bij, en de `<p id="teller">` toont "Aantal klikken: " met het aantal. Koppel hem aan het `'click'`-event van de knop.
+Schrijf een functie `telKlik` die de klikken telt: bij elke klik komt er 1 bij, en de `<p id="teller">` toont "Aantal klikken: " met het aantal. Met `+` plak je een tekst en een getal aan elkaar: `'Aantal klikken: ' + 2` wordt `Aantal klikken: 2`. Koppel de functie aan het `'click'`-event van de knop.
 
 <CodeEditor
   initialHtml={startHtml}

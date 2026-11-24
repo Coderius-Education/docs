@@ -114,6 +114,49 @@ describe('invoer en operatoren', () => {
   });
 });
 
+// Wat een doorloop als leerling van de lessen in stappen vond (november
+// 2026): code die een les gebruikt voordat een les hem uitlegt. 10a gebruikte
+// `[]`, dat pas in een oplossing van 10b stond; 5c noemde `or` en `not` maar
+// toonde ze nergens werkend; 11c rondde af met `:.1f` zonder uitleg; en les
+// 12 ging uit van `lijst[i] = …`, dat geen les liet zien. Per constructie de
+// les die hem uitlegt: daar staat hij voor het eerst in code, en de tekst van
+// die les noemt hem.
+const UITGELEGD: { wat: string; code: RegExp; les: string; tekst: RegExp; strings?: boolean }[] = [
+  { wat: 'een lege lijst', code: /=\s*\[\]/, les: '10b', tekst: /`\[\]`/ },
+  { wat: 'or', code: /\bor\b/, les: '05c', tekst: /`or`/ },
+  { wat: 'not', code: /\bnot\b/, les: '05c', tekst: /`not`/ },
+  { wat: 'afronden in een f-string', code: /:\.\d+f/, les: '11c', tekst: /`:\.1f`/, strings: true },
+  {
+    wat: 'een element vervangen',
+    code: /\w\[[^\]\n]+\]\s*=[^=]/,
+    les: '10a',
+    tekst: /`team\[1\] = /,
+  },
+];
+
+/** De code van een les, zonder commentaar en (tenzij gevraagd) zonder tekst tussen aanhalingstekens. */
+function codeVan(tekst: string, strings = false) {
+  return [
+    ...tekst.matchAll(
+      /```python[^\n]*\n([\s\S]*?)```|<CodeExercise[^>]*>\{`([\s\S]*?)`\}|code=\{`([\s\S]*?)`\}/g,
+    ),
+  ].map((m) =>
+    (m[1] ?? m[2] ?? m[3])
+      .replace(/#.*$/gm, '')
+      .replace(/f?"(?:[^"\\\n]|\\.)*"|f?'(?:[^'\\\n]|\\.)*'/g, (s) => (strings ? s : '""')),
+  );
+}
+
+describe('code staat pas in een les als hij is uitgelegd', () => {
+  it.each(UITGELEGD)('$wat: voor het eerst in les $les, en die les noemt hem', (regel) => {
+    const eerste = metCode.find((les) =>
+      codeVan(les.tekst, regel.strings).some((code) => regel.code.test(code)),
+    );
+    expect(eerste?.id).toBe(regel.les);
+    expect(eerste?.tekst).toMatch(regel.tekst);
+  });
+});
+
 // Het goede antwoord van een voorspelvraag is een belofte over Python, net als
 // een uitvoerblok; het blokken-script ziet hem niet, want de vraag staat tussen
 // de code en het antwoord. Deze test draait het blok direct boven elke
@@ -127,7 +170,7 @@ describe('invoer en operatoren', () => {
 function bestandenVoor(tekst: string): Map<string, string> {
   const bestanden = new Map<string, string>();
   for (const m of tekst.matchAll(
-    /^\*\*`(\w+\.py)`\*\*\s*\n(?:\s*\{\/\*[\s\S]*?\*\/\}\s*\n)*\s*```python\n([\s\S]*?)```/gm,
+    /^\*\*`(\w+\.py)`\*\*\s*\n(?:\s*\{\/\*[\s\S]*?\*\/\}\s*\n)*\s*```python[^\n]*\n([\s\S]*?)```/gm,
   )) {
     if (m[1] !== 'main.py') bestanden.set(m[1], m[2]);
   }
@@ -138,7 +181,7 @@ describe('het goede antwoord van elke voorspelvraag', () => {
   const vragen = metCode.flatMap((les) =>
     [
       ...les.tekst.matchAll(
-        /```python\n((?:(?!```)[\s\S])*?)```\s*<Voorspel vraag="([^"]*)"[^>]*>([\s\S]*?)<\/Voorspel>/g,
+        /```python[^\n]*\n((?:(?!```)[\s\S])*?)```\s*<Voorspel vraag="([^"]*)"[^>]*>([\s\S]*?)<\/Voorspel>/g,
       ),
     ].map((m) => ({
       les: les.id,

@@ -84,9 +84,9 @@ describe('leerling-doorloop van de FastAPI-route', () => {
     // Laat het zien opdracht 5 gaf db[sleutel] = …, terwijl POST /gastenboek
     // sinds Cookies db[f"bericht_{time.time_ns()}"] gebruikt: overnemen gaf een
     // NameError en een 500.
-    const blokken = [...les('afronden/laat-het-zien').matchAll(/```python\n([\s\S]*?)```/g)].map(
-      (m) => m[1],
-    );
+    const blokken = [
+      ...les('afronden/laat-het-zien').matchAll(/```python[^\n]*\n([\s\S]*?)```/g),
+    ].map((m) => m[1]);
     for (const b of blokken) {
       if (b.includes('db[sleutel] =')) expect(b, b).toMatch(/sleutel = /);
     }

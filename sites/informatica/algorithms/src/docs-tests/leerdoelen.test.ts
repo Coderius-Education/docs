@@ -294,7 +294,7 @@ describe('leerdoelen van Algoritmiek: de route machine learning op niveau 1', ()
     const code = (id: string) => {
       const tekst = lees(id);
       return [
-        ...[...tekst.matchAll(/```python\n([\s\S]*?)```/g)].map((m) => m[1]),
+        ...[...tekst.matchAll(/```python[^\n]*\n([\s\S]*?)```/g)].map((m) => m[1]),
         ...[...tekst.matchAll(/initialCode=\{`([\s\S]*?)`\}/g)].map((m) => m[1]),
       ];
     };

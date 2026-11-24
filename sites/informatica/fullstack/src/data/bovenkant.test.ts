@@ -24,7 +24,8 @@ const categorieen = sidebars.apiSidebar as unknown as { label: string; items: It
 const lessen = plat(sidebars.apiSidebar as unknown as Item[]);
 const tekst = (id: string) => readFileSync(`${DOCS}/${id}.mdx`, 'utf8');
 
-const STAND = /<summary>Zo ziet je `main\.py` er nu uit<\/summary>[\s\S]*?```python\n([\s\S]*?)```/;
+const STAND =
+  /<summary>Zo ziet je `main\.py` er nu uit<\/summary>[\s\S]*?```python[^\n]*\n([\s\S]*?)```/;
 const imports = (code: string) => {
   const per = new Map<string, Set<string>>();
   for (const m of code.matchAll(/^from ([\w.]+) import ([\w, ]+)$/gm))

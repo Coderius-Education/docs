@@ -108,7 +108,7 @@ document.querySelector('.kaart h2');   // h2 binnen .kaart
 ```
 
 :::note[En álle matches dan?]
-Daarvoor bestaat `querySelectorAll`, die een lijst teruggeeft. Om daar iets mee te doen heb je [loops](site:web/docs/js-basics/loops) nodig — die komen zo.
+Daarvoor bestaat `querySelectorAll`: die geeft een lijst met alle matches terug. Om met elk element uit die lijst iets te doen, heb je een [loop](site:web/docs/js-basics/loops) nodig. Deze cursus gebruikt `querySelectorAll` verder niet.
 :::
 
 ## `classList`: klassen aan- en uitzetten
@@ -327,7 +327,7 @@ kaart.classList.add('actief');
 ```
 
 ```
-Uncaught TypeError: Cannot read properties of null (reading 'classList')
+JavaScript fout: Uncaught TypeError: Cannot read properties of null (reading 'classList')
 ```
 
 Geen match betekent `null`, en op `null` bestaat geen `classList`. Controleer bij twijfel eerst of het element gevonden is:

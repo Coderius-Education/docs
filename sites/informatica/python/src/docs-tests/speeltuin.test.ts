@@ -33,6 +33,23 @@ describe('beloftes over de speeltuin', () => {
     expect(fout).toEqual([]);
   });
 
+  it('geen pagina zegt dat je code weg is na het herladen', () => {
+    // Drie pagina's zeiden bij een oneindige loop "herlaad de pagina, en je
+    // code is weg". Sinds het veld zijn code bewaart (issue 216) klopt dat
+    // niet meer. In Chromium nagespeeld met een while-loop zonder update: het
+    // tabblad loopt vast, en na het herladen staat de code er weer, behalve
+    // wat de leerling in de halve seconde voor Uitvoeren typte.
+    const WEG = /code is (?:dan )?weg|code (?:dan )?kwijt/i;
+    const fout = lesbestanden(DOCS).flatMap((pad) =>
+      readFileSync(pad, 'utf8')
+        .split('\n')
+        .map((regel, i) => ({ regel, nr: i + 1 }))
+        .filter(({ regel }) => WEG.test(regel))
+        .map(({ nr }) => `${relative(DOCS, pad)}:${nr}`),
+    );
+    expect(fout).toEqual([]);
+  });
+
   it('de regel herkent de oude zinnen', () => {
     expect(STOPKNOP.test('Klik dan op de Stop-knop.')).toBe(true);
     expect(STOPKNOP.test('**Oplossing:** druk op Stop, en zet')).toBe(true);

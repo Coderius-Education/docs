@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildDoc } from './buildDoc';
+import { GEVANGEN_MELDING, buildDoc } from './buildDoc';
 
 // buildDoc van web-docs is de oudere, vaste-bestandsnamen-variant (style.css
 // en script.js) van packages/editor/src/runners/web/buildDoc.ts. Die twee
@@ -127,10 +127,32 @@ describe('buildDoc — script', () => {
 
   it('meldt een fout uit de try/catch aan de console én in de pagina', () => {
     const result = buildDoc(pagina('', ''), '', JS);
-    expect(result).toContain("pre.textContent = 'JavaScript fout: ' + e.message;");
+    expect(result).toContain(`const melding = ${GEVANGEN_MELDING};`);
+    expect(result).toContain('pre.textContent = melding;');
     expect(result).toContain(
-      "window.parent.postMessage({ source: 'code-editor', veld: \"\", type: 'console', level: 'error', text: 'JavaScript fout: ' + e.message }, '*');",
+      "window.parent.postMessage({ source: 'code-editor', veld: \"\", type: 'console', level: 'error', text: melding }, '*');",
     );
+  });
+
+  it('een gevangen fout heet zoals een fout bij een klik: met Uncaught en de soort', () => {
+    // De les citeert bij een fout die het script bij het laden maakt
+    // "JavaScript fout: Uncaught TypeError: …"; eerst stond er alleen de
+    // message, zonder soort.
+    const melding = new Function('e', `return ${GEVANGEN_MELDING};`);
+    let gevangen: unknown;
+    try {
+      (null as unknown as { classList: unknown }).classList;
+    } catch (e) {
+      gevangen = e;
+    }
+    expect(melding(gevangen)).toMatch(
+      /^JavaScript fout: Uncaught TypeError: Cannot read properties of null/,
+    );
+    expect(melding(new ReferenceError('namen is not defined'))).toBe(
+      'JavaScript fout: Uncaught ReferenceError: namen is not defined',
+    );
+    // Een `throw 'stop'` gooit geen Error: dan de waarde zelf, zoals Chromium.
+    expect(melding('stop')).toBe('JavaScript fout: Uncaught stop');
   });
 
   it('plakt het script achteraan als er geen </body> is', () => {
