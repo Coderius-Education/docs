@@ -29,6 +29,7 @@ een eigen host, en de cursus staat onder een pad daarvan.
 | Onderzoek | `sites/wo/onderzoek` | https://wo.coderius.nl/onderzoek/ | Leer onderzoek doen, van een scherpe vraag tot een eerlijke conclusie. |
 | Hartjespuzzel | `sites/techniek/hartjespuzzel` | https://techniek.coderius.nl/hartjespuzzel/ | Leermateriaal: Opdracht hartjespuzzel. |
 | Didactiek (voor docenten) | `sites/informatica/didactiek` | https://informatica.coderius.nl/didactiek/ | Didactische tips en achtergrond voor docenten. |
+| Meesterproef | `sites/informatica/meesterproef` | https://informatica.coderius.nl/meesterproef/ | Meesterproef. |
 
 De homepage `sites/home` (SvelteKit) toont alle cursussen met filters op vak,
 niveau en thema, en heeft pagina's voor docenten.

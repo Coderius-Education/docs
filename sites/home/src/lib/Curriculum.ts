@@ -352,6 +352,8 @@ const entries: CurriculumEntry[] = [
       vwo: 1,
       havo: 1,
     },
+    // Voorlopig, bij het aanmaken gekozen: zet de raakvlakken goed.
+    examDomains: [{ code: 'D1', strength: 'strong' }],
   },
 ];
 
