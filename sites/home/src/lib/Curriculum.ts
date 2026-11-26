@@ -340,6 +340,21 @@ const entries: CurriculumEntry[] = [
       havo: 1,
     },
   },
+  {
+    id: 'meesterproef',
+    labels: [],
+    programmingLanguages: [],
+    projectTypes: ['Python'],
+    operatingSystems: ['Windows', 'Linux', 'macOS', 'ChromeOS'],
+    level: 'Beginner',
+    klas: '4 en 5+',
+    order: {
+      vwo: 1,
+      havo: 1,
+    },
+    // Voorlopig, bij het aanmaken gekozen: zet de raakvlakken goed.
+    examDomains: [{ code: 'D1', strength: 'strong' }],
+  },
 ];
 
 // Eerst alle cursussen voor beginners, dan de gevorderde; binnen een niveau in

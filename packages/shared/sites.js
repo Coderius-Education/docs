@@ -183,6 +183,14 @@ const SITES = defineSites([
     description: 'Leermateriaal: Opdracht hartjespuzzel',
     requires: [],
   },
+  {
+    id: 'meesterproef',
+    label: 'Meesterproef',
+    subject: 'informatica',
+    path: 'meesterproef',
+    description: 'Meesterproef',
+    requires: [],
+  },
 ]);
 
 // Sites voor docenten. Bewust niet in SITES: die lijst vult de navbar-dropdown,
