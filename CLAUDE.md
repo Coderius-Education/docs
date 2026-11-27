@@ -1727,7 +1727,8 @@ verandert.
 
 Het oefenveld van web (`CodeEditor`), dat van python (`CodeExercise`) en
 de speeltuin van play (`PygbagRunner`, sinds elke opdracht daar een eigen
-veld heeft) bewaren de code van de leerling in de IndexedDB van zijn browser. De opslag
+veld heeft, en de losse pagina `/speeltuin`) bewaren de code van de leerling
+in de IndexedDB van zijn browser. De opslag
 en de hook staan in `packages/shared/oefenveld` (`maakOpslag`, `useOpslag`);
 een veld zegt welke site het is en uit welke delen zijn code bestaat (web:
 html, css en js; python en play: code). Elke site heeft een eigen database
