@@ -7,9 +7,12 @@ import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { codeerDeelLink } from '../lib/deellink';
 import {
+  type Begin,
   SPEELTUIN_START,
   type SpeeltuinWerk,
-  beginVanAdres,
+  adresZonderLink,
+  isEigenCode,
+  kiesBegin,
   leesEigenAdres,
   speeltuinOpslag,
   standaardCode,
@@ -30,10 +33,7 @@ type CodeEditorComponent = React.ComponentType<{
 type ConsoleLine = { text: string; isError: boolean };
 type PendingRun = { code: string; mode: string; lineOffset: number; ingevoegd: number[] };
 
-function PlaygroundInner() {
-  // Waar de speeltuin mee opent: de startcode (en daarna het bewaarde werk),
-  // of de code uit het adres. Zie beginVanAdres.
-  const [begin] = useState(() => beginVanAdres(window.location.hash, leesEigenAdres()));
+function PlaygroundInner({ begin }: { begin: Begin }) {
   const [code, setCode] = useState(begin.code);
   const [mode, setMode] = useState<string>(begin.modus);
   const [isRunning, setIsRunning] = useState(false);
@@ -86,7 +86,7 @@ function PlaygroundInner() {
     },
   });
   const overOpslag = begin.gedeeld
-    ? 'Deze code komt uit een link en wordt niet in deze browser bewaard. Je eigen code staat er nog: open de Speeltuin via het menu.'
+    ? 'Deze code komt uit een link en wordt niet in deze browser bewaard.'
     : bewaard.stand === 'vol'
       ? 'Niet bewaard: de opslag van je browser is vol. Kopieer je code als je hem wilt houden.'
       : bewaard.stand === 'geweigerd'
@@ -192,7 +192,10 @@ function PlaygroundInner() {
 
   // Eigen code: niet de startcode en geen voorbeeld. Die gaat bij een
   // voorbeeld of Reset verloren, ook in de opslag: dan eerst vragen.
-  const eigenCode = code !== standaardCode(mode) && !presets.some((p) => p.code === code);
+  const eigenCode = isEigenCode(
+    code,
+    presets.map((p) => p.code),
+  );
 
   async function loadPreset(preset: Preset) {
     setPresetsOpen(false);
@@ -296,6 +299,22 @@ function PlaygroundInner() {
         </div>
       </div>
 
+      {begin.gedeeld && (
+        <div className={styles.gedeeld}>
+          <span>
+            Deze code komt uit een link en wordt niet in deze browser bewaard. Je eigen code staat
+            er nog.
+          </span>
+          <button
+            type="button"
+            className={styles.resetButton}
+            onClick={() => window.location.assign(adresZonderLink(window.location))}
+          >
+            Naar mijn eigen code
+          </button>
+        </div>
+      )}
+
       {/* Split view */}
       <div className={styles.splitView}>
         <div className={styles.editorPanel}>
@@ -326,7 +345,6 @@ function PlaygroundInner() {
             </>
           ) : (
             <div className={styles.outputPlaceholder}>
-              <div className={styles.placeholderIcon}>&#x1F3AE;</div>
               <p>
                 Klik op <strong>Uitvoeren</strong> om je code te starten
               </p>
@@ -342,11 +360,34 @@ function PlaygroundInner() {
   );
 }
 
+// Kiest eerst waar de speeltuin mee opent (zie kiesBegin): een link telt
+// alleen als gedeeld als er eigen werk is dat hij zou overschrijven, en dat
+// staat in de database.
+function Playground() {
+  const [begin, setBegin] = useState<Begin | null>(null);
+  useEffect(() => {
+    let weg = false;
+    kiesBegin(
+      window.location.hash,
+      leesEigenAdres(),
+      window.location.pathname,
+      speeltuinOpslag,
+    ).then((gekozen) => {
+      if (!weg) setBegin(gekozen);
+    });
+    return () => {
+      weg = true;
+    };
+  }, []);
+  if (!begin) return <div className={styles.loading}>Speeltuin laden...</div>;
+  return <PlaygroundInner begin={begin} />;
+}
+
 export default function Speeltuin() {
   return (
     <Layout title="Speeltuin" description="Probeer Python game code direct in je browser">
       <BrowserOnly fallback={<div style={{ padding: '2rem', textAlign: 'center' }}>Laden...</div>}>
-        {() => <PlaygroundInner />}
+        {() => <Playground />}
       </BrowserOnly>
     </Layout>
   );

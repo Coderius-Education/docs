@@ -1,4 +1,4 @@
-import { maakOpslag } from '@coderius/shared/oefenveld/opslag';
+import { type Opslag, maakOpslag, veldSleutel } from '@coderius/shared/oefenveld/opslag';
 import { decodeerDeelLink } from './deellink';
 
 // De losse speeltuin (/speeltuin) bewaart de code van de leerling in zijn
@@ -99,4 +99,58 @@ export function beginVanAdres(hash: string, eigenAdres: string | null): Begin {
   if (code === null) return { ...SPEELTUIN_START, gedeeld: false };
   const eigen = eigenAdres !== null && eigenAdres.replace(/^#/, '') === schoon;
   return { code, modus, gedeeld: !eigen };
+}
+
+/**
+ * Eigen code: niet een van de twee startcodes en geen voorbeeld. Die gaat bij
+ * Reset of een voorbeeld verloren, dus dan vraagt de speeltuin het eerst.
+ * Eerst telde alleen de startcode van de gekozen bibliotheek, en vroeg Reset
+ * het ook na alleen wisselen van bibliotheek, zonder getypte code.
+ */
+export function isEigenCode(code: string, voorbeelden: readonly string[]): boolean {
+  return code !== DEFAULT_CODE_PLAY && code !== DEFAULT_CODE_PYGAME && !voorbeelden.includes(code);
+}
+
+/**
+ * Het adres van de speeltuin zonder de code uit de link. Een klik op
+ * Speeltuin in het menu helpt vanaf een gedeelde link niet: het pad is
+ * hetzelfde, dus Docusaurus laadt de pagina niet opnieuw en de gedeelde code
+ * blijft staan. Een volledige navigatie naar dit adres wel.
+ */
+export function adresZonderLink(loc: { pathname: string; search: string }): string {
+  return `${loc.pathname}${loc.search}`;
+}
+
+// Hoe lang de speeltuin wacht op de database voordat hij een link voorzichtig
+// als gedeeld behandelt (zoals useOpslag het lezen opgeeft na anderhalve seconde).
+const WACHT_OP_DATABASE_MS = 1500;
+
+/**
+ * Waar de speeltuin mee opent, met de database erbij. Een link geldt alleen als
+ * gedeeld (tonen, niet bewaren) als er eigen werk is dat hij zou overschrijven.
+ * Is er niets bewaard, dan is de code uit het adres het eigen werk: zo bleef
+ * wie de speeltuin vóór de opslag gebruikte (de code stond toen alleen in het
+ * adres) bij herladen zijn werk houden. Antwoordt de database niet, dan blijft
+ * het voorzichtig: gedeeld.
+ */
+export async function kiesBegin(
+  hash: string,
+  eigenAdres: string | null,
+  pad: string,
+  opslag: Opslag<SpeeltuinWerk>,
+  wachtMs = WACHT_OP_DATABASE_MS,
+): Promise<Begin> {
+  const begin = beginVanAdres(hash, eigenAdres);
+  if (!begin.gedeeld) return begin;
+  const zaad = opslag.zaadVan(SPEELTUIN_START);
+  const sleutel = veldSleutel(pad, zaad, 0);
+  if (opslag.leesNood(sleutel, zaad)) return begin;
+  const bewaard = await Promise.race([
+    opslag.laad(sleutel, zaad).then(
+      (werk) => (werk ? 'eigen werk' : 'leeg'),
+      () => 'onbekend',
+    ),
+    new Promise<string>((klaar) => setTimeout(() => klaar('onbekend'), wachtMs)),
+  ]);
+  return bewaard === 'leeg' ? { ...begin, gedeeld: false } : begin;
 }
