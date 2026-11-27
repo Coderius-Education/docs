@@ -1,5 +1,5 @@
 import Keuzelijst from '@coderius/shared/components/Keuzelijst';
-import { bevestig } from '@coderius/shared/dialoog';
+import { bevestig, meld } from '@coderius/shared/dialoog';
 import { useOpslag } from '@coderius/shared/oefenveld/useOpslag';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import Layout from '@theme/Layout';
@@ -14,6 +14,7 @@ import {
   isEigenCode,
   kiesBegin,
   leesEigenAdres,
+  neemOver,
   speeltuinOpslag,
   standaardCode,
   zetEigenAdres,
@@ -33,7 +34,10 @@ type CodeEditorComponent = React.ComponentType<{
 type ConsoleLine = { text: string; isError: boolean };
 type PendingRun = { code: string; mode: string; lineOffset: number; ingevoegd: number[] };
 
-function PlaygroundInner({ begin }: { begin: Begin }) {
+function PlaygroundInner({
+  begin,
+  onNeemOver,
+}: { begin: Begin; onNeemOver: (werk: SpeeltuinWerk) => void }) {
   const [code, setCode] = useState(begin.code);
   const [mode, setMode] = useState<string>(begin.modus);
   const [isRunning, setIsRunning] = useState(false);
@@ -85,13 +89,14 @@ function PlaygroundInner({ begin }: { begin: Begin }) {
       setMode(werk.modus);
     },
   });
-  const overOpslag = begin.gedeeld
-    ? 'Deze code komt uit een link en wordt niet in deze browser bewaard.'
-    : bewaard.stand === 'vol'
+  // Lukt het bewaren niet, dan staat dat in een balk boven de code: in het
+  // lege uitvoervak was de melding weg zodra een spel draaide.
+  const nietBewaard =
+    bewaard.stand === 'vol'
       ? 'Niet bewaard: de opslag van je browser is vol. Kopieer je code als je hem wilt houden.'
       : bewaard.stand === 'geweigerd'
         ? 'Niet bewaard: deze browser slaat hier niets op (privévenster?). Kopieer je code als je hem wilt houden.'
-        : 'Je code blijft bewaard in deze browser.';
+        : null;
 
   // Het adres volgt de code, zodat je hem met de link kunt delen. Wat deze
   // tab zelf schreef, onthoudt hij: herladen is dan geen gedeelde link.
@@ -197,12 +202,16 @@ function PlaygroundInner({ begin }: { begin: Begin }) {
     presets.map((p) => p.code),
   );
 
+  // Bij een gedeelde link is er niets bewaard van wat hier staat, en blijft
+  // het eigen werk in de opslag onaangeroerd: dat zegt de vraag dan ook.
   async function loadPreset(preset: Preset) {
     setPresetsOpen(false);
     if (
       eigenCode &&
       !(await bevestig(
-        'Het voorbeeld vervangt je code, ook de versie die in deze browser bewaard is.',
+        begin.gedeeld
+          ? 'Het voorbeeld vervangt de code uit de link. Je eigen bewaarde code blijft staan.'
+          : 'Het voorbeeld vervangt je code, ook de versie die in deze browser bewaard is.',
         {
           titel: 'Voorbeeld laden?',
           bevestigLabel: 'Laad het voorbeeld',
@@ -219,16 +228,55 @@ function PlaygroundInner({ begin }: { begin: Begin }) {
   async function handleReset() {
     if (
       eigenCode &&
-      !(await bevestig('Je code gaat verloren, ook de versie die in deze browser bewaard is.', {
-        titel: 'Terug naar de startcode?',
-        bevestigLabel: 'Reset',
-        gevaarlijk: true,
-      }))
+      !(await bevestig(
+        begin.gedeeld
+          ? 'De code uit de link gaat van het scherm. Je eigen bewaarde code blijft staan.'
+          : 'Je code gaat verloren, ook de versie die in deze browser bewaard is.',
+        {
+          titel: 'Terug naar de startcode?',
+          bevestigLabel: 'Reset',
+          gevaarlijk: true,
+        },
+      ))
     )
       return;
     bewaard.wis();
     setCode(standaardCode(mode));
     handleStop();
+  }
+
+  // De twee knoppen bij een gedeelde link. Wat je aan de code uit de link
+  // veranderde, staat nergens bewaard: weggaan vraagt het dan eerst.
+  const gedeeldBewerkt = code !== begin.code || mode !== begin.modus;
+
+  async function naarEigenCode() {
+    if (
+      gedeeldBewerkt &&
+      !(await bevestig(
+        'Wat je aan deze code veranderd hebt, gaat verloren. Wil je het houden, kies dan Bewaar deze code als de mijne.',
+        { titel: 'Naar je eigen code?', bevestigLabel: 'Naar mijn eigen code', gevaarlijk: true },
+      ))
+    )
+      return;
+    window.location.assign(adresZonderLink(window.location));
+  }
+
+  async function bewaarAlsMijne() {
+    const zeker = await bevestig(
+      'Deze code komt in de plaats van de code die je nu in deze browser bewaard hebt. Die komt niet terug.',
+      { titel: 'Deze code bewaren als de jouwe?', bevestigLabel: 'Bewaar', gevaarlijk: true },
+    );
+    if (!zeker) return;
+    const werk = { code, modus: mode };
+    try {
+      await neemOver(speeltuinOpslag, window.location.pathname, werk);
+    } catch {
+      await meld('Bewaren lukte niet. Je eigen bewaarde code is niet veranderd.', {
+        titel: 'Niet bewaard',
+      });
+      return;
+    }
+    onNeemOver(werk);
   }
 
   if (!CodeEditor) {
@@ -300,18 +348,22 @@ function PlaygroundInner({ begin }: { begin: Begin }) {
       </div>
 
       {begin.gedeeld && (
-        <div className={styles.gedeeld}>
+        <div className={styles.balk}>
           <span>
             Deze code komt uit een link en wordt niet in deze browser bewaard. Je eigen code staat
             er nog.
           </span>
-          <button
-            type="button"
-            className={styles.resetButton}
-            onClick={() => window.location.assign(adresZonderLink(window.location))}
-          >
+          <button type="button" className={styles.balkKnop} onClick={bewaarAlsMijne}>
+            Bewaar deze code als de mijne
+          </button>
+          <button type="button" className={styles.balkKnop} onClick={naarEigenCode}>
             Naar mijn eigen code
           </button>
+        </div>
+      )}
+      {nietBewaard && (
+        <div className={styles.balk} role="alert">
+          {nietBewaard}
         </div>
       )}
 
@@ -351,7 +403,9 @@ function PlaygroundInner({ begin }: { begin: Begin }) {
               <p className={styles.placeholderHint}>
                 Kies een voorbeeld uit het menu of schrijf je eigen code
               </p>
-              <p className={styles.placeholderHint}>{overOpslag}</p>
+              {!begin.gedeeld && !nietBewaard && (
+                <p className={styles.placeholderHint}>Je code blijft bewaard in deze browser.</p>
+              )}
             </div>
           )}
         </div>
@@ -365,6 +419,9 @@ function PlaygroundInner({ begin }: { begin: Begin }) {
 // staat in de database.
 function Playground() {
   const [begin, setBegin] = useState<Begin | null>(null);
+  // Telt hoe vaak code uit een link het eigen werk werd: de speeltuin begint
+  // dan opnieuw, nu met de opslag aan.
+  const [overgenomen, setOvergenomen] = useState(0);
   useEffect(() => {
     let weg = false;
     kiesBegin(
@@ -380,7 +437,16 @@ function Playground() {
     };
   }, []);
   if (!begin) return <div className={styles.loading}>Speeltuin laden...</div>;
-  return <PlaygroundInner begin={begin} />;
+  return (
+    <PlaygroundInner
+      key={overgenomen}
+      begin={begin}
+      onNeemOver={(werk) => {
+        setBegin({ ...werk, gedeeld: false });
+        setOvergenomen((n) => n + 1);
+      }}
+    />
+  );
 }
 
 export default function Speeltuin() {

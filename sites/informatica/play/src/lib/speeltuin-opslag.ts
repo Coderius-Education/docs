@@ -102,13 +102,42 @@ export function beginVanAdres(hash: string, eigenAdres: string | null): Begin {
 }
 
 /**
- * Eigen code: niet een van de twee startcodes en geen voorbeeld. Die gaat bij
- * Reset of een voorbeeld verloren, dus dan vraagt de speeltuin het eerst.
- * Eerst telde alleen de startcode van de gekozen bibliotheek, en vroeg Reset
- * het ook na alleen wisselen van bibliotheek, zonder getypte code.
+ * Eigen code: niet leeg, niet een van de twee startcodes en geen voorbeeld.
+ * Die gaat bij Reset of een voorbeeld verloren, dus dan vraagt de speeltuin
+ * het eerst. Eerst telde alleen de startcode van de gekozen bibliotheek, en
+ * vroeg Reset het ook na alleen wisselen van bibliotheek, zonder getypte
+ * code; en bij een lege editor, waar niets te verliezen valt.
  */
 export function isEigenCode(code: string, voorbeelden: readonly string[]): boolean {
-  return code !== DEFAULT_CODE_PLAY && code !== DEFAULT_CODE_PYGAME && !voorbeelden.includes(code);
+  return (
+    code.trim() !== '' &&
+    code !== DEFAULT_CODE_PLAY &&
+    code !== DEFAULT_CODE_PYGAME &&
+    !voorbeelden.includes(code)
+  );
+}
+
+/** De plek van het werk van de speeltuin in de opslag (één veld per pad). */
+function plek(opslag: Opslag<SpeeltuinWerk>, pad: string) {
+  const zaad = opslag.zaadVan(SPEELTUIN_START);
+  return { zaad, sleutel: veldSleutel(pad, zaad, 0) };
+}
+
+/**
+ * Maakt code uit een link het eigen werk: de knop Bewaar deze code als de
+ * mijne. Zonder die knop kon een leerling die al eigen werk had, de startcode
+ * van een docent wel openen en bewerken, maar nooit houden. De noodkopie van
+ * het oude werk gaat eerst weg: bij het volgende laden gaat die vóór de
+ * database, en dan stond het oude werk er weer.
+ */
+export async function neemOver(
+  opslag: Opslag<SpeeltuinWerk>,
+  pad: string,
+  werk: SpeeltuinWerk,
+): Promise<void> {
+  const { zaad, sleutel } = plek(opslag, pad);
+  await opslag.bewaar(sleutel, werk, SPEELTUIN_START, zaad);
+  opslag.wisNood(sleutel);
 }
 
 /**
@@ -127,11 +156,13 @@ const WACHT_OP_DATABASE_MS = 1500;
 
 /**
  * Waar de speeltuin mee opent, met de database erbij. Een link geldt alleen als
- * gedeeld (tonen, niet bewaren) als er eigen werk is dat hij zou overschrijven.
- * Is er niets bewaard, dan is de code uit het adres het eigen werk: zo bleef
- * wie de speeltuin vóór de opslag gebruikte (de code stond toen alleen in het
- * adres) bij herladen zijn werk houden. Antwoordt de database niet, dan blijft
- * het voorzichtig: gedeeld.
+ * gedeeld (tonen, niet bewaren) als er ander eigen werk is dat hij zou
+ * overschrijven. Is er niets bewaard, dan is de code uit het adres het eigen
+ * werk: zo bleef wie de speeltuin vóór de opslag gebruikte (de code stond toen
+ * alleen in het adres) bij herladen zijn werk houden. Is het bewaarde werk
+ * gelijk aan de code uit het adres (je eigen adres in een nieuwe tab), dan is
+ * het ook gewoon eigen werk. Antwoordt de database niet, dan blijft het
+ * voorzichtig: gedeeld.
  */
 export async function kiesBegin(
   hash: string,
@@ -142,15 +173,20 @@ export async function kiesBegin(
 ): Promise<Begin> {
   const begin = beginVanAdres(hash, eigenAdres);
   if (!begin.gedeeld) return begin;
-  const zaad = opslag.zaadVan(SPEELTUIN_START);
-  const sleutel = veldSleutel(pad, zaad, 0);
-  if (opslag.leesNood(sleutel, zaad)) return begin;
+  const { zaad, sleutel } = plek(opslag, pad);
+  const uitAdres: SpeeltuinWerk = { code: begin.code, modus: begin.modus };
+  // De noodkopie gaat bij het laden vóór de database (useOpslag): die is dan
+  // het eigen werk.
+  const nood = opslag.leesNood(sleutel, zaad);
+  if (nood) return { ...begin, gedeeld: !opslag.gelijk(nood, uitAdres) };
   const bewaard = await Promise.race([
     opslag.laad(sleutel, zaad).then(
-      (werk) => (werk ? 'eigen werk' : 'leeg'),
-      () => 'onbekend',
+      (werk) => (werk ? werk : 'leeg'),
+      () => 'onbekend' as const,
     ),
-    new Promise<string>((klaar) => setTimeout(() => klaar('onbekend'), wachtMs)),
+    new Promise<'onbekend'>((klaar) => setTimeout(() => klaar('onbekend'), wachtMs)),
   ]);
-  return bewaard === 'leeg' ? { ...begin, gedeeld: false } : begin;
+  if (bewaard === 'onbekend') return begin;
+  if (bewaard === 'leeg') return { ...begin, gedeeld: false };
+  return { ...begin, gedeeld: !opslag.gelijk(bewaard, uitAdres) };
 }

@@ -12,6 +12,7 @@ import {
   beginVanAdres,
   isEigenCode,
   kiesBegin,
+  neemOver,
   speeltuinOpslag,
   standaardCode,
 } from './speeltuin-opslag';
@@ -180,6 +181,22 @@ describe('kiesBegin', () => {
     expect((await kiesBegin(link, null, pad, faalt)).gedeeld).toBe(true);
   });
 
+  it('je eigen adres in een nieuwe tab: de code is gelijk aan het bewaarde werk, dus eigen', async () => {
+    // Eerst kreeg je dan de balk "komt uit een link" bij je eigen werk, en
+    // bewaarde de speeltuin niets.
+    const werk = { code: 'import play\n# van een ander\n', modus: 'play' };
+    const o = opslagInGeheugen();
+    await o.bewaar(sleutel(o), werk, SPEELTUIN_START, o.zaadVan(SPEELTUIN_START));
+    expect((await kiesBegin(link, null, pad, o)).gedeeld).toBe(false);
+    // Dezelfde code met een andere bibliotheek is ander werk.
+    const pygame = `#${adres('import play\n# van een ander\n', 'pygame')}`;
+    expect((await kiesBegin(pygame, null, pad, o)).gedeeld).toBe(true);
+    // En een noodkopie met dezelfde code telt ook als eigen.
+    const metNood = opslagInGeheugen();
+    metNood.zetNood(sleutel(metNood), werk, metNood.zaadVan(SPEELTUIN_START));
+    expect((await kiesBegin(link, null, pad, metNood)).gedeeld).toBe(false);
+  });
+
   it('zonder link of met het eigen adres kijkt hij niet in de opslag', async () => {
     expect(await kiesBegin('', null, pad, opslagInGeheugen())).toEqual({
       ...SPEELTUIN_START,
@@ -187,6 +204,67 @@ describe('kiesBegin', () => {
     });
     const eigen = adres('import play\n# mijn werk\n');
     expect((await kiesBegin(`#${eigen}`, eigen, pad, opslagInGeheugen())).gedeeld).toBe(false);
+  });
+});
+
+describe('neemOver', () => {
+  const pad = '/play/speeltuin';
+  const gedeeld = {
+    code: 'import play\n# startcode van de docent\n# mijn uur werk\n',
+    modus: 'play',
+  };
+
+  it('maakt de code uit de link het eigen werk, ook als er een oude noodkopie lag', async () => {
+    const o = opslagInGeheugen();
+    const zaad = o.zaadVan(SPEELTUIN_START);
+    const sleutel = veldSleutel(pad, zaad, 0);
+    await o.bewaar(
+      sleutel,
+      { code: 'import play\n# oud eigen werk\n', modus: 'play' },
+      SPEELTUIN_START,
+      zaad,
+    );
+    // De noodkopie gaat bij het laden vóór de database: bleef hij liggen,
+    // dan stond het oude werk er na de knop weer.
+    o.zetNood(sleutel, { code: 'import play\n# oude noodkopie\n', modus: 'play' }, zaad);
+
+    await neemOver(o, pad, gedeeld);
+
+    expect(await o.laad(sleutel, zaad)).toEqual(gedeeld);
+    expect(o.leesNood(sleutel, zaad)).toBeUndefined();
+    // En de link zelf is daarna geen gedeelde link meer.
+    expect((await kiesBegin(`#${adres(gedeeld.code)}`, null, pad, o)).gedeeld).toBe(false);
+  });
+
+  it('laat het oude werk en de noodkopie staan als het bewaren mislukt', async () => {
+    const lade = new Map<string, string>();
+    const faalt = maakOpslag<SpeeltuinWerk>({
+      site: 'play',
+      naam: 'speeltuin',
+      delen: ['code', 'modus'],
+      kast: {
+        get: async () => undefined,
+        set: async () => {
+          throw new Error('vol');
+        },
+        del: async () => {},
+      },
+      lade: {
+        getItem: (k) => lade.get(k) ?? null,
+        setItem: (k, w) => {
+          lade.set(k, w);
+        },
+        removeItem: (k) => {
+          lade.delete(k);
+        },
+      },
+    });
+    const zaad = faalt.zaadVan(SPEELTUIN_START);
+    const sleutel = veldSleutel(pad, zaad, 0);
+    const oud = { code: 'import play\n# oude noodkopie\n', modus: 'play' };
+    faalt.zetNood(sleutel, oud, zaad);
+    await expect(neemOver(faalt, pad, gedeeld)).rejects.toThrow('vol');
+    expect(faalt.leesNood(sleutel, zaad)).toEqual(oud);
   });
 });
 
@@ -198,6 +276,11 @@ describe('isEigenCode', () => {
     expect(isEigenCode(DEFAULT_CODE_PYGAME, [])).toBe(false);
     expect(isEigenCode('import play\n# voorbeeld\n', ['import play\n# voorbeeld\n'])).toBe(false);
     expect(isEigenCode(`${DEFAULT_CODE_PLAY}# eigen\n`, [])).toBe(true);
+  });
+
+  it('een lege editor is geen eigen code: Reset vraagt dan niets', () => {
+    expect(isEigenCode('', [])).toBe(false);
+    expect(isEigenCode('  \n\n', [])).toBe(false);
   });
 });
 
@@ -219,5 +302,23 @@ describe('adresZonderLink', () => {
     expect(pagina).toContain('window.location.assign(adresZonderLink(window.location))');
     expect(pagina).toContain('Naar mijn eigen code');
     expect(pagina).not.toContain('open de Speeltuin via het menu');
+  });
+
+  it('bij een gedeelde link zegt de pagina wat er echt gebeurt', () => {
+    const pagina = readFileSync(
+      fileURLToPath(new URL('../pages/speeltuin.tsx', import.meta.url)),
+      'utf8',
+    );
+    // Je kunt de code uit de link houden, en weggaan vraagt het eerst als je
+    // hem bewerkt hebt.
+    expect(pagina).toContain('Bewaar deze code als de mijne');
+    expect(pagina).toContain('await neemOver(speeltuinOpslag, window.location.pathname, werk)');
+    expect(pagina).toMatch(/gedeeldBewerkt &&\s*!\(await bevestig\(/);
+    // Reset en een voorbeeld beloven daar niet dat de bewaarde versie weggaat.
+    expect(pagina.match(/Je eigen bewaarde code blijft staan\./g)).toHaveLength(2);
+    // De melding staat er één keer, niet ook nog in het uitvoervak.
+    expect(pagina.match(/Deze code komt uit een link/g)).toHaveLength(1);
+    // Niet bewaard staat in een balk, ook terwijl een spel draait.
+    expect(pagina).toMatch(/\{nietBewaard && \(\s*<div className=\{styles\.balk\} role="alert">/);
   });
 });
