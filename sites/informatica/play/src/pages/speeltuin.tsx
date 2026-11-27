@@ -1,9 +1,24 @@
 import Keuzelijst from '@coderius/shared/components/Keuzelijst';
+import { bevestig, meld } from '@coderius/shared/dialoog';
+import { useOpslag } from '@coderius/shared/oefenveld/useOpslag';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import Layout from '@theme/Layout';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { codeerDeelLink, decodeerDeelLink } from '../lib/deellink';
+import { codeerDeelLink } from '../lib/deellink';
+import {
+  type Begin,
+  SPEELTUIN_START,
+  type SpeeltuinWerk,
+  adresZonderLink,
+  isEigenCode,
+  kiesBegin,
+  leesEigenAdres,
+  neemOver,
+  speeltuinOpslag,
+  standaardCode,
+  zetEigenAdres,
+} from '../lib/speeltuin-opslag';
 import styles from './speeltuin.module.css';
 
 // De runner-modules zijn plain JS en laden lui; hun types komen uit de bron.
@@ -13,41 +28,18 @@ type Preset = typeof import('../components/CodeRunner/presets')['presets'][numbe
 type CodeEditorComponent = React.ComponentType<{
   value: string;
   onChange: (code: string) => void;
+  readOnly?: boolean;
   height?: string;
 }>;
 type ConsoleLine = { text: string; isError: boolean };
 type PendingRun = { code: string; mode: string; lineOffset: number; ingevoegd: number[] };
 
-const DEFAULT_CODE_PLAY = `import play
-
-play.set_backdrop('white')
-
-play.new_circle(color='red', radius=80)
-`;
-
-const DEFAULT_CODE_PYGAME = `import pygame
-
-pygame.init()
-
-scherm = pygame.display.set_mode((800, 600))
-pygame.display.set_caption("Mijn spel")
-
-actief = True
-
-while actief:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            actief = False
-
-    scherm.fill((30, 30, 30))
-    pygame.display.flip()
-
-pygame.quit()
-`;
-
-function PlaygroundInner() {
-  const [code, setCode] = useState(DEFAULT_CODE_PLAY);
-  const [mode, setMode] = useState<string>('play');
+function PlaygroundInner({
+  begin,
+  onNeemOver,
+}: { begin: Begin; onNeemOver: (werk: SpeeltuinWerk) => void }) {
+  const [code, setCode] = useState(begin.code);
+  const [mode, setMode] = useState<string>(begin.modus);
   const [isRunning, setIsRunning] = useState(false);
   const [presetsOpen, setPresetsOpen] = useState(false);
   const [consoleLines, setConsoleLines] = useState<ConsoleLine[]>([]);
@@ -82,23 +74,32 @@ function PlaygroundInner() {
     });
   }, []);
 
-  // Load from URL hash on mount. decodeerDeelLink leest zowel het huidige
-  // formaat als de oude btoa-links en geeft null bij rommel.
-  useEffect(() => {
-    const hash = window.location.hash.slice(1);
-    const params = new URLSearchParams(hash);
-    const encodedCode = params.get('code');
-    const hashMode = params.get('mode');
-    if (encodedCode) {
-      const gedeeld = decodeerDeelLink(encodedCode);
-      if (gedeeld !== null) setCode(gedeeld);
-    }
-    if (hashMode === 'play' || hashMode === 'pygame') {
-      setMode(hashMode);
-    }
-  }, []);
+  // De code van de leerling blijft bewaard in deze browser, zoals in de
+  // speeltuinen van de lessen. Code uit een gedeelde link bewaart hij niet:
+  // die zou het eigen werk overschrijven.
+  const veldRef = useRef<HTMLDivElement>(null);
+  const huidig = useMemo<SpeeltuinWerk>(() => ({ code, modus: mode }), [code, mode]);
+  const bewaard = useOpslag<SpeeltuinWerk>({
+    opslag: begin.gedeeld ? null : speeltuinOpslag,
+    start: SPEELTUIN_START,
+    huidig,
+    containerRef: veldRef,
+    onHerstel: (werk) => {
+      setCode(werk.code);
+      setMode(werk.modus);
+    },
+  });
+  // Lukt het bewaren niet, dan staat dat in een balk boven de code: in het
+  // lege uitvoervak was de melding weg zodra een spel draaide.
+  const nietBewaard =
+    bewaard.stand === 'vol'
+      ? 'Niet bewaard: de opslag van je browser is vol. Kopieer je code als je hem wilt houden.'
+      : bewaard.stand === 'geweigerd'
+        ? 'Niet bewaard: deze browser slaat hier niets op (privévenster?). Kopieer je code als je hem wilt houden.'
+        : null;
 
-  // Update URL hash on code change (debounced)
+  // Het adres volgt de code, zodat je hem met de link kunt delen. Wat deze
+  // tab zelf schreef, onthoudt hij: herladen is dan geen gedeelde link.
   useEffect(() => {
     const timeout = setTimeout(() => {
       try {
@@ -106,10 +107,11 @@ function PlaygroundInner() {
         params.set('code', codeerDeelLink(code));
         params.set('mode', mode);
         window.history.replaceState(null, '', `#${params.toString()}`);
+        if (!begin.gedeeld) zetEigenAdres(params.toString());
       } catch {}
     }, 500);
     return () => clearTimeout(timeout);
-  }, [code, mode]);
+  }, [code, mode, begin.gedeeld]);
 
   // Close presets dropdown on outside click
   useEffect(() => {
@@ -193,16 +195,88 @@ function PlaygroundInner() {
     });
   }, [isRunning, ownerId, shared, appendLine]);
 
-  function loadPreset(preset: Preset) {
+  // Eigen code: niet de startcode en geen voorbeeld. Die gaat bij een
+  // voorbeeld of Reset verloren, ook in de opslag: dan eerst vragen.
+  const eigenCode = isEigenCode(
+    code,
+    presets.map((p) => p.code),
+  );
+
+  // Bij een gedeelde link is er niets bewaard van wat hier staat, en blijft
+  // het eigen werk in de opslag onaangeroerd: dat zegt de vraag dan ook.
+  async function loadPreset(preset: Preset) {
+    setPresetsOpen(false);
+    if (
+      eigenCode &&
+      !(await bevestig(
+        begin.gedeeld
+          ? 'Het voorbeeld vervangt de code uit de link. Je eigen bewaarde code blijft staan.'
+          : 'Het voorbeeld vervangt je code, ook de versie die in deze browser bewaard is.',
+        {
+          titel: 'Voorbeeld laden?',
+          bevestigLabel: 'Laad het voorbeeld',
+          gevaarlijk: true,
+        },
+      ))
+    )
+      return;
     setCode(preset.code);
     setMode(preset.mode);
     handleStop();
-    setPresetsOpen(false);
   }
 
-  function handleReset() {
-    setCode(mode === 'pygame' ? DEFAULT_CODE_PYGAME : DEFAULT_CODE_PLAY);
+  async function handleReset() {
+    if (
+      eigenCode &&
+      !(await bevestig(
+        begin.gedeeld
+          ? 'De code uit de link gaat van het scherm. Je eigen bewaarde code blijft staan.'
+          : 'Je code gaat verloren, ook de versie die in deze browser bewaard is.',
+        {
+          titel: 'Terug naar de startcode?',
+          bevestigLabel: 'Reset',
+          gevaarlijk: true,
+        },
+      ))
+    )
+      return;
+    bewaard.wis();
+    setCode(standaardCode(mode));
     handleStop();
+  }
+
+  // De twee knoppen bij een gedeelde link. Wat je aan de code uit de link
+  // veranderde, staat nergens bewaard: weggaan vraagt het dan eerst.
+  const gedeeldBewerkt = code !== begin.code || mode !== begin.modus;
+
+  async function naarEigenCode() {
+    if (
+      gedeeldBewerkt &&
+      !(await bevestig(
+        'Wat je aan deze code veranderd hebt, gaat verloren. Wil je het houden, kies dan Bewaar deze code als de mijne.',
+        { titel: 'Naar je eigen code?', bevestigLabel: 'Naar mijn eigen code', gevaarlijk: true },
+      ))
+    )
+      return;
+    window.location.assign(adresZonderLink(window.location));
+  }
+
+  async function bewaarAlsMijne() {
+    const zeker = await bevestig(
+      'Deze code komt in de plaats van de code die je nu in deze browser bewaard hebt. Die komt niet terug.',
+      { titel: 'Deze code bewaren als de jouwe?', bevestigLabel: 'Bewaar', gevaarlijk: true },
+    );
+    if (!zeker) return;
+    const werk = { code, modus: mode };
+    try {
+      await neemOver(speeltuinOpslag, window.location.pathname, werk);
+    } catch {
+      await meld('Bewaren lukte niet. Je eigen bewaarde code is niet veranderd.', {
+        titel: 'Niet bewaard',
+      });
+      return;
+    }
+    onNeemOver(werk);
   }
 
   if (!CodeEditor) {
@@ -210,7 +284,7 @@ function PlaygroundInner() {
   }
 
   return (
-    <div className={styles.playground}>
+    <div ref={veldRef} className={styles.playground} data-zaad={bewaard.zaad || undefined}>
       {/* Toolbar */}
       <div className={styles.toolbar}>
         <div className={styles.toolbarLeft}>
@@ -273,10 +347,30 @@ function PlaygroundInner() {
         </div>
       </div>
 
+      {begin.gedeeld && (
+        <div className={styles.balk}>
+          <span>
+            Deze code komt uit een link en wordt niet in deze browser bewaard. Je eigen code staat
+            er nog.
+          </span>
+          <button type="button" className={styles.balkKnop} onClick={bewaarAlsMijne}>
+            Bewaar deze code als de mijne
+          </button>
+          <button type="button" className={styles.balkKnop} onClick={naarEigenCode}>
+            Naar mijn eigen code
+          </button>
+        </div>
+      )}
+      {nietBewaard && (
+        <div className={styles.balk} role="alert">
+          {nietBewaard}
+        </div>
+      )}
+
       {/* Split view */}
       <div className={styles.splitView}>
         <div className={styles.editorPanel}>
-          <CodeEditor value={code} onChange={setCode} height="100%" />
+          <CodeEditor value={code} onChange={setCode} readOnly={!bewaard.geladen} height="100%" />
         </div>
         <div className={styles.outputPanel}>
           {isRunning ? (
@@ -303,13 +397,15 @@ function PlaygroundInner() {
             </>
           ) : (
             <div className={styles.outputPlaceholder}>
-              <div className={styles.placeholderIcon}>&#x1F3AE;</div>
               <p>
                 Klik op <strong>Uitvoeren</strong> om je code te starten
               </p>
               <p className={styles.placeholderHint}>
                 Kies een voorbeeld uit het menu of schrijf je eigen code
               </p>
+              {!begin.gedeeld && !nietBewaard && (
+                <p className={styles.placeholderHint}>Je code blijft bewaard in deze browser.</p>
+              )}
             </div>
           )}
         </div>
@@ -318,11 +414,46 @@ function PlaygroundInner() {
   );
 }
 
+// Kiest eerst waar de speeltuin mee opent (zie kiesBegin): een link telt
+// alleen als gedeeld als er eigen werk is dat hij zou overschrijven, en dat
+// staat in de database.
+function Playground() {
+  const [begin, setBegin] = useState<Begin | null>(null);
+  // Telt hoe vaak code uit een link het eigen werk werd: de speeltuin begint
+  // dan opnieuw, nu met de opslag aan.
+  const [overgenomen, setOvergenomen] = useState(0);
+  useEffect(() => {
+    let weg = false;
+    kiesBegin(
+      window.location.hash,
+      leesEigenAdres(),
+      window.location.pathname,
+      speeltuinOpslag,
+    ).then((gekozen) => {
+      if (!weg) setBegin(gekozen);
+    });
+    return () => {
+      weg = true;
+    };
+  }, []);
+  if (!begin) return <div className={styles.loading}>Speeltuin laden...</div>;
+  return (
+    <PlaygroundInner
+      key={overgenomen}
+      begin={begin}
+      onNeemOver={(werk) => {
+        setBegin({ ...werk, gedeeld: false });
+        setOvergenomen((n) => n + 1);
+      }}
+    />
+  );
+}
+
 export default function Speeltuin() {
   return (
     <Layout title="Speeltuin" description="Probeer Python game code direct in je browser">
       <BrowserOnly fallback={<div style={{ padding: '2rem', textAlign: 'center' }}>Laden...</div>}>
-        {() => <PlaygroundInner />}
+        {() => <Playground />}
       </BrowserOnly>
     </Layout>
   );

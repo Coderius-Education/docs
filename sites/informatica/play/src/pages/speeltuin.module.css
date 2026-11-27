@@ -168,6 +168,35 @@
 }
 
 /* Split view */
+/* De balk boven de code: bij code uit een link van een ander (wordt niet
+   bewaard; de knoppen bewaren hem of brengen je terug bij je eigen code), en
+   als het bewaren niet lukt. */
+.balk {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  padding: 0.4rem 1rem;
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+  background: var(--ifm-color-emphasis-100);
+  font-size: 0.9rem;
+}
+
+.balkKnop {
+  padding: 0.3rem 0.75rem;
+  background: var(--ifm-background-color);
+  color: var(--ifm-font-color-base);
+  border: 1px solid var(--ifm-color-primary);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.15s;
+}
+
+.balkKnop:hover {
+  background: var(--ifm-color-emphasis-200);
+}
+
 .splitView {
   display: flex;
   flex: 1;
@@ -178,6 +207,12 @@
   flex: 1;
   overflow: hidden;
   border-right: 1px solid var(--ifm-color-emphasis-200);
+}
+
+/* De editor vult zijn helft: zonder deze regel was hij zo hoog als de code,
+   en deed een klik in het lege vlak eronder niets. */
+.editorPanel :global(.cm-editor) {
+  height: 100%;
 }
 
 .outputPanel {
@@ -211,12 +246,6 @@
   color: #888;
   text-align: center;
   padding: 2rem;
-}
-
-.placeholderIcon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  opacity: 0.5;
 }
 
 .placeholderHint {
